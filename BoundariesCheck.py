@@ -2,7 +2,7 @@ from __future__ import print_function
 import cv2
 import argparse
 
-cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+cam = cv2.VideoCapture(2, cv2.CAP_DSHOW)
 
 cam.set(cv2.CAP_PROP_FRAME_WIDTH, 800)
 cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 600)
