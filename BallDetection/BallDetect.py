@@ -12,11 +12,12 @@ cropSize = (100, 100)
 
 # cv.namedWindow("Python Webcam Screenshot App")
 
+
 outputDrawing = np.zeros((784,1568,3), np.uint8)
 
 while True:
     # ret, frame = cam.read()
-    frame = cv.imread('pool_table_ball.jpg')
+    frame = cv.imread('./pics/pool_table_ball.jpg')
     frame = cv.resize(frame, (1920, 1080))
 
     # if not ret: break
