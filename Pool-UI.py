@@ -6,7 +6,6 @@ from typing import Sized
 from PIL import Image, ImageTk
 from tkinter.font import Font
 
-
   
 class Sampleapp(tk.Tk):  
   
