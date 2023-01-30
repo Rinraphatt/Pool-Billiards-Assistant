@@ -36,7 +36,9 @@ class StartPage(tk.Frame):
   
     def __init__(self, parent, controller):  
         tk.Frame.__init__(self,parent)
-
+        self.bg = PhotoImage(file="Bg-Firstpage.png")
+        bg = Label(self, image=self.bg)
+        bg.place(x=0, y=0)
         button = Button(self, text="Visit Page 1",font=self.Myfont(40),  
                             command=lambda: controller.show_frame(PageOne))  
         button.pack()  
@@ -62,7 +64,6 @@ class PageOne(tk.Frame):
         return self.myfont
   
          
-  
 app = Sampleapp()  
 app.title("Pool-Billiard")
 app.mainloop()  
