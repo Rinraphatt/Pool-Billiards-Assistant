@@ -1,7 +1,7 @@
 import cv2 as cv
 import math
 
-path = 'pool_table_noBall.jpg'
+path = 'pics/pool_table_ball_4.jpg'
 img = cv.imread(path)
 # img = cv.resize(img, (1000, 968))
 img = cv.resize(img, (1920, 1080))
@@ -40,13 +40,13 @@ def getAngle(pointsList):
         cv.circle(img, (2*pt1[0] - pt2[0],pt2[1]), 5, (0,255,0), cv.FILLED)
         cv.circle(img, (2*pt1[0] - pt3[0],pt3[1]), 5, (0,255,0), cv.FILLED)
         cv.line(img, (pt1[0], pt1[1]), (2*pt1[0] - pt2[0], pt2[1]), (0,255,0), 2)
-        cv.line(img, (pt1[0], pt1[1]), (2*pt1[0] - pt3[0], pt3[1]), (0,255,0), 2)
+        # cv.line(img, (pt1[0], pt1[1]), (2*pt1[0] - pt3[0], pt3[1]), (0,255,0), 2)
     else:
         cv.circle(img, (pt1[0],pt1[1]), 5, (0,255,0), cv.FILLED)
         cv.circle(img, (pt2[0],2*pt1[1] - pt2[1]), 5, (0,255,0), cv.FILLED)
         cv.circle(img, (pt3[0],2*pt1[1] - pt3[1]), 5, (0,255,0), cv.FILLED)
         cv.line(img, (pt1[0], pt1[1]), (pt2[0],2*pt1[1] - pt2[1]), (0,255,0), 2)
-        cv.line(img, (pt1[0], pt1[1]), (pt3[0],2*pt1[1] - pt3[1]), (0,255,0), 2)
+        # cv.line(img, (pt1[0], pt1[1]), (pt3[0],2*pt1[1] - pt3[1]), (0,255,0), 2)
 
 
 while True :
