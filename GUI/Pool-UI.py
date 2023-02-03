@@ -40,8 +40,8 @@ class StartPage(tk.Frame):
         bg = Label(self, image=self.bg)
         bg.place(x=0, y=0)
         button = Button(self, text="Visit Page 1",font=self.Myfont(40),  
-                            command=lambda: controller.show_frame(PageOne))  
-        button.pack()  
+                            command=lambda: controller.show_frame(PageOne))    
+        button.pack()
 
     def Myfont(self, sizefont):
         self.myfont = Font(family="Londrina Solid", size=sizefont)
