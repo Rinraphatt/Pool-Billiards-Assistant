@@ -88,6 +88,15 @@ while succuess:
         print(circles[0][whitePos][1])
 
         cropped_whiteZone = frame[260+circles[0][whitePos][1]-100: 260+circles[0][whitePos][1]+100, -193+174+circles[0][whitePos][0]-100: -193+174+circles[0][whitePos][0]+100]
+        edges = cv.Canny(cropped_whiteZone, 50, 200)
+        # Detect points that form a line
+        lines = cv.HoughLinesP(edges, 1, np.pi/180, 40, minLineLength=5, maxLineGap=250)
+        #print(lines)
+        if lines is not None:
+            for line in lines:
+                x1, y1, x2, y2 = line[0]
+                cv.line(cropped_whiteZone, (x1, y1), (x2, y2), (255, 0, 0), 3)
+
         cv.imshow("RealWhiteCircleZone", cropped_whiteZone)
         # cv.imshow("SolidCircleZone1", frame[148+circles[0][3][1]-100: 148+circles[0][3][1]+100, 174+circles[0][3][0]-100: 174+circles[0][3][0]+100])
         # cv.imshow("SolidCircleZone2", frame[148+circles[0][6][1]-100: 148+circles[0][6][1]+100, 174+circles[0][6][0]-100: 174+circles[0][6][0]+100])

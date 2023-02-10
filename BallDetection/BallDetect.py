@@ -102,7 +102,7 @@ while True:
         print(lines)
         for line in lines:
             x1, y1, x2, y2 = line[0]
-            cv.line(cropped_whiteZone, (x1, y1), (x2, y2), (255, 0, 0), 3)
+            cv.line(cropped_whiteZone, (x1, y1), (x2, y2), (255, 0, 0), 2)
 
         cv.imshow("RealWhiteCircleZone", cropped_whiteZone)
         # cv.imshow("SolidCircleZone1", frame[148+circles[0][3][1]-100: 148+circles[0][3][1]+100, 174+circles[0][3][0]-100: 174+circles[0][3][0]+100])
