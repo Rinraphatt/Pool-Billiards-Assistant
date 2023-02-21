@@ -43,12 +43,14 @@ class StartPage(tk.Frame):
         button = Button(self,text="Start",bg="#C24E4E",fg="white", bd=0,activebackground="#C24E4E",font=self.Myfont(40),   
                             command=lambda: controller.show_frame(PageOne))  
         button.place(x=810,y=880,width=300,height=100)
-        my_text = Entry(self, justify=CENTER,bg="#FFFFFF",bd=0, font=self.Myfont(50))
-        my_text.insert(0, "Welcome")
-        my_text.pack(padx=140, pady=140)
-        my_tex1 = Entry(self, justify=CENTER,bg="#FFFFFF",bd=0, font=self.Myfont(50))
-        my_tex1.insert(0, "Pool Billiard Assistant")
-        my_tex1.pack(padx=0, pady=0)
+        # my_text = Entry(self, justify=CENTER,bg="#FFFFFF",bd=0, font=self.Myfont(50))
+        # my_text.insert(0, "Welcome")
+        # my_text.pack(padx=140, pady=140)
+        # my_tex1 = Entry(self, justify=CENTER,bg="#FFFFFF",bd=0, font=self.Myfont(50))
+        # my_tex1.insert(0, "Pool Billiard Assistant")
+        # my_tex1.pack(padx=0, pady=0)
+        lbl1 = Label(window, text="List", bg="orange red", fg="white", font="none 24 bold", width=lblwidth, anchor=CENTER)
+        lbl1.pack()
 
     def Myfont(self, sizefont):
         self.myfont = Font(family="Londrina Solid", size=sizefont)
@@ -82,9 +84,11 @@ class TrainMode(tk.Frame):
         bg = Label(self, image=self.bg)
         bg.place(x=0, y=0)
 
-        button = Button(self,text="Training",bg="#FFFFFF",fg="Black", bd=0,activebackground="#FFFFFF",font=self.Myfont(40),   
-                            command=lambda: controller.show_frame(PageOne))  
-        button.place(x=530,y=880,width=300,height=100)
+
+
+        # button = Button(self,text="Training",bg="#FFFFFF",fg="Black", bd=0,activebackground="#FFFFFF",font=self.Myfont(40),   
+        #                     command=lambda: controller.show_frame(PageOne))  
+        # button.place(x=530,y=880,width=300,height=100)
 
     def Myfont(self, sizefont):
         self.myfont = Font(family="Londrina Solid", size=sizefont)
