@@ -102,12 +102,12 @@ class Pool8Mode(tk.Frame):
         bg = Label(self, image=self.bg)
         bg.place(x=0, y=0)
 
-        button2 = Button(self,text="Single Player",bg="#E22424",fg="#FFFFFF", bd=0,activebackground="#E22424",font=self.Myfont(90),   
+        button2 = Button(self,text="Single Player",bg="#E22424",fg="#FFFFFF", bd=0,activebackground="#E22424",font=self.Myfont(50),   
                             command=lambda: controller.show_frame(TrainMode))  
-        button2.pack(pady=140,padx=140)
-        button3 = Button(self,text="Multi Player",bg="#E22424",fg="#FFFFFF", bd=0,activebackground="#E22424",font=self.Myfont(90),   
+        button2.place(x=190,y=755,width=690,height=140)
+        button3 = Button(self,text="Multi Player",bg="#E22424",fg="#FFFFFF", bd=0,activebackground="#E22424",font=self.Myfont(50),   
                             command=lambda: controller.show_frame(Pool8Mode))  
-        button3.pack(pady=110,padx=110)
+        button3.place(x=1050,y=755,width=690,height=140)
 
     def Myfont(self, sizefont):
         self.myfont = Font(family="Londrina Solid", size=sizefont)
