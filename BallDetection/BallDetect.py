@@ -17,7 +17,7 @@ outputDrawing = np.zeros((784,1568,3), np.uint8)
 
 while True:
     # ret, frame = cam.read()
-    frame = cv.imread('./pics/pool_table_ball.jpg')
+    frame = cv.imread('./pics/pool_table_ball_4.jpg')
     frame = cv.resize(frame, (1920, 1080))
 
     # if not ret: break
@@ -88,20 +88,30 @@ while True:
 
         # cv.imshow("WhiteCircleZone", whiteZone)
 
-        # print(whitePos)
+        print(whitePos)
         # print(circles[0])
-        # print(circles[0][whitePos][0])
-        # print(circles[0][whitePos][1])
+        print(circles[0][whitePos][0])
+        print(circles[0][whitePos][1])
 
-        # cropped_whiteZone = frame[148+circles[0][whitePos][1]-100: 148+circles[0][whitePos][1]+100, 174+circles[0][whitePos][0]-100: 174+circles[0][whitePos][0]+100]
-        # cv.imshow("RealWhiteCircleZone", cropped_whiteZone)
-        cv.imshow("SolidCircleZone1", frame[148+circles[0][3][1]-100: 148+circles[0][3][1]+100, 174+circles[0][3][0]-100: 174+circles[0][3][0]+100])
-        cv.imshow("SolidCircleZone2", frame[148+circles[0][6][1]-100: 148+circles[0][6][1]+100, 174+circles[0][6][0]-100: 174+circles[0][6][0]+100])
-        cv.imshow("SolidCircleZone3", frame[148+circles[0][12][1]-100: 148+circles[0][12][1]+100, 174+circles[0][12][0]-100: 174+circles[0][12][0]+100])
-        cv.imshow("SolidCircleZone4", frame[148+circles[0][8][1]-100: 148+circles[0][8][1]+100, 174+circles[0][8][0]-100: 174+circles[0][8][0]+100])
-        cv.imshow("SolidCircleZone5", frame[148+circles[0][10][1]-100: 148+circles[0][10][1]+100, 174+circles[0][10][0]-100: 174+circles[0][10][0]+100])
-        cv.imshow("SolidCircleZone6", frame[148+circles[0][14][1]-100: 148+circles[0][14][1]+100, 174+circles[0][14][0]-100: 174+circles[0][14][0]+100])
-        cv.imshow("SolidCircleZone7", frame[148+circles[0][9][1]-100: 148+circles[0][9][1]+100, 174+circles[0][9][0]-100: 174+circles[0][9][0]+100])
+        cropped_whiteZone = frame[148+circles[0][whitePos][1]-100: 148+circles[0][whitePos][1]+100, 174+circles[0][whitePos][0]-100: 174+circles[0][whitePos][0]+100]
+        #cv.imshow("RealWhiteCircleZone", cropped_whiteZone)
+
+        edges = cv.Canny(cropped_whiteZone, 50, 200)
+        # Detect points that form a line
+        lines = cv.HoughLinesP(edges, 1, np.pi/180, 25, minLineLength=10, maxLineGap=250)
+        print(lines)
+        for line in lines:
+            x1, y1, x2, y2 = line[0]
+            cv.line(cropped_whiteZone, (x1, y1), (x2, y2), (255, 0, 0), 2)
+
+        cv.imshow("RealWhiteCircleZone", cropped_whiteZone)
+        # cv.imshow("SolidCircleZone1", frame[148+circles[0][3][1]-100: 148+circles[0][3][1]+100, 174+circles[0][3][0]-100: 174+circles[0][3][0]+100])
+        # cv.imshow("SolidCircleZone2", frame[148+circles[0][6][1]-100: 148+circles[0][6][1]+100, 174+circles[0][6][0]-100: 174+circles[0][6][0]+100])
+        # cv.imshow("SolidCircleZone3", frame[148+circles[0][12][1]-100: 148+circles[0][12][1]+100, 174+circles[0][12][0]-100: 174+circles[0][12][0]+100])
+        # cv.imshow("SolidCircleZone4", frame[148+circles[0][8][1]-100: 148+circles[0][8][1]+100, 174+circles[0][8][0]-100: 174+circles[0][8][0]+100])
+        # cv.imshow("SolidCircleZone5", frame[148+circles[0][10][1]-100: 148+circles[0][10][1]+100, 174+circles[0][10][0]-100: 174+circles[0][10][0]+100])
+        # cv.imshow("SolidCircleZone6", frame[148+circles[0][14][1]-100: 148+circles[0][14][1]+100, 174+circles[0][14][0]-100: 174+circles[0][14][0]+100])
+        # cv.imshow("SolidCircleZone7", frame[148+circles[0][9][1]-100: 148+circles[0][9][1]+100, 174+circles[0][9][0]-100: 174+circles[0][9][0]+100])
         
 
     circleZones = []
