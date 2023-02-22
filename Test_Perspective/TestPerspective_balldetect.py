@@ -39,6 +39,8 @@ while succuess:
 
         circleCounter = 0
 
+        # print(circles[0])
+        
         for i in circles[0, :]:
             # cv.circle(frame, (i[0], i[1]), 1, (0,200,200), 2)
             # cv.circle(frame, (i[0], i[1]), i[2], (255,0,255), 2)
@@ -58,58 +60,9 @@ while succuess:
 
             # cropped_image = blurFrame[i[0]-200: i[0]+200, i[1]-200: i[1]+200]
             circleCounter += 1
-            
-    if circles is not None:
-        whiteValue = -1000000
-        whiteZone = []
-
-        whitePos = 0
-
-        for i in range(len(circleZones)):
-            testFrame = circleZones[i]
-            print(testFrame)
-            if testFrame != [] :
-                avg_color_per_row = np.average(testFrame, axis=0)
-                avg_color = np.average(avg_color_per_row, axis=0)
-                print("CircleZones" + str(i) + " : " + str(avg_color))
-                if avg_color > whiteValue : 
-                    whiteValue = avg_color
-                    whiteZone = circleZones[i]
-                    whitePos = i
-                # cv.imshow("CircleZones" + str(i), circleZones[i])
-
-        print(whiteValue)
-
-        # cv.imshow("WhiteCircleZone", whiteZone)
-
-        print(whitePos)
-        # print(circles[0])
-        print(circles[0][whitePos][0])
-        print(circles[0][whitePos][1])
-
-        cropped_whiteZone = frame[260+circles[0][whitePos][1]-100: 260+circles[0][whitePos][1]+100, -193+174+circles[0][whitePos][0]-100: -193+174+circles[0][whitePos][0]+100]
-        edges = cv.Canny(cropped_whiteZone, 50, 200)
-        # Detect points that form a line
-        lines = cv.HoughLinesP(edges, 1, np.pi/180, 40, minLineLength=5, maxLineGap=250)
-        #print(lines)
-        if lines is not None:
-            for line in lines:
-                x1, y1, x2, y2 = line[0]
-                cv.line(cropped_whiteZone, (x1, y1), (x2, y2), (255, 0, 0), 3)
-
-        cv.imshow("RealWhiteCircleZone", cropped_whiteZone)
-        # cv.imshow("SolidCircleZone1", frame[148+circles[0][3][1]-100: 148+circles[0][3][1]+100, 174+circles[0][3][0]-100: 174+circles[0][3][0]+100])
-        # cv.imshow("SolidCircleZone2", frame[148+circles[0][6][1]-100: 148+circles[0][6][1]+100, 174+circles[0][6][0]-100: 174+circles[0][6][0]+100])
-        # cv.imshow("SolidCircleZone3", frame[148+circles[0][12][1]-100: 148+circles[0][12][1]+100, 174+circles[0][12][0]-100: 174+circles[0][12][0]+100])
-        # cv.imshow("SolidCircleZone4", frame[148+circles[0][8][1]-100: 148+circles[0][8][1]+100, 174+circles[0][8][0]-100: 174+circles[0][8][0]+100])
-        # cv.imshow("SolidCircleZone5", frame[148+circles[0][10][1]-100: 148+circles[0][10][1]+100, 174+circles[0][10][0]-100: 174+circles[0][10][0]+100])
-        # cv.imshow("SolidCircleZone6", frame[148+circles[0][14][1]-100: 148+circles[0][14][1]+100, 174+circles[0][14][0]-100: 174+circles[0][14][0]+100])
-        # cv.imshow("SolidCircleZone7", frame[148+circles[0][9][1]-100: 148+circles[0][9][1]+100, 174+circles[0][9][0]-100: 174+circles[0][9][0]+100])
-        
-
-    circleZones = []
+    
     cv.imshow("Test_Perspectice", tansformed_frame)
-    frame = cv.resize(frame, (192*3, 108*3))
+
     cv.imshow("Test", frame)
     
     if cv.waitKey(1) == 27:
