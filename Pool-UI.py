@@ -88,7 +88,7 @@ class TrainMode(tk.Frame):
                                 command=lambda: controller.show_frame(ModeAmature))
         btn_Amature.place(x=729,y=400,width=475,height=387)
         btn_Custom = Button(self,text="Custom", fg="#FFFFFF",bg="Black",bd=0,activebackground="#FFFFFF",font=self.Myfont(40),)
-        btn_Custom.place(x=729,y=400,width=475,height=387)
+        btn_Custom.place(x=1290,y=400,width=475,height=387)
 
     def Myfont(self, sizefont):
         self.myfont = Font(family="Londrina Solid", size=sizefont)
@@ -102,9 +102,12 @@ class Pool8Mode(tk.Frame):
         bg = Label(self, image=self.bg)
         bg.place(x=0, y=0)
 
-        button = Button(self,text="Training",bg="#FFFFFF",fg="Black", bd=0,activebackground="#FFFFFF",font=self.Myfont(40),   
-                            command=lambda: controller.show_frame(PageOne))  
-        button.place(x=530,y=880,width=300,height=100)
+        button2 = Button(self,text="Single Player",bg="#E22424",fg="#FFFFFF", bd=0,activebackground="#E22424",font=self.Myfont(90),   
+                            command=lambda: controller.show_frame(TrainMode))  
+        button2.pack(pady=140,padx=140)
+        button3 = Button(self,text="Multi Player",bg="#E22424",fg="#FFFFFF", bd=0,activebackground="#E22424",font=self.Myfont(90),   
+                            command=lambda: controller.show_frame(Pool8Mode))  
+        button3.pack(pady=110,padx=110)
 
     def Myfont(self, sizefont):
         self.myfont = Font(family="Londrina Solid", size=sizefont)
