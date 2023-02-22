@@ -19,7 +19,7 @@ class Sampleapp(tk.Tk):
         container.grid_columnconfigure(0, weight=1)  
         self.frames = {}  
   
-        for F in (StartPage, PageOne ,TrainMode, Pool8Mode):  
+        for F in (StartPage, PageOne ,TrainMode, Pool8Mode, ModeBasic, ModeAmature):  
   
             frame = F(container, self)  
             self.frames[F] = frame  
@@ -43,12 +43,6 @@ class StartPage(tk.Frame):
         button = Button(self,text="Start",bg="#C24E4E",fg="white", bd=0,activebackground="#C24E4E",font=self.Myfont(40),   
                             command=lambda: controller.show_frame(PageOne))  
         button.place(x=810,y=880,width=300,height=100)
-        # my_text = Entry(self, justify=CENTER,bg="#FFFFFF",bd=0, font=self.Myfont(50))
-        # my_text.insert(0, "Welcome")
-        # my_text.pack(padx=140, pady=140)
-        # my_tex1 = Entry(self, justify=CENTER,bg="#FFFFFF",bd=0, font=self.Myfont(50))
-        # my_tex1.insert(0, "Pool Billiard Assistant")
-        # my_tex1.pack(padx=0, pady=0)
         lbl1 = Label(self, text="Welcome", bg="White" ,fg="Black", font=self.Myfont(50), anchor=CENTER)
         lbl1.pack(padx=140, pady=140)
         lbl2 = Label(self, text="Pool Billiard Assistant", bg="White" ,fg="Black", font=self.Myfont(50), anchor=CENTER)
@@ -86,11 +80,15 @@ class TrainMode(tk.Frame):
         bg = Label(self, image=self.bg)
         bg.place(x=0, y=0)
 
-        
-
-        # button = Button(self,text="Training",bg="#FFFFFF",fg="Black", bd=0,activebackground="#FFFFFF",font=self.Myfont(40),   
-        #                     command=lambda: controller.show_frame(PageOne))  
-        # button.place(x=530,y=880,width=300,height=100)
+        # button
+        btn_basic = Button(self,text="Basic", fg="#FFFFFF",bg="Black",bd=0,activebackground="#FFFFFF",font=self.Myfont(40),
+                                command=lambda: controller.show_frame(ModeBasic))
+        btn_basic.place(x=168,y=400,width=475,height=387)
+        btn_Amature = Button(self,text="Amature", fg="#FFFFFF",bg="Black",bd=0,activebackground="#FFFFFF",font=self.Myfont(40),
+                                command=lambda: controller.show_frame(ModeAmature))
+        btn_Amature.place(x=729,y=400,width=475,height=387)
+        btn_Custom = Button(self,text="Custom", fg="#FFFFFF",bg="Black",bd=0,activebackground="#FFFFFF",font=self.Myfont(40),)
+        btn_Custom.place(x=729,y=400,width=475,height=387)
 
     def Myfont(self, sizefont):
         self.myfont = Font(family="Londrina Solid", size=sizefont)
