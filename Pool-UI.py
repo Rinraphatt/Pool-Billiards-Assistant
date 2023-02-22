@@ -86,7 +86,7 @@ class TrainMode(tk.Frame):
         bg = Label(self, image=self.bg)
         bg.place(x=0, y=0)
 
-
+        
 
         # button = Button(self,text="Training",bg="#FFFFFF",fg="Black", bd=0,activebackground="#FFFFFF",font=self.Myfont(40),   
         #                     command=lambda: controller.show_frame(PageOne))  
@@ -111,7 +111,39 @@ class Pool8Mode(tk.Frame):
     def Myfont(self, sizefont):
         self.myfont = Font(family="Londrina Solid", size=sizefont)
         return self.myfont
-         
+
+class ModeBasic(tk.Frame):  
+  
+    def __init__(self, parent, controller):  
+        tk.Frame.__init__(self, parent) 
+        self.bg = PhotoImage(file="basicmode.png")
+        bg = Label(self, image=self.bg)
+        bg.place(x=0, y=0)
+
+        button = Button(self,text="Training",bg="#FFFFFF",fg="Black", bd=0,activebackground="#FFFFFF",font=self.Myfont(40),   
+                            command=lambda: controller.show_frame(PageOne))  
+        button.place(x=530,y=880,width=300,height=100)
+
+    def Myfont(self, sizefont):
+        self.myfont = Font(family="Londrina Solid", size=sizefont)
+        return self.myfont
+
+class ModeAmature(tk.Frame):  
+  
+    def __init__(self, parent, controller):  
+        tk.Frame.__init__(self, parent) 
+        self.bg = PhotoImage(file="mode amature.png")
+        bg = Label(self, image=self.bg)
+        bg.place(x=0, y=0)
+
+        button = Button(self,text="Training",bg="#FFFFFF",fg="Black", bd=0,activebackground="#FFFFFF",font=self.Myfont(40),   
+                            command=lambda: controller.show_frame(PageOne))  
+        button.place(x=530,y=880,width=300,height=100)
+
+    def Myfont(self, sizefont):
+        self.myfont = Font(family="Londrina Solid", size=sizefont)
+        return self.myfont
+
 app = Sampleapp()  
 app.title("Pool-Billiard")
 app.mainloop()  
