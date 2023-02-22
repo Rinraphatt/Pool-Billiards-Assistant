@@ -49,8 +49,10 @@ class StartPage(tk.Frame):
         # my_tex1 = Entry(self, justify=CENTER,bg="#FFFFFF",bd=0, font=self.Myfont(50))
         # my_tex1.insert(0, "Pool Billiard Assistant")
         # my_tex1.pack(padx=0, pady=0)
-        lbl1 = Label(window, text="List", bg="orange red", fg="white", font="none 24 bold", width=lblwidth, anchor=CENTER)
-        lbl1.pack()
+        lbl1 = Label(self, text="Welcome", bg="White" ,fg="Black", font=self.Myfont(50), anchor=CENTER)
+        lbl1.pack(padx=140, pady=140)
+        lbl2 = Label(self, text="Pool Billiard Assistant", bg="White" ,fg="Black", font=self.Myfont(50), anchor=CENTER)
+        lbl2.pack(padx=0, pady=0)
 
     def Myfont(self, sizefont):
         self.myfont = Font(family="Londrina Solid", size=sizefont)
