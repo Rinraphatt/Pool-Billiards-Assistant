@@ -145,6 +145,15 @@ class ModeAmature(tk.Frame):
         self.myfont = Font(family="Londrina Solid", size=sizefont)
         return self.myfont
 
+class ModeCreative(tk.Frame):  
+  
+    def __init__(self, parent, controller):  
+        tk.Frame.__init__(self, parent) 
+
+    def Myfont(self, sizefont):
+        self.myfont = Font(family="Londrina Solid", size=sizefont)
+        return self.myfont
+
 app = Sampleapp()  
 app.title("Pool-Billiard")
 app.mainloop()  
