@@ -1,10 +1,13 @@
 import numpy as np
 import cv2
 
-vidcap = cv2.VideoCapture("Test_Perspective/newVid.mp4")
+vidcap = cv2.VideoCapture(0)
 succuess, img = vidcap.read()
 width = 1280
 heigth = 720
+
+print(succuess)
+
 while succuess:
     succuess, img = vidcap.read()
     frame = img
