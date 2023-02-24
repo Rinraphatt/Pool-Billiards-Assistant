@@ -15,10 +15,10 @@ while True:
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
     # Apply Canny edge detection to detect edges
-    edges = cv2.Canny(gray, 50, 200)
+    edges = cv2.Canny(gray, 130, 255)
 
     # Apply the Hough Line Transform to detect line segments
-    lines = cv2.HoughLinesP(edges, 1, np.pi/180, 100, minLineLength=100, maxLineGap=10)
+    lines = cv2.HoughLinesP(edges, 1, np.pi/180, 150, minLineLength=150, maxLineGap=10)
 
     # Draw the detected line segments on the original frame
     if lines is not None:
