@@ -1,3 +1,1 @@
-
-        frame.tkraise()  
-  
+.num)

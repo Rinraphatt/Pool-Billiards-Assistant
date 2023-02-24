@@ -58,15 +58,21 @@ class PageOne(tk.Frame):
     def __init__(self, parent, controller):  
         tk.Frame.__init__(self, parent) 
         self.bg = PhotoImage(file="iMac - 14.png")
+        self.btnback = PhotoImage(file="left-arrow - Copy.png")
         bg = Label(self, image=self.bg)
-        bg.place(x=0, y=0)
+        bg.place(x=0,y=0)
 
-        button2 = Button(self,text="Training",bg="#FFFFFF",fg="Black", bd=0,activebackground="#FFFFFF",font=self.Myfont(90),   
+        buttontrain = Button(self,text="Training",bg="#FFFFFF",fg="Black", bd=0,activebackground="#FFFFFF",font=self.Myfont(90),   
                             command=lambda: controller.show_frame(TrainMode))  
-        button2.pack(pady=140,padx=140)
-        button3 = Button(self,text="8-Pool",bg="Black",fg="#FFFFFF", bd=0,activebackground="Black",font=self.Myfont(90),   
+        buttontrain.pack(pady=140,padx=140)
+        button8pool = Button(self,text="8-Pool",bg="Black",fg="#FFFFFF", bd=0,activebackground="Black",activeforeground="#FFFFFF",font=self.Myfont(90),   
                             command=lambda: controller.show_frame(Pool8Mode))  
-        button3.pack(pady=110,padx=110)
+        button8pool.pack(pady=110,padx=110)
+
+        buttonback = Button(self,image=self.btnback,bg="#FFFFFF",bd=0,activebackground="#FFFFFF",
+                            command=lambda: controller.show_frame(StartPage))
+        buttonback.place(x=20,y=20,width=100,height=100)
+
 
     def Myfont(self, sizefont):
         self.myfont = Font(family="Londrina Solid", size=sizefont)
@@ -77,6 +83,7 @@ class TrainMode(tk.Frame):
     def __init__(self, parent, controller):  
         tk.Frame.__init__(self, parent) 
         self.bg = PhotoImage(file="bgTraingmode.png")
+        self.btnback = PhotoImage(file="left-arrow.png")
         bg = Label(self, image=self.bg)
         bg.place(x=0, y=0)
 
@@ -90,6 +97,10 @@ class TrainMode(tk.Frame):
         btn_Custom = Button(self,text="Custom", fg="#FFFFFF",bg="Black",bd=0,activebackground="#FFFFFF",font=self.Myfont(40),)
         btn_Custom.place(x=1290,y=400,width=475,height=387)
 
+        buttonback = Button(self,image=self.btnback,bg="Black",bd=0,activebackground="Black",
+                            command=lambda: controller.show_frame(StartPage))
+        buttonback.place(x=20,y=20,width=100,height=100)
+
     def Myfont(self, sizefont):
         self.myfont = Font(family="Londrina Solid", size=sizefont)
         return self.myfont
@@ -99,6 +110,7 @@ class Pool8Mode(tk.Frame):
     def __init__(self, parent, controller):  
         tk.Frame.__init__(self, parent) 
         self.bg = PhotoImage(file="bgpool8.png")
+        self.btnback = PhotoImage(file="left-arrow.png")
         bg = Label(self, image=self.bg)
         bg.place(x=0, y=0)
 
@@ -109,6 +121,10 @@ class Pool8Mode(tk.Frame):
                             command=lambda: controller.show_frame(Pool8Mode))  
         button3.place(x=1050,y=755,width=690,height=140)
 
+        buttonback = Button(self,image=self.btnback,bg="Black",bd=0,activebackground="Black",
+                            command=lambda: controller.show_frame(StartPage))
+        buttonback.place(x=20,y=20,width=100,height=100)
+
     def Myfont(self, sizefont):
         self.myfont = Font(family="Londrina Solid", size=sizefont)
         return self.myfont
@@ -116,30 +132,47 @@ class Pool8Mode(tk.Frame):
 class ModeBasic(tk.Frame):  
   
     def __init__(self, parent, controller):  
-        tk.Frame.__init__(self, parent) 
+        tk.Frame.__init__(self, parent)
         self.bg = PhotoImage(file="basicmode.png")
+        self.btnback = PhotoImage(file="left-arrow.png")
+        self.btnnext = PhotoImage(file="arrow-forward.png")
+        self.num = [1,2,3]
         bg = Label(self, image=self.bg)
         bg.place(x=0, y=0)
+        buttonback = Button(self,image=self.btnback,bg="Black",bd=0,activebackground="Black",
+                            command=lambda: controller.show_frame(StartPage))
+        buttonback.place(x=20,y=20,width=100,height=100)
+        
+        buttonnext = Button(self,image=self.btnnext,bg="Black",bd=0,activebackground="Black")
+        buttonnext.bind("<Button-1>", self.addnum)
+        buttonnext.place(x=1820,y=550,width=70,height=70)
 
-        button = Button(self,text="Training",bg="#FFFFFF",fg="Black", bd=0,activebackground="#FFFFFF",font=self.Myfont(40),   
-                            command=lambda: controller.show_frame(PageOne))  
-        button.place(x=530,y=880,width=300,height=100)
+        # btnnum = Button(self,text=self.num,bg="black",fg="#FFFFFF", bd=0)
+        # btnnum.place(x= 50,y=50)
 
     def Myfont(self, sizefont):
         self.myfont = Font(family="Londrina Solid", size=sizefont)
         return self.myfont
+
+    def addnum(self,event):
+        for i in range(len(self.num)):
+            self.num[i]+= 3
+        print(self.num)
+
 
 class ModeAmature(tk.Frame):  
   
     def __init__(self, parent, controller):  
         tk.Frame.__init__(self, parent) 
         self.bg = PhotoImage(file="mode amature.png")
+        self.btnback = PhotoImage(file="left-arrow.png")
         bg = Label(self, image=self.bg)
         bg.place(x=0, y=0)
 
-        button = Button(self,text="Training",bg="#FFFFFF",fg="Black", bd=0,activebackground="#FFFFFF",font=self.Myfont(40),   
-                            command=lambda: controller.show_frame(PageOne))  
-        button.place(x=530,y=880,width=300,height=100)
+        buttonback = Button(self,image=self.btnback,bg="Black",bd=0,activebackground="Black",
+                            command=lambda: controller.show_frame(StartPage))
+        buttonback.place(x=20,y=20,width=100,height=100)
+
 
     def Myfont(self, sizefont):
         self.myfont = Font(family="Londrina Solid", size=sizefont)
