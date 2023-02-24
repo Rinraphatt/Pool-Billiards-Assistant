@@ -1,10 +1,12 @@
 from tkinter import *
+from tkinter import filedialog as fd
 
 class Hole:
     def __init__(self, x, y) -> None:
         xPos = x
         yPos = y
 
+        self.type = "hole"
         self.coordinates = [xPos, yPos]
         self.width = 50
         self.height = 50
@@ -12,11 +14,12 @@ class Hole:
         hole = canvas.create_oval(xPos-(self.width/2), yPos-(self.height/2), xPos+(self.width/2), yPos+(self.height/2), fill=HOLE_DEACTIVE_COLOR, tag="Hole")
         holesVisual.append(hole)
 
-class WhiteBall:
+class WhiteBall: 
     def __init__(self, x, y) -> None:
         xPos = x
         yPos = y
 
+        self.type = "whiteBall"
         self.coordinates = [xPos, yPos]
         self.width = 50
         self.height = 50
@@ -32,6 +35,7 @@ class GreenBall:
         xPos = x
         yPos = y
 
+        self.type = "targetBall"
         self.coordinates = [xPos, yPos]
         self.width = 50
         self.height = 50
@@ -47,6 +51,7 @@ class RedBall:
         xPos = x
         yPos = y
 
+        self.type = "obstacleBall"
         self.coordinates = [xPos, yPos]
         self.width = 50
         self.height = 50
@@ -62,6 +67,7 @@ class TargetZone:
         xPos = x
         yPos = y
 
+        self.type = "targetZone"
         self.coordinates = [xPos, yPos]
         self.width = 200
         self.height = 200
@@ -220,6 +226,102 @@ def resetMap():
         canvas.delete(entitiesTextVisual[i])
         del entitiesTextVisual[i]
 
+def saveMap():
+    saveStrings = []
+
+    # Save All Holes
+    saveHoles = ""
+    saveHoles += str(targetHole1.get()) + " "
+    saveHoles += str(targetHole2.get()) + " "
+    saveHoles += str(targetHole3.get()) + " "
+    saveHoles += str(targetHole4.get()) + " "
+    saveHoles += str(targetHole5.get()) + " "
+    saveHoles += str(targetHole6.get()) + "\n"
+    saveStrings.append(saveHoles)
+
+    # Save All Entities
+    for entity in entities:
+        saveString = ""
+        saveString += str(entity.type)
+        saveString += " "
+        saveString += str(entity.coordinates[0])
+        saveString += " "
+        saveString += str(entity.coordinates[1])
+        saveString += "\n"
+        saveStrings.append(saveString)
+    
+    # print(saveStrings)
+
+    filetypes = (
+        ('text files', '*.txt'),
+    )
+
+    filename = fd.asksaveasfilename(
+        initialfile = 'Untitled.txt',
+        defaultextension = '.txt',
+        filetypes = filetypes
+    )
+
+    if filename != '':
+        file1 = open(filename, "w")
+        file1.writelines(saveStrings)
+        file1.close
+
+def loadMap():
+    resetMap()
+
+    filetypes = (
+        ('text files', '*.txt'),
+    )
+
+    filename = fd.askopenfilename(
+        title='Choose a file',
+        initialdir='/Users/UNS_CT/Documents/GitHub/Pool-Billiards-Assistant',
+        filetypes=filetypes
+    )
+
+    print(filename)
+
+    if filename != '':
+        file1 = open(filename, "r+")
+        # print(file1.read())
+        loadStrings = file1.readlines()
+        file1.close
+
+        # Load All Holes
+        loadHoles = loadStrings[0].split()
+        targetHole1.set(int(loadHoles[0]))
+        targetHole2.set(int(loadHoles[1]))
+        targetHole3.set(int(loadHoles[2]))
+        targetHole4.set(int(loadHoles[3]))
+        targetHole5.set(int(loadHoles[4]))
+        targetHole6.set(int(loadHoles[5]))
+        updateHoles()
+
+        # Load All Entities
+        for loadString in loadStrings[1::]:
+            tempEntity = loadString.split()
+            tempEntity[1] = int(tempEntity[1])
+            tempEntity[2] = int(tempEntity[2])
+
+            print(tempEntity)
+
+            if tempEntity[0] == 'whiteBall':
+                entity = WhiteBall((tempEntity[1]), tempEntity[2])
+                entities.append(entity)
+            if tempEntity[0] == 'targetBall':
+                entity = GreenBall(tempEntity[1], tempEntity[2])
+                entities.append(entity)
+            if tempEntity[0] == 'obstacleBall':
+                entity = RedBall(tempEntity[1], tempEntity[2])
+                entities.append(entity)
+            if tempEntity[0] == 'targetZone':
+                entity = TargetZone(tempEntity[1], tempEntity[2])
+                entities.append(entity)
+
+
+
+
 window = Tk()
 window.resizable(False, False)
 
@@ -271,7 +373,9 @@ label.grid(row=0, column=0, sticky=W, columnspan=10)
 dropdownList = OptionMenu(window, dropdownClicked, *options)
 dropdownList.grid(row=1, column=0, sticky=W, columnspan=5)
 
-Button(text="Reset", command=resetMap).grid(row=1, column=1, sticky=W, columnspan=3)
+Button(text="Reset", command=resetMap).grid(row=1, column=1, sticky=W, columnspan=2)
+Button(text="Save", command=saveMap).grid(row=1, column=3, sticky=W, columnspan=2)
+Button(text="Load", command=loadMap).grid(row=1, column=4, sticky=W, columnspan=2)
 
 canvas = Canvas(window, width=CANVAS_WIDTH, height=CANVAS_HEIGHT, bg="black")
 canvas.grid(row=2, column=0, sticky=W, columnspan=20)
