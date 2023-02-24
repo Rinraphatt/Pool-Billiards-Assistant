@@ -39,9 +39,13 @@ while succuess:
     # Convert the frame to HSV color space
     hsv = cv2.cvtColor(tansformed_frame, cv2.COLOR_BGR2HSV)
 
-    # Define a white color threshold
-    lower_white = np.array([0, 0, 130])
-    upper_white = np.array([179, 50, 255])
+    # # Define a white color threshold
+    # lower_white = np.array([0, 0, 130])
+    # upper_white = np.array([179, 50, 255])
+
+    # Define a cue white color threshold
+    lower_white = np.array([0, 0, 160])
+    upper_white = np.array([179, 80, 255])
 
     # Apply the white color threshold to extract white regions
     mask = cv2.inRange(hsv, lower_white, upper_white)
@@ -65,11 +69,15 @@ while succuess:
 
         # Draw a circle around the largest contour
         cv2.circle(tansformed_frame, center, radius, (0, 0, 255), 2)
+        # Draw a rec around the largest contour
+        # x, y, w, h = cv2.boundingRect(max_contour)
+        # cv2.rectangle(tansformed_frame, (x, y), (x+w, y+h), (0, 0, 255), 2)
 
         # Crop the image using the circle
         mask = np.zeros_like(tansformed_frame)
         cv2.circle(mask, center, radius, (255, 255, 255), -1)
         crop_frame = cv2.bitwise_and(tansformed_frame, mask)
+        # crop_frame = tansformed_frame[y:y+h, x:x+w]
 
        
 

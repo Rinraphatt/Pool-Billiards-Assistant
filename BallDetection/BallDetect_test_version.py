@@ -6,14 +6,8 @@ from turtle import circle
 import cv2 as cv
 import numpy as np
 
-cameraHeight=1080 
-cameraWidth=1920
-
-# cap = cv.VideoCapture(0)
-# cap = cv.VideoCapture('./videos/Test.mp4')
-# cap = cv.VideoCapture(0, cv.CAP_DSHOW)
-# cap.set(cv.CAP_PROP_FRAME_HEIGHT, cameraHeight)
-# cap.set(cv.CAP_PROP_FRAME_WIDTH, cameraWidth)
+cam = cv.VideoCapture(0)
+cap = cv.VideoCapture('./videos/Test.mp4')
 prevCircle = None
 cropSize = (100, 100)
 
@@ -24,11 +18,11 @@ outputDrawing = np.zeros((784,1568,3), np.uint8)
 
 while True:
     # Read the frame
-    # ret, frame = cap.read()
-    # if not ret:
-    #     break
-    frame = cv.imread('./pics/pool_table_ball_4.jpg')
-    frame = cv.resize(frame, (1920, 1080))
+    ret, frame = cap.read()
+    if not ret:
+        break
+    # frame = cv.imread('./pics/pool_table_ball_4.jpg')
+    # frame = cv.resize(frame, (1920, 1080))
 
     # if not ret: break
 
@@ -73,7 +67,9 @@ while True:
             # cropped_image = blurFrame[i[0]-200: i[0]+200, i[1]-200: i[1]+200]
             circleCounter += 1
 
-
+    cv.imshow("circles", frame)
+    cv.imshow("cropped", cropped_image)
+    # cv.imshow("Output", outputDrawing)
 
     if circles is not None:
         whiteValue = -1000000
@@ -104,29 +100,29 @@ while True:
         cropped_whiteZone = frame[148+circles[0][whitePos][1]-100: 148+circles[0][whitePos][1]+100, 174+circles[0][whitePos][0]-100: 174+circles[0][whitePos][0]+100]
         #cv.imshow("RealWhiteCircleZone", cropped_whiteZone)
 
+
         # Convert the frame to HSV color space
-        hsv = cv.cvtColor(cropped_whiteZone, cv.COLOR_BGR2HSV)
+        hsv = cv.cvtColor(cropped_whiteZone, cv2.COLOR_BGR2HSV)
 
+        # Define a white color threshold
+        lower_white = np.array([0, 0, 130])
+        upper_white = np.array([179, 50, 255])
 
-        # Define a cue white color threshold
-        lower_white = np.array([0, 0, 200])
-        upper_white = np.array([179, 60, 255])
-
+        # Apply the white color threshold to extract white regions
         mask = cv.inRange(hsv, lower_white, upper_white)
-        output = cv.bitwise_and(cropped_whiteZone,cropped_whiteZone, mask= mask)
 
-        cv.imshow("test", output)
+        # Find contours in the white regions
+        contours, hierarchy = cv.findContours(mask, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
 
-
-
-        edges = cv.Canny(output, 130, 255)
+        edges = cv.Canny(cropped_whiteZone, 130, 255)
         # Detect points that form a line
         lines = cv.HoughLinesP(edges, 1, np.pi/180, 25, minLineLength=10, maxLineGap=100)
+
         # Draw the detected line segments on the original frame
         if lines is not None:
             for line in lines:
                 x1, y1, x2, y2 = line[0]
-                cv.line(output, (x1, y1), (x2, y2), (0, 0, 255), 1)
+                cv.line(cropped_whiteZone, (x1, y1), (x2, y2), (0, 0, 255), 1)
                 # Calculate the center of two line segments
 
             # Find the distance between the two parallel lines
@@ -135,10 +131,10 @@ while True:
 
                 x1, y1, x2, y2 = lines[0][0]
                 x3, y3, x4, y4 = lines[1][0]
-                # cv.circle(cropped_whiteZone, (x1, y1), 2, (0, 255, 255), -1)
-                # cv.circle(cropped_whiteZone, (x2, y2), 2, (0, 255, 255), -1)
-                # cv.circle(cropped_whiteZone, (x3, y3), 2, (0, 255, 255), -1)
-                # cv.circle(cropped_whiteZone, (x4, y4), 2, (0, 255, 255), -1)
+                cv.circle(cropped_whiteZone, (x1, y1), 2, (0, 255, 255), -1)
+                cv.circle(cropped_whiteZone, (x2, y2), 2, (0, 255, 255), -1)
+                cv.circle(cropped_whiteZone, (x3, y3), 2, (0, 255, 255), -1)
+                cv.circle(cropped_whiteZone, (x4, y4), 2, (0, 255, 255), -1)
 
                 m1 = (round((x1+x3) /2) , round((y1+y3) /2)) 
                 m3 = (round((x2+x4) /2) , round((y2+y4) /2))
@@ -149,11 +145,7 @@ while True:
                 x1, y1 = m1
                 x2, y2 = m3
                 # Calculate the slope and intercept of the line
-                m = 0
-                if (x2-x1) != 0 :
-                    m = (y2 - y1) / (x2 - x1)
-                else:
-                    m = (y2 - y1) / 0.01
+                m = (y2 - y1) / (x2 - x1)
                 b = y1 - m * x1
 
                 # Define the image boundaries
@@ -215,7 +207,22 @@ while True:
                 # Draw a continuous line from the intersection points to the image boundaries
                 cv.line(cropped_whiteZone, (x_top, y_top), (x_bottom, y_bottom), (0, 255, 0), 2)
 
+        if contours:
+            # Find the contour with the largest area
+            max_contour = max(contours, key=cv2.contourArea)
 
+            # Fit a circle to the largest contour
+            (x, y), radius = cv2.minEnclosingCircle(max_contour)
+            center = (int(x), int(y))
+            radius = int(radius)
+
+            # Draw a circle around the largest contour
+            cv2.circle(tansformed_frame, center, radius, (0, 0, 255), 2)
+
+            # Crop the image using the circle
+            mask = np.zeros_like(tansformed_frame)
+            cv2.circle(mask, center, radius, (255, 255, 255), -1)
+            crop_frame = cv2.bitwise_and(tansformed_frame, mask)
 
         cv.imshow("RealWhiteCircleZone", cropped_whiteZone)
         # cv.imshow("SolidCircleZone1", frame[148+circles[0][3][1]-100: 148+circles[0][3][1]+100, 174+circles[0][3][0]-100: 174+circles[0][3][0]+100])
@@ -229,8 +236,7 @@ while True:
 
     circleZones = []
     
-    cv.imshow("circles", frame)
-    cv.imshow("cropped", cropped_image)
+
     # cv.imshow("circles", frame)
     # cv.imshow("grayFrame", blurFrame)
     # cv.imshow("Output", outputDrawing)
