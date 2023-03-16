@@ -5,12 +5,13 @@ from tkinter.colorchooser import Chooser
 from turtle import circle
 import cv2
 import numpy as np
+import math
 
 width = 1920
 height = 1080
 
 # cap = cv2.VideoCapture(0)
-# cap = cv2.VideoCapture('./videos/Test.mp4')
+cap = cv2.VideoCapture('./videos/new1080.mp4')
 # cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 # cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
 # cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
@@ -23,11 +24,11 @@ cropSize = (100, 100)
 
 while True:
     # Read the frame
-    # ret, frame = cap.read()
-    # if not ret:
-    #     break
-    frame = cv2.imread('./pics/new.jpg')
-    frame = cv2.resize(frame, (1920, 1080))
+    ret, frame = cap.read()
+    if not ret:
+        break
+    # frame = cv2.imread('./pics/new5.jpg')
+    # frame = cv2.resize(frame, (1920, 1080))
 
     # if not ret: break
 
@@ -130,10 +131,47 @@ while True:
             # Convert point in Crop into Original frame
             m1 = (m1[0]+center[0]-200, m1[1]+center[1]-200)
             m3 = (m3[0]+center[0]-200, m3[1]+center[1]-200)
+
+            dis1ToCen = math.sqrt(pow(m1[0]-center[0], 2)+pow(m1[1]-center[1], 2))
+            dis2ToCen = math.sqrt(pow(m3[0]-center[0], 2)+pow(m3[1]-center[1], 2))
+
             # print(m1)
             cv2.circle(frame, m1, 2, (0, 0, 255), -1)
             cv2.circle(frame, m3, 2, (0, 0, 255), -1)
 
+            font = cv2.FONT_HERSHEY_SIMPLEX
+            cv2.putText(frame, 'M1 X: '+ str(m1[0])+ " Y: "+ str(m1[1]), m1, font, 1, (0, 255, 0), 2, cv2.LINE_AA)
+            cv2.putText(frame, 'M3 X: '+ str(m3[0])+ " Y: "+ str(m3[1]), m3, font, 1, (0, 255, 0), 2, cv2.LINE_AA)
+
+            hor = '0'
+            ver = '0'
+
+            head = (0,0)
+            if dis1ToCen < dis2ToCen:
+                head = m1
+                if m1[0] < m3[0]:
+                    hor = 'left'
+                else:
+                    hor = 'right'
+
+                if m1[1] < m3[1]:
+                    ver = 'up'
+                else:
+                    ver = 'down'
+            else:
+                head = m3
+                if m1[0] < m3[0]:
+                    hor = 'right'
+                else:
+                    hor = 'left'
+
+                if m1[1] < m3[1]:
+                    ver = 'down'
+                else:
+                    ver = 'up'
+            
+
+            cv2.putText(frame, 'Hor : '+ hor + " Ver : "+ ver, (100, 300), font, 1, (0, 255, 0), 2, cv2.LINE_AA)
             x1, y1 = m1
             x2, y2 = m3
             # Calculate the slope and intercept of the line
@@ -196,14 +234,46 @@ while True:
 
             cv2.line(frame, (x_top, y_top),
                      (x_bottom, y_bottom), (0, 255, 0), 2)
-            #Draw Reflex line
-            cv2.line(frame, (0,714),
-                     (1920,881), (0, 0, 255), 2)
 
-            cv2.line(frame, (0,714),
-                     (1920,714), (255, 0, 255), 2)
+            #Draw Reflex line
+            # cv2.line(frame, (0,714),
+            #          (1920,881), (0, 0, 255), 2)
+
+            # cv2.line(frame, (0,714),
+            #          (1920,714), (255, 0, 255), 2)
+
+            if (ver == 'up' and hor == 'left'):
+                if (y_top == 0 and y_bottom == 1080):
+                    cv2.line(frame, (x_top,y_top),(x_top-abs(x_bottom-x_top),1080), (0, 0, 255), 2)
+                elif (x_top == 0 and x_bottom == 1920):
+                    cv2.line(frame, (x_top,y_top),(1920,y_top-abs(y_top-y_bottom)), (0, 0, 255), 2)  
+
+            if (ver == 'up' and hor == 'right'):
+                if (y_top == 0 and y_bottom == 1080):
+                    cv2.line(frame, (x_top,y_top),(x_top+abs(x_bottom-x_top),1080), (0, 0, 255), 2)
+                elif (x_top == 0 and x_bottom == 1920):
+                    cv2.line(frame, (x_top,y_top),(0,y_top-abs(y_top-y_bottom)), (0, 0, 255), 2)   
+
+            if (ver == 'down' and hor == 'left'):
+                if (y_top == 0 and y_bottom == 1080):
+                    cv2.line(frame, (x_bottom,y_bottom),(x_bottom-abs(x_bottom-x_top),0), (0, 0, 255), 2)
+                elif (x_top == 1920 and x_bottom == 0):
+                    cv2.line(frame, (x_bottom,y_bottom),(1920,y_bottom+abs(y_top-y_bottom)), (0, 0, 255), 2)   
+
+            if (ver == 'down' and hor == 'right'):
+                if (y_top == 0 and y_bottom == 1080):
+                    cv2.line(frame, (x_bottom,y_bottom),(x_bottom+abs(x_bottom-x_top),0), (0, 0, 255), 2)
+                elif (x_top == 0 and x_bottom == 1920):
+                    cv2.line(frame, (x_bottom,y_bottom),(0,y_bottom+abs(y_top-y_bottom)), (0, 0, 255), 2)    
+
+            cv2.putText(frame, 'X_top: '+ str(x_top)+ " Y_top: "+ str(y_top), (100,100), font, 1, (0, 255, 0), 2, cv2.LINE_AA)
+            cv2.putText(frame, 'X_bottom: '+ str(x_bottom)+ " Y_bottom: "+ str(y_bottom), (100,200), font, 1, (0, 255, 0), 2, cv2.LINE_AA)
+
+            print("Top : ", end=" ")         
             print(x_top, y_top)
+            print("Botton : ", end=" ")    
             print(x_bottom, y_bottom)
+
 
     cv2.imshow("test", output)
     cv2.imshow('White Ball Zone', whiteball_zone)
