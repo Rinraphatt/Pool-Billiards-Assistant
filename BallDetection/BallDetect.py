@@ -10,7 +10,7 @@ cameraHeight=1080
 cameraWidth=1920
 
 # cap = cv.VideoCapture(0)
-# cap = cv.VideoCapture('./videos/Test.mp4')
+cap = cv.VideoCapture('./videos/Test.mp4')
 # cap = cv.VideoCapture(0, cv.CAP_DSHOW)
 # cap.set(cv.CAP_PROP_FRAME_HEIGHT, cameraHeight)
 # cap.set(cv.CAP_PROP_FRAME_WIDTH, cameraWidth)
@@ -131,7 +131,7 @@ while True:
 
             # Find the distance between the two parallel lines
             if len(lines) == 2:
-                print(lines)
+                #print(lines)
 
                 x1, y1, x2, y2 = lines[0][0]
                 x3, y3, x4, y4 = lines[1][0]
@@ -142,7 +142,7 @@ while True:
 
                 m1 = (round((x1+x3) /2) , round((y1+y3) /2)) 
                 m3 = (round((x2+x4) /2) , round((y2+y4) /2))
-                print(m1)
+                #print(m1)
                 cv.circle(cropped_whiteZone, m1, 1, (255, 255, 0), -1)
                 cv.circle(cropped_whiteZone, m3, 1, (255, 0, 0), -1) 
 
@@ -155,9 +155,11 @@ while True:
                 else:
                     m = (y2 - y1) / 0.01
                 b = y1 - m * x1
+                print(b)
 
                 # Define the image boundaries
                 height, width = cropped_whiteZone.shape[:2]
+                #print(height, width)
                 y_top = 0
                 y_bottom = height - 1
                 x_left = 0
@@ -214,6 +216,8 @@ while True:
 
                 # Draw a continuous line from the intersection points to the image boundaries
                 cv.line(cropped_whiteZone, (x_top, y_top), (x_bottom, y_bottom), (0, 255, 0), 2)
+                print(x_top, y_top)
+                print(x_bottom, y_bottom)
 
 
 

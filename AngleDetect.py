@@ -4,7 +4,7 @@ import math
 path = 'pics/pool_table_ball_4.jpg'
 img = cv.imread(path)
 # img = cv.resize(img, (1000, 968))
-img = cv.resize(img, (1920, 1080))
+img = cv.resize(img, (1280, 720))
 
 pointsList = []
 
@@ -60,5 +60,5 @@ while True :
         pointsList = []
         img = cv.imread(path)
         # img = cv.resize(img, (1000, 968))
-        img = cv.resize(img, (1920, 1080))
+        img = cv.resize(img, (1280, 720))
 
