@@ -19,7 +19,7 @@ class Sampleapp(tk.Tk):
         container.grid_columnconfigure(0, weight=1)  
         self.frames = {}  
   
-        for F in (StartPage, PageOne ,TrainMode, Pool8Mode, ModeBasic, ModeAmature, Result8Pool, Stage):  
+        for F in (StartPage, PageOne ,TrainMode, Pool8Mode, ModeBasic, ModeAmature, Result8Pool, Stage, Play8Pool):  
   
             frame = F(container, self)  
             self.frames[F] = frame  
@@ -115,7 +115,7 @@ class Pool8Mode(tk.Frame):
         bg.place(x=0, y=0)
 
         button2 = Button(self,text="Single Player",bg="#E22424",fg="#FFFFFF", bd=0,activebackground="#E22424",font=self.Myfont(50),
-                            command=lambda: controller.show_frame(Result8Pool))  
+                            command=lambda: controller.show_frame(Play8Pool))  
         button2.place(x=190,y=755,width=690,height=140)
         button3 = Button(self,text="Multi Player",bg="#E22424",fg="#FFFFFF", bd=0,activebackground="#E22424",font=self.Myfont(50))  
         button3.place(x=1050,y=755,width=690,height=140)
@@ -146,6 +146,7 @@ class ModeBasic(tk.Frame):
         buttonnext.bind("<Button-1>", self.addnum)
         buttonnext.place(x=1820,y=550,width=70,height=70)
 
+        
         btnnum1 = Button(self,text=self.num[0],bg="black",fg="#FFFFFF", bd=0,activeforeground="#E22424",activebackground="Black",font=self.Myfont(110)
                         , command=lambda: controller.show_frame(Stage))
         btnnum1.place(x=140,y=460,width=475,height=360)
@@ -153,6 +154,8 @@ class ModeBasic(tk.Frame):
         btnnum2.place(x=720,y=460,width=475,height=360)
         btnnum3 = Button(self,text=self.num[2],bg="black",fg="#FFFFFF", bd=0,activeforeground="#E22424",activebackground="Black",font=self.Myfont(110))
         btnnum3.place(x= 1310,y=460,width=475,height=360)
+
+        
 
     def Myfont(self, sizefont):
         self.myfont = Font(family="Londrina Solid", size=sizefont)
@@ -220,6 +223,25 @@ class Result8Pool(tk.Frame):
         buttonback = Button(self,image=self.btnback,bg="Black",bd=0,activebackground="Black",
                             command=lambda: controller.show_frame(StartPage))
         buttonback.place(x=20,y=20,width=100,height=100)
+        
+    def Myfont(self, sizefont):
+        self.myfont = Font(family="Londrina Solid", size=sizefont)
+        return self.myfont
+
+class Play8Pool(tk.Frame):  
+  
+    def __init__(self, parent, controller):  
+        tk.Frame.__init__(self, parent) 
+        self.btnback = PhotoImage(file="left-arrow.png")
+        self.btnnext = PhotoImage(file="arrow-forward.png")
+
+        buttonback = Button(self,image=self.btnback,bg="Black",bd=0,activebackground="Black",
+                            command=lambda: controller.show_frame(StartPage))
+        buttonback.place(x=20,y=20,width=100,height=100)
+
+        buttonnext = Button(self,image=self.btnnext,bg="Black",bd=0,activebackground="Black",
+                            command=lambda: controller.show_frame(Result8Pool))
+        buttonnext.place(x=1820,y=550,width=70,height=70)
         
     def Myfont(self, sizefont):
         self.myfont = Font(family="Londrina Solid", size=sizefont)
