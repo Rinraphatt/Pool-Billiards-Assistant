@@ -135,7 +135,9 @@ class ModeBasic(tk.Frame):
         self.bg = PhotoImage(file="basicmode.png")
         self.btnback = PhotoImage(file="left-arrow.png")
         self.btnnext = PhotoImage(file="arrow-forward.png")
+        self.stage1 = PhotoImage(file="iMac - 18.png")
         self.num = [1,2,3]
+        self.stage = 0
         bg = Label(self, image=self.bg)
         bg.place(x=0, y=0)
         buttonback = Button(self,image=self.btnback,bg="Black",bd=0,activebackground="Black",
@@ -148,14 +150,16 @@ class ModeBasic(tk.Frame):
 
         
         btnnum1 = Button(self,text=self.num[0],bg="black",fg="#FFFFFF", bd=0,activeforeground="#E22424",activebackground="Black",font=self.Myfont(110)
-                        , command=lambda: controller.show_frame(Stage))
+                        , command=lambda *args: self.display(self.num[0]))
         btnnum1.place(x=140,y=460,width=475,height=360)
-        btnnum2 = Button(self,text=self.num[1],bg="black",fg="#FFFFFF", bd=0,activeforeground="#E22424",activebackground="Black",font=self.Myfont(110))
+        btnnum2 = Button(self,text=self.num[1],bg="black",fg="#FFFFFF", bd=0,activeforeground="#E22424",activebackground="Black",font=self.Myfont(110)
+                        , command=lambda *args: self.display(self.num[1]))
         btnnum2.place(x=720,y=460,width=475,height=360)
-        btnnum3 = Button(self,text=self.num[2],bg="black",fg="#FFFFFF", bd=0,activeforeground="#E22424",activebackground="Black",font=self.Myfont(110))
+        btnnum3 = Button(self,text=self.num[2],bg="black",fg="#FFFFFF", bd=0,activeforeground="#E22424",activebackground="Black",font=self.Myfont(110)
+                        , command=lambda *args: self.display(self.num[2]))
         btnnum3.place(x= 1310,y=460,width=475,height=360)
 
-
+        
     def Myfont(self, sizefont):
         self.myfont = Font(family="Londrina Solid", size=sizefont)
         return self.myfont
@@ -163,8 +167,13 @@ class ModeBasic(tk.Frame):
     def addnum(self,event):
         for i in range(len(self.num)):
             self.num[i]+= 3
-        print(self.num)
     
+    def display(self,stagenum):
+        self.stage = stagenum
+        if self.stage == 1 :
+            stage1 = Label(self, image=self.stage1)
+            stage1.place(x=0, y=0)
+            
 
 
 
