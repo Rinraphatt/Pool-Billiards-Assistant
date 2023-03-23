@@ -136,6 +136,30 @@ rgbColors = [
     [200.0, 200.0, 200.0] #White
 ]
 
+lowerColor = [
+    np.array([20,150,50]),
+    np.array([110,100,50]),
+    np.array([0,150,155]),
+    np.array([120,100,50]),
+    np.array([5,150,50]),
+    np.array([50,100,100]),
+    np.array([0,100,50]),
+    np.array([50,50,5]),
+    np.array([0,0,150]),
+
+]
+upperColor = [
+    np.array([40,255,255]),
+    np.array([130,255,255]),
+    np.array([20,255,255]),
+    np.array([140,255,255]),
+    np.array([25,255,255]),
+    np.array([70,255,255]),
+    np.array([20,255,155]),
+    np.array([179,255,75]),
+    np.array([179,80,255]),
+]
+
 grayScaleValues = [
     [167.0, 170.0],
     [88.0, 121.0],
@@ -196,10 +220,10 @@ while True:
         for i in circles[0, :]:
             # cv.circle(frame, (i[0], i[1]), 1, (0,200,200), 2)
             # cv.circle(frame, (i[0], i[1]), i[2], (255,0,255), 2)
-            circleZone = blurFrame[148+int(i[1].item())-20:148+int(i[1].item())+20, 174+int(i[0].item())-20:174+int(i[0].item())+20]
+            circleZone = blurFrame[148+int(i[1].item())-22:148+int(i[1].item())+22, 174+int(i[0].item())-22:174+int(i[0].item())+22]
             circleZones.append(circleZone)
 
-            circleZoneColor = frame[148+int(i[1].item())-20:148+int(i[1].item())+20, 174+int(i[0].item())-20:174+int(i[0].item())+20]
+            circleZoneColor = frame[148+int(i[1].item())-22:148+int(i[1].item())+22, 174+int(i[0].item())-22:174+int(i[0].item())+22]
             circleZonesColor.append(circleZoneColor)
 
             cv.circle(showFrame, (i[0]+174, i[1]+148), i[2], (255,0,255), 2)
@@ -227,8 +251,8 @@ while True:
             avg_color = np.average(avg_color_per_row, axis=0)
             circleGrayScaleValues.append(round(avg_color))
 
-            cv.putText(showFrame, f'{i} : {round(avg_color)}', (circles[0][i][0]+120, circles[0][i][1]+200), cv.FONT_HERSHEY_SIMPLEX, 
-                   1, (255, 0, 255), 2, cv.LINE_AA)
+            # cv.putText(showFrame, f'{i} : {round(avg_color)}', (circles[0][i][0]+120, circles[0][i][1]+200), cv.FONT_HERSHEY_SIMPLEX, 
+            #        1, (255, 0, 255), 2, cv.LINE_AA)
             # if avg_color > whiteValue : 
             #     whiteValue = avg_color
             #     whiteZone = circleZones[i]
@@ -285,48 +309,73 @@ while True:
                     realDominantColor = sortedDominantColor[1]
                 print(f'Change MinDiffPos to : {minDiffPos}')
 
+            maxSameColor = 0
+            maxSameColorPos = -1
+            semiSameColorPos = -1
+            print('start ', maxSameColor, maxSameColorPos)
+
+            colorCounter = 0
+            whiteCounter = 0
+
+            hsvcircleZone = cv.cvtColor(circleZonesColor[i], cv.COLOR_BGR2HSV)
+            for j in range(len(lowerColor)):
+                mask = cv.inRange(hsvcircleZone, lowerColor[j], upperColor[j])
+                samePixs = np.sum(mask == 255)
+
+                if j == 8:
+                    whiteCounter = samePixs
+
+                if samePixs > maxSameColor:
+                    semiSameColorPos = maxSameColorPos
+                    maxSameColor = samePixs
+                    maxSameColorPos = j
+                print('Same to : ', j, samePixs)
+
+            ballType = 'none'
+
+            if maxSameColorPos == 8 and maxSameColor < 1200:
+                maxSameColorPos = semiSameColorPos
+                ballType = 'Stripe'
+            else:
+                if abs(maxSameColor - whiteCounter) >= 400:
+                    ballType = 'Solid'
+                else:
+                    ballType = 'Stripe'
+
             similarColor = ''
-            # print(f'Less Diff RGB : {minDiffPos}') 
-            if minDiffPos == 0:
+
+            if maxSameColorPos == 0:
                 similarColor = 'Yellow'
-            elif minDiffPos == 1:
+            elif maxSameColorPos == 1:
                 similarColor = 'Blue'
-            elif minDiffPos == 2:
+            elif maxSameColorPos == 2:
                 similarColor = 'Red'
-            elif minDiffPos == 3:
+            elif maxSameColorPos == 3:
                 similarColor = 'Purple'
-            elif minDiffPos == 4:
+            elif maxSameColorPos == 4:
                 similarColor = 'Orange'
-            elif minDiffPos == 5:
+            elif maxSameColorPos == 5:
                 similarColor = 'Green'
-            elif minDiffPos == 6:
+            elif maxSameColorPos == 6:
                 similarColor = 'Crimson'
-            elif minDiffPos == 7:
+            elif maxSameColorPos == 7:
                 similarColor = 'Black'
-            elif minDiffPos == 8:
+            elif maxSameColorPos == 8:
                 similarColor = 'White'
 
             print(f'Similar to {similarColor}')
-
-            colorCounter = 0
-            lower_blue = np.array([110,50,50])
-            upper_blue = np.array([130,255,255])
-
-            # print(circleZonesColor[i])
-            hsvcircleZone = cv.cvtColor(circleZonesColor[i], cv.COLOR_BGR2HSV)
-            mask = cv.inRange(hsvcircleZone, lower_blue, upper_blue)
-            whitePixs = np.sum(mask == 255)
-            print('Number of blue pixels : ', whitePixs)
             
+            cv.putText(showFrame, f'Number : {i}', (circles[0][i][0]+120, circles[0][i][1]+200), cv.FONT_HERSHEY_SIMPLEX, 
+                0.7, (255, 0, 255), 2, cv.LINE_AA)
             cv.putText(showFrame, f'Color : {similarColor}', (circles[0][i][0]+120, circles[0][i][1]+230), cv.FONT_HERSHEY_SIMPLEX, 
                 0.7, (255, 0, 255), 2, cv.LINE_AA)
-            if (minDiffPos >= 0 and minDiffPos <= 6):
-                if circleGrayScaleValues[i] <= grayScaleValues[minDiffPos][0]:
-                    cv.putText(showFrame, f'Type : Solid', (circles[0][i][0]+120, circles[0][i][1]+250), cv.FONT_HERSHEY_SIMPLEX, 
+            if (maxSameColorPos >= 0 and maxSameColorPos <= 6):
+                # if whiteCounter <= 100:
+                    cv.putText(showFrame, f'Type : {ballType}', (circles[0][i][0]+120, circles[0][i][1]+250), cv.FONT_HERSHEY_SIMPLEX, 
                         0.7, (255, 0, 255), 2, cv.LINE_AA)
-                else:
-                    cv.putText(showFrame, f'Type : Stripe', (circles[0][i][0]+120, circles[0][i][1]+250), cv.FONT_HERSHEY_SIMPLEX, 
-                        0.7, (255, 0, 255), 2, cv.LINE_AA)
+                # else:
+                #     cv.putText(showFrame, f'Type : {ballType}', (circles[0][i][0]+120, circles[0][i][1]+250), cv.FONT_HERSHEY_SIMPLEX, 
+                #         0.7, (255, 0, 255), 2, cv.LINE_AA)
             # cv.putText(showFrame, f'Color : {sortedDominantColor[0]}', (circles[0][i][0]+120, circles[0][i][1]+250), cv.FONT_HERSHEY_SIMPLEX, 
             #     0.7, (255, 0, 255), 2, cv.LINE_AA)
             # cv.putText(showFrame, f'Color : {sortedDominantColor[1]}', (circles[0][i][0]+120, circles[0][i][1]+270), cv.FONT_HERSHEY_SIMPLEX, 
@@ -441,8 +490,8 @@ while True:
     # cv.imshow("ShowFrame", showFrame)
     cv.imshow("CroppedShowFrame", cropped_Show_image)
     # cv.imshow("cropped", cropped_image)
-    # cv.imshow("CircleZoneColor[2]", circleZonesColor[6])
-    # cv.imshow("CircleZoneColor[11]", circleZonesColor[8])
+    cv.imshow("CircleZoneColor[2]", circleZonesColor[0])
+    # cv.imshow("CircleZoneColor[11]", circleZonesColor[3])
 
     circleZones = []
     circleZonesColor = []
