@@ -190,6 +190,9 @@ class ModeAmature(tk.Frame):
         tk.Frame.__init__(self, parent) 
         self.bg = PhotoImage(file="mode amature.png")
         self.btnback = PhotoImage(file="left-arrow.png")
+        self.btnnext = PhotoImage(file="arrow-forward.png")
+        self.num = [1,2,3]
+        self.stage = 0
         bg = Label(self, image=self.bg)
         bg.place(x=0, y=0)
 
@@ -197,10 +200,42 @@ class ModeAmature(tk.Frame):
                             command=lambda: controller.show_frame(StartPage))
         buttonback.place(x=20,y=20,width=100,height=100)
 
+        buttonnext = Button(self,image=self.btnnext,bg="Black",bd=0,activebackground="Black")
+        buttonnext.bind("<Button-1>", self.addnum)
+        buttonnext.place(x=1820,y=550,width=70,height=70)
+
+        
+        btnnum1 = Button(self,text=self.num[0],bg="black",fg="#FFFFFF", bd=0,activeforeground="#E22424",activebackground="Black",font=self.Myfont(110)
+                        , command=lambda *args: self.display(self.num[0]))
+        btnnum1.place(x=140,y=460,width=475,height=360)
+        btnnum2 = Button(self,text=self.num[1],bg="black",fg="#FFFFFF", bd=0,activeforeground="#E22424",activebackground="Black",font=self.Myfont(110)
+                        , command=lambda *args: self.display(self.num[1]))
+        btnnum2.place(x=720,y=460,width=475,height=360)
+        btnnum3 = Button(self,text=self.num[2],bg="black",fg="#FFFFFF", bd=0,activeforeground="#E22424",activebackground="Black",font=self.Myfont(110)
+                        , command=lambda *args: self.display(self.num[2]))
+        btnnum3.place(x= 1310,y=460,width=475,height=360)
+
 
     def Myfont(self, sizefont):
         self.myfont = Font(family="Londrina Solid", size=sizefont)
         return self.myfont
+    
+    def addnum(self,event):
+        for i in range(len(self.num)):
+            self.num[i]+= 3
+    
+    # def display(self,stagenum):
+    #     self.stage = stagenum
+    #     print(self.stage)
+    #     if self.stage == 1 :
+    #         stage1 = Label(self, image=self.stage1)
+    #         stage1.place(x=0, y=0)
+    #     elif self.stage == 2 :
+    #         stage2 = Label(self, image=self.stage2)
+    #         stage2.place(x=0, y=0)
+    #     elif self.stage == 3 :
+    #         stage3 = Label(self, image=self.stage3)
+    #         stage3.place(x=0, y=0)
 
 class ModeCreative(tk.Frame):  
   
