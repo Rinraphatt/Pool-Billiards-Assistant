@@ -17,6 +17,8 @@ class Sampleapp(tk.Tk):
         container.pack(side="top", fill="both", expand = True)  
         container.grid_rowconfigure(0, weight=1)  
         container.grid_columnconfigure(0, weight=1)  
+        self.attributes('-fullscreen', True)
+        self.bind('<Motion>', self.motion)
         self.frames = {}  
   
         for F in (StartPage, PageOne ,TrainMode, Pool8Mode, ModeBasic, ModeAmature, Result8Pool, Stage, Play8Pool):  
@@ -26,6 +28,12 @@ class Sampleapp(tk.Tk):
             frame.grid(row=0, column=0, sticky="nsew")  
 
         self.show_frame(StartPage)  
+
+    def motion(event, event2):
+        # x, y = event.x, event.y
+        # print('{}, {}'.format(x, y))
+        print(event)
+        print(event2)
   
     def show_frame(self, cont):  
         frame = self.frames[cont]  
@@ -36,8 +44,8 @@ class StartPage(tk.Frame):
   
     def __init__(self, parent, controller):  
         tk.Frame.__init__(self,parent)
-        self.bg = PhotoImage(file="Bg-Firstpage.png")
-        self.bgbutton = PhotoImage(file="BG-Button.png")
+        self.bg = PhotoImage(file="../Bg-Firstpage.png")
+        self.bgbutton = PhotoImage(file="../BG-Button.png")
         bg = Label(self, image=self.bg)
         bg.place(x=0, y=0)
         button = Button(self,text="Start",bg="#C24E4E",fg="white", bd=0,activebackground="#C24E4E",font=self.Myfont(40),   
@@ -57,8 +65,8 @@ class PageOne(tk.Frame):
   
     def __init__(self, parent, controller):  
         tk.Frame.__init__(self, parent) 
-        self.bg = PhotoImage(file="iMac - 14.png")
-        self.btnback = PhotoImage(file="left-arrow - Copy.png")
+        self.bg = PhotoImage(file="../iMac - 14.png")
+        self.btnback = PhotoImage(file="../left-arrow - Copy.png")
         bg = Label(self, image=self.bg)
         bg.place(x=0,y=0)
 
@@ -82,8 +90,8 @@ class TrainMode(tk.Frame):
   
     def __init__(self, parent, controller):  
         tk.Frame.__init__(self, parent) 
-        self.bg = PhotoImage(file="bgTraingmode.png")
-        self.btnback = PhotoImage(file="left-arrow.png")
+        self.bg = PhotoImage(file="../bgTraingmode.png")
+        self.btnback = PhotoImage(file="../left-arrow.png")
         bg = Label(self, image=self.bg)
         bg.place(x=0, y=0)
 
@@ -109,8 +117,8 @@ class Pool8Mode(tk.Frame):
   
     def __init__(self, parent, controller):  
         tk.Frame.__init__(self, parent) 
-        self.bg = PhotoImage(file="bgpool8.png")
-        self.btnback = PhotoImage(file="left-arrow.png")
+        self.bg = PhotoImage(file="../bgpool8.png")
+        self.btnback = PhotoImage(file="../left-arrow.png")
         bg = Label(self, image=self.bg)
         bg.place(x=0, y=0)
 
@@ -132,12 +140,12 @@ class ModeBasic(tk.Frame):
   
     def __init__(self, parent, controller):  
         tk.Frame.__init__(self, parent)
-        self.bg = PhotoImage(file="basicmode.png")
-        self.btnback = PhotoImage(file="left-arrow.png")
-        self.btnnext = PhotoImage(file="arrow-forward.png")
-        self.stage1 = PhotoImage(file="iMac - 18.png")
-        self.stage2 = PhotoImage(file="iMac - 23.png")
-        self.stage3 = PhotoImage(file="iMac - 24.png")
+        self.bg = PhotoImage(file="../basicmode.png")
+        self.btnback = PhotoImage(file="../left-arrow.png")
+        self.btnnext = PhotoImage(file="../arrow-forward.png")
+        self.stage1 = PhotoImage(file="../iMac - 18.png")
+        self.stage2 = PhotoImage(file="../iMac - 23.png")
+        self.stage3 = PhotoImage(file="../iMac - 24.png")
         self.num = [1,2,3]
         self.stage = 0
         bg = Label(self, image=self.bg)
@@ -188,9 +196,9 @@ class ModeAmature(tk.Frame):
   
     def __init__(self, parent, controller):  
         tk.Frame.__init__(self, parent) 
-        self.bg = PhotoImage(file="mode amature.png")
-        self.btnback = PhotoImage(file="left-arrow.png")
-        self.btnnext = PhotoImage(file="arrow-forward.png")
+        self.bg = PhotoImage(file="../mode amature.png")
+        self.btnback = PhotoImage(file="../left-arrow.png")
+        self.btnnext = PhotoImage(file="../arrow-forward.png")
         self.num = [1,2,3]
         self.stage = 0
         bg = Label(self, image=self.bg)
@@ -250,8 +258,8 @@ class Stage(tk.Frame):
   
     def __init__(self, parent, controller):  
         tk.Frame.__init__(self, parent) 
-        self.bg = PhotoImage(file="howto.png")
-        self.btnback = PhotoImage(file="left-arrow.png")
+        self.bg = PhotoImage(file="../howto.png")
+        self.btnback = PhotoImage(file="../left-arrow.png")
         bg = Label(self, image=self.bg)
         bg.place(x=0, y=0)
 
@@ -267,8 +275,8 @@ class Result8Pool(tk.Frame):
   
     def __init__(self, parent, controller):  
         tk.Frame.__init__(self, parent) 
-        self.bg = PhotoImage(file="result.png")
-        self.btnback = PhotoImage(file="left-arrow.png")
+        self.bg = PhotoImage(file="../result.png")
+        self.btnback = PhotoImage(file="../left-arrow.png")
         bg = Label(self, image=self.bg)
         bg.place(x=0, y=0)
 
@@ -284,8 +292,8 @@ class Play8Pool(tk.Frame):
   
     def __init__(self, parent, controller):  
         tk.Frame.__init__(self, parent) 
-        self.btnback = PhotoImage(file="left-arrow.png")
-        self.btnnext = PhotoImage(file="arrow-forward.png")
+        self.btnback = PhotoImage(file="../left-arrow.png")
+        self.btnnext = PhotoImage(file="../arrow-forward.png")
 
         buttonback = Button(self,image=self.btnback,bg="Black",bd=0,activebackground="Black",
                             command=lambda: controller.show_frame(StartPage))
