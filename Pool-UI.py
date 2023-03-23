@@ -136,6 +136,8 @@ class ModeBasic(tk.Frame):
         self.btnback = PhotoImage(file="left-arrow.png")
         self.btnnext = PhotoImage(file="arrow-forward.png")
         self.stage1 = PhotoImage(file="iMac - 18.png")
+        self.stage2 = PhotoImage(file="iMac - 23.png")
+        self.stage3 = PhotoImage(file="iMac - 24.png")
         self.num = [1,2,3]
         self.stage = 0
         bg = Label(self, image=self.bg)
@@ -170,11 +172,16 @@ class ModeBasic(tk.Frame):
     
     def display(self,stagenum):
         self.stage = stagenum
+        print(self.stage)
         if self.stage == 1 :
             stage1 = Label(self, image=self.stage1)
             stage1.place(x=0, y=0)
-            
-
+        elif self.stage == 2 :
+            stage2 = Label(self, image=self.stage2)
+            stage2.place(x=0, y=0)
+        elif self.stage == 3 :
+            stage3 = Label(self, image=self.stage3)
+            stage3.place(x=0, y=0)
 
 
 class ModeAmature(tk.Frame):  
