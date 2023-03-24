@@ -140,6 +140,7 @@ class ModeBasic(tk.Frame):
         self.stage3 = PhotoImage(file="iMac - 24.png")
         self.num = [1,2,3]
         self.stage = 0
+        self.state = False
         bg = Label(self, image=self.bg)
         bg.place(x=0, y=0)
         buttonback = Button(self,image=self.btnback,bg="Black",bd=0,activebackground="Black",
@@ -150,7 +151,14 @@ class ModeBasic(tk.Frame):
         buttonnext.bind("<Button-1>", self.addnum)
         buttonnext.place(x=1820,y=550,width=70,height=70)
 
-        
+        # if self.state == True :
+        #     print("hello")
+        #     buttonfinish = Button(self,image=self.btnnext,bg="Black",bd=0,activebackground="Black",
+        #                     command=lambda: controller.show_frame(StartPage))
+        #     buttonfinish.place(x=1820,y=550,width=70,height=70)
+        #     print("state : " + self.state)
+        #     sale.state = False
+
         btnnum1 = Button(self,text=self.num[0],bg="black",fg="#FFFFFF", bd=0,activeforeground="#E22424",activebackground="Black",font=self.Myfont(110)
                         , command=lambda *args: self.display(self.num[0]))
         btnnum1.place(x=140,y=460,width=475,height=360)
@@ -161,7 +169,7 @@ class ModeBasic(tk.Frame):
                         , command=lambda *args: self.display(self.num[2]))
         btnnum3.place(x= 1310,y=460,width=475,height=360)
 
-        
+    
     def Myfont(self, sizefont):
         self.myfont = Font(family="Londrina Solid", size=sizefont)
         return self.myfont
@@ -169,19 +177,39 @@ class ModeBasic(tk.Frame):
     def addnum(self,event):
         for i in range(len(self.num)):
             self.num[i]+= 3
+            print(self.num)
+        btnnum1 = Button(self,text=self.num[0],bg="black",fg="#FFFFFF", bd=0,activeforeground="#E22424",activebackground="Black",font=self.Myfont(110)
+                        , command=lambda *args: self.display(self.num[0]))
+        btnnum1.place(x=140,y=460,width=475,height=360)
+        btnnum2 = Button(self,text=self.num[1],bg="black",fg="#FFFFFF", bd=0,activeforeground="#E22424",activebackground="Black",font=self.Myfont(110)
+                        , command=lambda *args: self.display(self.num[1]))
+        btnnum2.place(x=720,y=460,width=475,height=360)
+        btnnum3 = Button(self,text=self.num[2],bg="black",fg="#FFFFFF", bd=0,activeforeground="#E22424",activebackground="Black",font=self.Myfont(110)
+                        , command=lambda *args: self.display(self.num[2]))
+        btnnum3.place(x= 1310,y=460,width=475,height=360)
     
+    def close(self,stage):
+        stage.destroy()
+
     def display(self,stagenum):
         self.stage = stagenum
         print(self.stage)
         if self.stage == 1 :
-            stage1 = Label(self, image=self.stage1)
-            stage1.place(x=0, y=0)
+            stageShow1 = Label(self, image=self.stage1)
+            stageShow1.place(x=0, y=0)
+            buttonfinish = Button(self,image=self.btnnext,bg="Black",bd=0,activebackground="Black"
+                        ,command=lambda *args: self.close(stageShow1))
+            buttonfinish.place(x=1820,y=550,width=70,height=70)
+            # self.state = True
+            # print(self.state)
         elif self.stage == 2 :
-            stage2 = Label(self, image=self.stage2)
-            stage2.place(x=0, y=0)
+            stageShow2 = Label(self, image=self.stage2)
+            stageShow2.place(x=0, y=0)
         elif self.stage == 3 :
-            stage3 = Label(self, image=self.stage3)
-            stage3.place(x=0, y=0)
+            stageShow3 = Label(self, image=self.stage3)
+            stageShow3.place(x=0, y=0)
+        self.num = [1,2,3]
+        
 
 
 class ModeAmature(tk.Frame):  
