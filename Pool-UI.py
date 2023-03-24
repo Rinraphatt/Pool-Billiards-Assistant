@@ -144,20 +144,13 @@ class ModeBasic(tk.Frame):
         bg = Label(self, image=self.bg)
         bg.place(x=0, y=0)
         buttonback = Button(self,image=self.btnback,bg="Black",bd=0,activebackground="Black",
-                            command=lambda: controller.show_frame(StartPage))
+                            command=lambda: [controller.show_frame(StartPage),self.setnum()])
         buttonback.place(x=20,y=20,width=100,height=100)
         
         buttonnext = Button(self,image=self.btnnext,bg="Black",bd=0,activebackground="Black")
         buttonnext.bind("<Button-1>", self.addnum)
         buttonnext.place(x=1820,y=550,width=70,height=70)
 
-        # if self.state == True :
-        #     print("hello")
-        #     buttonfinish = Button(self,image=self.btnnext,bg="Black",bd=0,activebackground="Black",
-        #                     command=lambda: controller.show_frame(StartPage))
-        #     buttonfinish.place(x=1820,y=550,width=70,height=70)
-        #     print("state : " + self.state)
-        #     sale.state = False
 
         btnnum1 = Button(self,text=self.num[0],bg="black",fg="#FFFFFF", bd=0,activeforeground="#E22424",activebackground="Black",font=self.Myfont(110)
                         , command=lambda *args: self.display(self.num[0]))
@@ -190,6 +183,32 @@ class ModeBasic(tk.Frame):
     
     def close(self,stage):
         stage.destroy()
+        btnnum1 = Button(self,text=self.num[0],bg="black",fg="#FFFFFF", bd=0,activeforeground="#E22424",activebackground="Black",font=self.Myfont(110)
+                        , command=lambda *args: self.display(self.num[0]))
+        btnnum1.place(x=140,y=460,width=475,height=360)
+        btnnum2 = Button(self,text=self.num[1],bg="black",fg="#FFFFFF", bd=0,activeforeground="#E22424",activebackground="Black",font=self.Myfont(110)
+                        , command=lambda *args: self.display(self.num[1]))
+        btnnum2.place(x=720,y=460,width=475,height=360)
+        btnnum3 = Button(self,text=self.num[2],bg="black",fg="#FFFFFF", bd=0,activeforeground="#E22424",activebackground="Black",font=self.Myfont(110)
+                        , command=lambda *args: self.display(self.num[2]))
+        btnnum3.place(x= 1310,y=460,width=475,height=360)
+        buttonnext = Button(self,image=self.btnnext,bg="Black",bd=0,activebackground="Black")
+        buttonnext.bind("<Button-1>", self.addnum)
+        buttonnext.place(x=1820,y=550,width=70,height=70)
+        print(self.num)
+    
+    def setnum(self):
+        self.num = [1,2,3]
+        btnnum1 = Button(self,text=self.num[0],bg="black",fg="#FFFFFF", bd=0,activeforeground="#E22424",activebackground="Black",font=self.Myfont(110)
+                        , command=lambda *args: self.display(self.num[0]))
+        btnnum1.place(x=140,y=460,width=475,height=360)
+        btnnum2 = Button(self,text=self.num[1],bg="black",fg="#FFFFFF", bd=0,activeforeground="#E22424",activebackground="Black",font=self.Myfont(110)
+                        , command=lambda *args: self.display(self.num[1]))
+        btnnum2.place(x=720,y=460,width=475,height=360)
+        btnnum3 = Button(self,text=self.num[2],bg="black",fg="#FFFFFF", bd=0,activeforeground="#E22424",activebackground="Black",font=self.Myfont(110)
+                        , command=lambda *args: self.display(self.num[2]))
+        btnnum3.place(x= 1310,y=460,width=475,height=360)
+        print("set")
 
     def display(self,stagenum):
         self.stage = stagenum
@@ -205,10 +224,15 @@ class ModeBasic(tk.Frame):
         elif self.stage == 2 :
             stageShow2 = Label(self, image=self.stage2)
             stageShow2.place(x=0, y=0)
+            buttonfinish = Button(self,image=self.btnnext,bg="Black",bd=0,activebackground="Black"
+                        ,command=lambda *args: self.close(stageShow2))
+            buttonfinish.place(x=1820,y=550,width=70,height=70)
         elif self.stage == 3 :
             stageShow3 = Label(self, image=self.stage3)
             stageShow3.place(x=0, y=0)
-        self.num = [1,2,3]
+            buttonfinish = Button(self,image=self.btnnext,bg="Black",bd=0,activebackground="Black"
+                        ,command=lambda *args: self.close(stageShow3))
+            buttonfinish.place(x=1820,y=550,width=70,height=70)
         
 
 
