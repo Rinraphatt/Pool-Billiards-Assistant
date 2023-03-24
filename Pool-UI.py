@@ -151,7 +151,6 @@ class ModeBasic(tk.Frame):
         buttonnext.bind("<Button-1>", self.addnum)
         buttonnext.place(x=1820,y=550,width=70,height=70)
 
-
         btnnum1 = Button(self,text=self.num[0],bg="black",fg="#FFFFFF", bd=0,activeforeground="#E22424",activebackground="Black",font=self.Myfont(110)
                         , command=lambda *args: self.display(self.num[0]))
         btnnum1.place(x=140,y=460,width=475,height=360)
@@ -162,7 +161,17 @@ class ModeBasic(tk.Frame):
                         , command=lambda *args: self.display(self.num[2]))
         btnnum3.place(x= 1310,y=460,width=475,height=360)
 
-    
+    def showbtn(self):
+        btnnum1 = Button(self,text=self.num[0],bg="black",fg="#FFFFFF", bd=0,activeforeground="#E22424",activebackground="Black",font=self.Myfont(110)
+                        , command=lambda *args: self.display(self.num[0]))
+        btnnum1.place(x=140,y=460,width=475,height=360)
+        btnnum2 = Button(self,text=self.num[1],bg="black",fg="#FFFFFF", bd=0,activeforeground="#E22424",activebackground="Black",font=self.Myfont(110)
+                        , command=lambda *args: self.display(self.num[1]))
+        btnnum2.place(x=720,y=460,width=475,height=360)
+        btnnum3 = Button(self,text=self.num[2],bg="black",fg="#FFFFFF", bd=0,activeforeground="#E22424",activebackground="Black",font=self.Myfont(110)
+                        , command=lambda *args: self.display(self.num[2]))
+        btnnum3.place(x= 1310,y=460,width=475,height=360)
+
     def Myfont(self, sizefont):
         self.myfont = Font(family="Londrina Solid", size=sizefont)
         return self.myfont
@@ -171,27 +180,11 @@ class ModeBasic(tk.Frame):
         for i in range(len(self.num)):
             self.num[i]+= 3
             print(self.num)
-        btnnum1 = Button(self,text=self.num[0],bg="black",fg="#FFFFFF", bd=0,activeforeground="#E22424",activebackground="Black",font=self.Myfont(110)
-                        , command=lambda *args: self.display(self.num[0]))
-        btnnum1.place(x=140,y=460,width=475,height=360)
-        btnnum2 = Button(self,text=self.num[1],bg="black",fg="#FFFFFF", bd=0,activeforeground="#E22424",activebackground="Black",font=self.Myfont(110)
-                        , command=lambda *args: self.display(self.num[1]))
-        btnnum2.place(x=720,y=460,width=475,height=360)
-        btnnum3 = Button(self,text=self.num[2],bg="black",fg="#FFFFFF", bd=0,activeforeground="#E22424",activebackground="Black",font=self.Myfont(110)
-                        , command=lambda *args: self.display(self.num[2]))
-        btnnum3.place(x= 1310,y=460,width=475,height=360)
+        self.showbtn()
     
     def close(self,stage):
         stage.destroy()
-        btnnum1 = Button(self,text=self.num[0],bg="black",fg="#FFFFFF", bd=0,activeforeground="#E22424",activebackground="Black",font=self.Myfont(110)
-                        , command=lambda *args: self.display(self.num[0]))
-        btnnum1.place(x=140,y=460,width=475,height=360)
-        btnnum2 = Button(self,text=self.num[1],bg="black",fg="#FFFFFF", bd=0,activeforeground="#E22424",activebackground="Black",font=self.Myfont(110)
-                        , command=lambda *args: self.display(self.num[1]))
-        btnnum2.place(x=720,y=460,width=475,height=360)
-        btnnum3 = Button(self,text=self.num[2],bg="black",fg="#FFFFFF", bd=0,activeforeground="#E22424",activebackground="Black",font=self.Myfont(110)
-                        , command=lambda *args: self.display(self.num[2]))
-        btnnum3.place(x= 1310,y=460,width=475,height=360)
+        self.showbtn()
         buttonnext = Button(self,image=self.btnnext,bg="Black",bd=0,activebackground="Black")
         buttonnext.bind("<Button-1>", self.addnum)
         buttonnext.place(x=1820,y=550,width=70,height=70)
@@ -199,28 +192,20 @@ class ModeBasic(tk.Frame):
     
     def setnum(self):
         self.num = [1,2,3]
-        btnnum1 = Button(self,text=self.num[0],bg="black",fg="#FFFFFF", bd=0,activeforeground="#E22424",activebackground="Black",font=self.Myfont(110)
-                        , command=lambda *args: self.display(self.num[0]))
-        btnnum1.place(x=140,y=460,width=475,height=360)
-        btnnum2 = Button(self,text=self.num[1],bg="black",fg="#FFFFFF", bd=0,activeforeground="#E22424",activebackground="Black",font=self.Myfont(110)
-                        , command=lambda *args: self.display(self.num[1]))
-        btnnum2.place(x=720,y=460,width=475,height=360)
-        btnnum3 = Button(self,text=self.num[2],bg="black",fg="#FFFFFF", bd=0,activeforeground="#E22424",activebackground="Black",font=self.Myfont(110)
-                        , command=lambda *args: self.display(self.num[2]))
-        btnnum3.place(x= 1310,y=460,width=475,height=360)
+        self.showbtn()
         print("set")
 
     def display(self,stagenum):
         self.stage = stagenum
         print(self.stage)
+        # result = Image.alpha_composite(self.stage1, self.stage2)
+        # result_tk = ImageTk.PhotoImage(result)
         if self.stage == 1 :
             stageShow1 = Label(self, image=self.stage1)
             stageShow1.place(x=0, y=0)
             buttonfinish = Button(self,image=self.btnnext,bg="Black",bd=0,activebackground="Black"
                         ,command=lambda *args: self.close(stageShow1))
             buttonfinish.place(x=1820,y=550,width=70,height=70)
-            # self.state = True
-            # print(self.state)
         elif self.stage == 2 :
             stageShow2 = Label(self, image=self.stage2)
             stageShow2.place(x=0, y=0)
@@ -233,6 +218,8 @@ class ModeBasic(tk.Frame):
             buttonfinish = Button(self,image=self.btnnext,bg="Black",bd=0,activebackground="Black"
                         ,command=lambda *args: self.close(stageShow3))
             buttonfinish.place(x=1820,y=550,width=70,height=70)
+
+    
         
 
 
