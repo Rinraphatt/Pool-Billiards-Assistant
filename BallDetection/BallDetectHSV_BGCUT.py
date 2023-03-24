@@ -5,9 +5,6 @@ from tkinter.colorchooser import Chooser
 from turtle import circle
 import cv2 as cv
 import numpy as np
-from colormath.color_objects import sRGBColor, LabColor
-from colormath.color_conversions import convert_color
-from colormath.color_diff import delta_e_cie2000
 
 cameraHeight=1080 
 cameraWidth=1920
@@ -17,9 +14,9 @@ cameraWidth=1920
 # cam.set(cv.CAP_PROP_FRAME_HEIGHT, cameraHeight)
 # cam.set(cv.CAP_PROP_FRAME_WIDTH, cameraWidth)
 
-cam2 = cv.VideoCapture(0, cv.CAP_DSHOW)
-cam2.set(cv.CAP_PROP_FRAME_HEIGHT, cameraHeight)
-cam2.set(cv.CAP_PROP_FRAME_WIDTH, cameraWidth)
+# cam2 = cv.VideoCapture(0, cv.CAP_DSHOW)
+# cam2.set(cv.CAP_PROP_FRAME_HEIGHT, cameraHeight)
+# cam2.set(cv.CAP_PROP_FRAME_WIDTH, cameraWidth)
 
 # success, img = cam.read()
 # success2, img2 = cam2.read()
@@ -185,21 +182,19 @@ updatedBall = []
 # loadSetting()
 
 while True:
-    success, img = cam2.read()
-    success2, img2 = cam2.read()
-    frame = img
-    showFrame = img2
+    # success, img = cam2.read()
+    # success2, img2 = cam2.read()
+    # frame = img
+    # showFrame = img2
 
-    # frame = cv.imread('../pics/pool_table_ball_3.jpg')
-    # frame = cv.resize(frame, (1920, 1080))
+    frame = cv.imread('./pics/pool_table_ball_3.jpg')
+    frame = cv.resize(frame, (1920, 1080))
     # print('frame', frame)
 
-    # showFrame = cv.imread('../pics/pool_table_ball_3.jpg')
-    # showFrame = cv.resize(frame, (1920, 1080))
+    showFrame = cv.imread('./pics/pool_table_ball_3.jpg')
+    showFrame = cv.resize(showFrame, (1920, 1080))
 
     # if not ret: break
-
-    
 
     hsvFrame = cv.cvtColor(frame, cv.COLOR_BGR2HSV)
     lower_green = np.array([30,5,40])

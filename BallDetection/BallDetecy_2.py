@@ -24,7 +24,7 @@ width = 1920
 height = 1080
 
 cap = cv2.VideoCapture(0)
-#cap = cv2.VideoCapture('./videos/new1080.mp4')
+# cap = cv2.VideoCapture('./videos/new1080.mp4')
 # set frame rate to 30 fps
 fps = cap.get(cv2.CAP_PROP_FPS)
 frame_interval = int(fps / 5)
@@ -35,6 +35,29 @@ cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
 # start processing loop
 frame_count = 0
 
+lowerColor = [
+    np.array([20,150,50]),
+    np.array([110,100,50]),
+    np.array([0,150,155]),
+    np.array([120,100,50]),
+    np.array([5,150,50]),
+    np.array([50,100,100]),
+    np.array([0,100,50]),
+    np.array([50,50,5]),
+    np.array([0,0,150]),
+
+]
+upperColor = [
+    np.array([40,255,255]),
+    np.array([130,255,255]),
+    np.array([20,255,255]),
+    np.array([140,255,255]),
+    np.array([25,255,255]),
+    np.array([70,255,255]),
+    np.array([20,255,155]),
+    np.array([179,255,75]),
+    np.array([179,80,255]),
+]
 
 while True:
     # Read the frame
