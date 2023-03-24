@@ -1,0 +1,4 @@
+0 1 0 0 0 0
+whiteBall 787 446
+obstacleBall 786 292
+targetBall 785 137

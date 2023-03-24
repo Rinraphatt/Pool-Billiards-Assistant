@@ -24,14 +24,6 @@ cameraWidth=1920
 # success, img = cam.read()
 # success2, img2 = cam2.read()
 
-cameraHeight=1080 
-cameraWidth=1920
-
-# cap = cv.VideoCapture(0)
-cap = cv.VideoCapture('./videos/Test.mp4')
-# cap = cv.VideoCapture(0, cv.CAP_DSHOW)
-# cap.set(cv.CAP_PROP_FRAME_HEIGHT, cameraHeight)
-# cap.set(cv.CAP_PROP_FRAME_WIDTH, cameraWidth)
 prevCircle = None
 cropSize = (100, 100)
 
@@ -144,6 +136,30 @@ rgbColors = [
     [200.0, 200.0, 200.0] #White
 ]
 
+lowerColor = [
+    np.array([20,150,50]),
+    np.array([110,100,50]),
+    np.array([0,150,155]),
+    np.array([120,100,50]),
+    np.array([5,150,50]),
+    np.array([50,100,100]),
+    np.array([0,100,50]),
+    np.array([50,50,5]),
+    np.array([0,0,150]),
+
+]
+upperColor = [
+    np.array([40,255,255]),
+    np.array([130,255,255]),
+    np.array([20,255,255]),
+    np.array([140,255,255]),
+    np.array([25,255,255]),
+    np.array([70,255,255]),
+    np.array([20,255,155]),
+    np.array([179,255,75]),
+    np.array([179,80,255]),
+]
+
 grayScaleValues = [
     [167.0, 170.0],
     [88.0, 121.0],
@@ -204,10 +220,10 @@ while True:
         for i in circles[0, :]:
             # cv.circle(frame, (i[0], i[1]), 1, (0,200,200), 2)
             # cv.circle(frame, (i[0], i[1]), i[2], (255,0,255), 2)
-            circleZone = blurFrame[148+int(i[1].item())-20:148+int(i[1].item())+20, 174+int(i[0].item())-20:174+int(i[0].item())+20]
+            circleZone = blurFrame[148+int(i[1].item())-22:148+int(i[1].item())+22, 174+int(i[0].item())-22:174+int(i[0].item())+22]
             circleZones.append(circleZone)
 
-            circleZoneColor = frame[148+int(i[1].item())-20:148+int(i[1].item())+20, 174+int(i[0].item())-20:174+int(i[0].item())+20]
+            circleZoneColor = frame[148+int(i[1].item())-22:148+int(i[1].item())+22, 174+int(i[0].item())-22:174+int(i[0].item())+22]
             circleZonesColor.append(circleZoneColor)
 
             cv.circle(showFrame, (i[0]+174, i[1]+148), i[2], (255,0,255), 2)
@@ -235,8 +251,8 @@ while True:
             avg_color = np.average(avg_color_per_row, axis=0)
             circleGrayScaleValues.append(round(avg_color))
 
-            cv.putText(showFrame, f'{i} : {round(avg_color)}', (circles[0][i][0]+120, circles[0][i][1]+200), cv.FONT_HERSHEY_SIMPLEX, 
-                   1, (255, 0, 255), 2, cv.LINE_AA)
+            # cv.putText(showFrame, f'{i} : {round(avg_color)}', (circles[0][i][0]+120, circles[0][i][1]+200), cv.FONT_HERSHEY_SIMPLEX, 
+            #        1, (255, 0, 255), 2, cv.LINE_AA)
             # if avg_color > whiteValue : 
             #     whiteValue = avg_color
             #     whiteZone = circleZones[i]
@@ -293,48 +309,73 @@ while True:
                     realDominantColor = sortedDominantColor[1]
                 print(f'Change MinDiffPos to : {minDiffPos}')
 
+            maxSameColor = 0
+            maxSameColorPos = -1
+            semiSameColorPos = -1
+            print('start ', maxSameColor, maxSameColorPos)
+
+            colorCounter = 0
+            whiteCounter = 0
+
+            hsvcircleZone = cv.cvtColor(circleZonesColor[i], cv.COLOR_BGR2HSV)
+            for j in range(len(lowerColor)):
+                mask = cv.inRange(hsvcircleZone, lowerColor[j], upperColor[j])
+                samePixs = np.sum(mask == 255)
+
+                if j == 8:
+                    whiteCounter = samePixs
+
+                if samePixs > maxSameColor:
+                    semiSameColorPos = maxSameColorPos
+                    maxSameColor = samePixs
+                    maxSameColorPos = j
+                print('Same to : ', j, samePixs)
+
+            ballType = 'none'
+
+            if maxSameColorPos == 8 and maxSameColor < 1200:
+                maxSameColorPos = semiSameColorPos
+                ballType = 'Stripe'
+            else:
+                if abs(maxSameColor - whiteCounter) >= 400:
+                    ballType = 'Solid'
+                else:
+                    ballType = 'Stripe'
+
             similarColor = ''
-            # print(f'Less Diff RGB : {minDiffPos}') 
-            if minDiffPos == 0:
+
+            if maxSameColorPos == 0:
                 similarColor = 'Yellow'
-            elif minDiffPos == 1:
+            elif maxSameColorPos == 1:
                 similarColor = 'Blue'
-            elif minDiffPos == 2:
+            elif maxSameColorPos == 2:
                 similarColor = 'Red'
-            elif minDiffPos == 3:
+            elif maxSameColorPos == 3:
                 similarColor = 'Purple'
-            elif minDiffPos == 4:
+            elif maxSameColorPos == 4:
                 similarColor = 'Orange'
-            elif minDiffPos == 5:
+            elif maxSameColorPos == 5:
                 similarColor = 'Green'
-            elif minDiffPos == 6:
+            elif maxSameColorPos == 6:
                 similarColor = 'Crimson'
-            elif minDiffPos == 7:
+            elif maxSameColorPos == 7:
                 similarColor = 'Black'
-            elif minDiffPos == 8:
+            elif maxSameColorPos == 8:
                 similarColor = 'White'
 
             print(f'Similar to {similarColor}')
-
-            colorCounter = 0
-            lower_blue = np.array([110,50,50])
-            upper_blue = np.array([130,255,255])
-
-            # print(circleZonesColor[i])
-            hsvcircleZone = cv.cvtColor(circleZonesColor[i], cv.COLOR_BGR2HSV)
-            mask = cv.inRange(hsvcircleZone, lower_blue, upper_blue)
-            whitePixs = np.sum(mask == 255)
-            print('Number of blue pixels : ', whitePixs)
             
+            cv.putText(showFrame, f'Number : {i}', (circles[0][i][0]+120, circles[0][i][1]+200), cv.FONT_HERSHEY_SIMPLEX, 
+                0.7, (255, 0, 255), 2, cv.LINE_AA)
             cv.putText(showFrame, f'Color : {similarColor}', (circles[0][i][0]+120, circles[0][i][1]+230), cv.FONT_HERSHEY_SIMPLEX, 
                 0.7, (255, 0, 255), 2, cv.LINE_AA)
-            if (minDiffPos >= 0 and minDiffPos <= 6):
-                if circleGrayScaleValues[i] <= grayScaleValues[minDiffPos][0]:
-                    cv.putText(showFrame, f'Type : Solid', (circles[0][i][0]+120, circles[0][i][1]+250), cv.FONT_HERSHEY_SIMPLEX, 
+            if (maxSameColorPos >= 0 and maxSameColorPos <= 6):
+                # if whiteCounter <= 100:
+                    cv.putText(showFrame, f'Type : {ballType}', (circles[0][i][0]+120, circles[0][i][1]+250), cv.FONT_HERSHEY_SIMPLEX, 
                         0.7, (255, 0, 255), 2, cv.LINE_AA)
-                else:
-                    cv.putText(showFrame, f'Type : Stripe', (circles[0][i][0]+120, circles[0][i][1]+250), cv.FONT_HERSHEY_SIMPLEX, 
-                        0.7, (255, 0, 255), 2, cv.LINE_AA)
+                # else:
+                #     cv.putText(showFrame, f'Type : {ballType}', (circles[0][i][0]+120, circles[0][i][1]+250), cv.FONT_HERSHEY_SIMPLEX, 
+                #         0.7, (255, 0, 255), 2, cv.LINE_AA)
             # cv.putText(showFrame, f'Color : {sortedDominantColor[0]}', (circles[0][i][0]+120, circles[0][i][1]+250), cv.FONT_HERSHEY_SIMPLEX, 
             #     0.7, (255, 0, 255), 2, cv.LINE_AA)
             # cv.putText(showFrame, f'Color : {sortedDominantColor[1]}', (circles[0][i][0]+120, circles[0][i][1]+270), cv.FONT_HERSHEY_SIMPLEX, 
@@ -346,139 +387,45 @@ while True:
 
         # cv.imshow("WhiteCircleZone", whiteZone)
 
-        print(whitePos)
+        # print(whitePos)
         # print(circles[0])
-        print(circles[0][whitePos][0])
-        print(circles[0][whitePos][1])
+        # print(circles[0][whitePos][0])
+        # print(circles[0][whitePos][1])
 
-        cropped_whiteZone = frame[148+circles[0][whitePos][1]-100: 148+circles[0][whitePos][1]+100, 174+circles[0][whitePos][0]-100: 174+circles[0][whitePos][0]+100]
-        #cv.imshow("RealWhiteCircleZone", cropped_whiteZone)
-
-        # Convert the frame to HSV color space
-        hsv = cv.cvtColor(cropped_whiteZone, cv.COLOR_BGR2HSV)
-
-
-        # Define a cue white color threshold
-        lower_white = np.array([0, 0, 200])
-        upper_white = np.array([179, 60, 255])
-
-        mask = cv.inRange(hsv, lower_white, upper_white)
-        output = cv.bitwise_and(cropped_whiteZone,cropped_whiteZone, mask= mask)
-
-        cv.imshow("test", output)
-
-
-
-        edges = cv.Canny(output, 130, 255)
-        # Detect points that form a line
-        lines = cv.HoughLinesP(edges, 1, np.pi/180, 25, minLineLength=10, maxLineGap=100)
-        # Draw the detected line segments on the original frame
-        if lines is not None:
-            for line in lines:
-                x1, y1, x2, y2 = line[0]
-                cv.line(output, (x1, y1), (x2, y2), (0, 0, 255), 1)
-                # Calculate the center of two line segments
-
-            # Find the distance between the two parallel lines
-            if len(lines) == 2:
-                #print(lines)
-
-                x1, y1, x2, y2 = lines[0][0]
-                x3, y3, x4, y4 = lines[1][0]
-                # cv.circle(cropped_whiteZone, (x1, y1), 2, (0, 255, 255), -1)
-                # cv.circle(cropped_whiteZone, (x2, y2), 2, (0, 255, 255), -1)
-                # cv.circle(cropped_whiteZone, (x3, y3), 2, (0, 255, 255), -1)
-                # cv.circle(cropped_whiteZone, (x4, y4), 2, (0, 255, 255), -1)
-
-                m1 = (round((x1+x3) /2) , round((y1+y3) /2)) 
-                m3 = (round((x2+x4) /2) , round((y2+y4) /2))
-                #print(m1)
-                cv.circle(cropped_whiteZone, m1, 1, (255, 255, 0), -1)
-                cv.circle(cropped_whiteZone, m3, 1, (255, 0, 0), -1) 
-
-                x1, y1 = m1
-                x2, y2 = m3
-                # Calculate the slope and intercept of the line
-                m = 0
-                if (x2-x1) != 0 :
-                    m = (y2 - y1) / (x2 - x1)
-                else:
-                    m = (y2 - y1) / 0.01
-                b = y1 - m * x1
-                print(b)
-
-                # Define the image boundaries
-                height, width = cropped_whiteZone.shape[:2]
-                #print(height, width)
-                y_top = 0
-                y_bottom = height - 1
-                x_left = 0
-                x_right = width - 1
-
-                # Calculate the intersection points of the line with the image boundaries
-                if abs(m) > 1e-6:
-                    # Calculate the intersection points with the top and bottom image boundaries
-                    x_top = int(round((y_top - b) / m))
-                    x_bottom = int(round((y_bottom - b) / m))
-                    
-                    # Check if the intersection points are inside the image boundaries
-                    if x_top < x_left:
-                        x_top = x_left
-                        y_top = int(round(m * x_top + b))
-                    elif x_top > x_right:
-                        x_top = x_right
-                        y_top = int(round(m * x_top + b))
-                        
-                    if x_bottom < x_left:
-                        x_bottom = x_left
-                        y_bottom = int(round(m * x_bottom + b))
-                    elif x_bottom > x_right:
-                        x_bottom = x_right
-                        y_bottom = int(round(m * x_bottom + b))
-                else:
-                    # If the line is vertical, set the intersection points to the left and right image boundaries
-                    x_top = x1
-                    x_bottom = x2
-                    
-                    if y1 < y2:
-                        y_top = y1
-                        y_bottom = y_bottom
-                    else:
-                        y_top = y2
-                        y_bottom = y1
-
-                    if y_top < y_top:
-                        y_top = y_top
-                        x_top = int(round((y_top - b) / m))
-                    elif y_top > y_bottom:
-                        y_top = y_bottom
-                        x_top = int(round((y_top - b) / m))
-
-                    if y_bottom < y_top:
-                        y_bottom = y_top
-                        x_bottom = int(round((y_bottom - b) / m))
-                    elif y_bottom > y_bottom:
-                        y_bottom = y_bottom
-                        x_bottom = int(round((y_bottom - b) / m))
-
-                # Draw the line segment between the two points
-                # cv.line(cropped_whiteZone, (x1, y1), (x2, y2), (0, 0, 255), 2)
-
-                # Draw a continuous line from the intersection points to the image boundaries
-                cv.line(cropped_whiteZone, (x_top, y_top), (x_bottom, y_bottom), (0, 255, 0), 2)
-                print(x_top, y_top)
-                print(x_bottom, y_bottom)
-
-
-
-        cv.imshow("RealWhiteCircleZone", cropped_whiteZone)
+        # cropped_whiteZone = frame[148+circles[0][whitePos][1]-100: 148+circles[0][whitePos][1]+100, 174+circles[0][whitePos][0]-100: 174+circles[0][whitePos][0]+100]
+        # cv.imshow("RealWhiteCircleZone", cropped_whiteZone)
         # cv.imshow("SolidCircleZone1", frame[148+circles[0][3][1]-100: 148+circles[0][3][1]+100, 174+circles[0][3][0]-100: 174+circles[0][3][0]+100])
         # cv.imshow("SolidCircleZone2", frame[148+circles[0][6][1]-100: 148+circles[0][6][1]+100, 174+circles[0][6][0]-100: 174+circles[0][6][0]+100])
-        # cv.imshow("SolidCircleZone3", frame[148+circles[0][12][1]-100: 148+circles[0][12][1]+100, 17q4+circles[0][12][0]-100: 174+circles[0][12][0]+100])
+        # cv.imshow("SolidCircleZone3", frame[148+circles[0][12][1]-100: 148+circles[0][12][1]+100, 174+circles[0][12][0]-100: 174+circles[0][12][0]+100])
         # cv.imshow("SolidCircleZone4", frame[148+circles[0][8][1]-100: 148+circles[0][8][1]+100, 174+circles[0][8][0]-100: 174+circles[0][8][0]+100])
         # cv.imshow("SolidCircleZone5", frame[148+circles[0][10][1]-100: 148+circles[0][10][1]+100, 174+circles[0][10][0]-100: 174+circles[0][10][0]+100])
         # cv.imshow("SolidCircleZone6", frame[148+circles[0][14][1]-100: 148+circles[0][14][1]+100, 174+circles[0][14][0]-100: 174+circles[0][14][0]+100])
         # cv.imshow("SolidCircleZone7", frame[148+circles[0][9][1]-100: 148+circles[0][9][1]+100, 174+circles[0][9][0]-100: 174+circles[0][9][0]+100])
+
+    # for i in range(len(circleZones)):
+    #     height, width, _ = np.shape(circleZonesColor[i])
+    #     data = np.reshape(circleZonesColor[i], (height * width, 3))
+    #     data = np.float32(data)
+
+    #     number_clusters = 2
+    #     criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 10, 1.0)
+    #     flags = cv.KMEANS_RANDOM_CENTERS
+    #     compactness, labels, centers = cv.kmeans(data, number_clusters, None, criteria, 10, flags)
+    #     # print(centers)
+
+    #     cluster_sizes = np.bincount(labels.flatten())
+
+    #     palette = []
+    #     sortedDominantColor = []
+
+    #     for cluster_idx in np.argsort(-cluster_sizes):
+    #         sortedDominantColor.append(centers[cluster_idx])
+    #         palette.append(np.full((circleZonesColor[i].shape[0], circleZonesColor[i].shape[1], 3), fill_value=centers[cluster_idx].astype(int), dtype=np.uint8))
+    #     palette = np.hstack(palette)
+
+    #     sf = circleZonesColor[i].shape[1] / palette.shape[1]
+    #     out = np.vstack([circleZonesColor[i], cv.resize(palette, (0, 0), fx=sf, fy=sf)])
+
         
     #     print(f'{i}-1 : {sortedDominantColor[0]}')
 
@@ -543,13 +490,10 @@ while True:
     # cv.imshow("ShowFrame", showFrame)
     cv.imshow("CroppedShowFrame", cropped_Show_image)
     # cv.imshow("cropped", cropped_image)
-    # cv.imshow("CircleZoneColor[2]", circleZonesColor[6])
-    # cv.imshow("CircleZoneColor[11]", circleZonesColor[8])
+    cv.imshow("CircleZoneColor[2]", circleZonesColor[0])
+    # cv.imshow("CircleZoneColor[11]", circleZonesColor[3])
 
     circleZones = []
-    
-    cv.imshow("circles", frame)
-    cv.imshow("cropped", cropped_image)
     circleZonesColor = []
 
     # cv.imshow("circles", frame)
