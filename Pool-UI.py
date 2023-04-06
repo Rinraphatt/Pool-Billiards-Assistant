@@ -168,6 +168,10 @@ class ModeBasic(tk.Frame):
         buttonnext.bind("<Button-1>", self.addnum)
         buttonnext.place(x=1820,y=550,width=70,height=70)
 
+        buttonbackstage = Button(self,image=self.btnback,bg="Black",bd=0,activebackground="Black")
+        buttonbackstage.bind("<Button-1>", self.deletenum)
+        buttonbackstage.place(x=50,y=550,width=70,height=70)
+
         btnnum1 = Button(self,text=self.num[0],bg="black",fg="#FFFFFF", bd=0,activeforeground="#E22424",activebackground="Black",font=self.Myfont(110)
                         , command=lambda *args: self.display(self.num[0]))
         btnnum1.place(x=140,y=460,width=475,height=360)
@@ -198,6 +202,13 @@ class ModeBasic(tk.Frame):
             self.num[i]+= 3
             print(self.num)
         self.showbtn()
+
+    def deletenum(self,event):
+        for i in range(len(self.num)):
+            if self.num[i] > 3 :
+                self.num[i]-= 3
+                print(self.num)
+                self.showbtn()
     
     def close(self,stage):
         stage.destroy()
@@ -236,8 +247,6 @@ class ModeBasic(tk.Frame):
 
     
         
-
-
 class ModeAmature(tk.Frame):  
   
     def __init__(self, parent, controller):  
