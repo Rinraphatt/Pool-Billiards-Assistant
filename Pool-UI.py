@@ -139,22 +139,6 @@ class ModeBasic(tk.Frame):
         self.stage2 = PhotoImage(file="iMac - 23.png")
         self.stage3 = PhotoImage(file="iMac - 24.png")
 
-        self.img1_size = (self.stage1.width(), self.stage1.height())
-        self.img2_size = (self.stage2.width(), self.stage2.height())
-
-        self.img1_pil = ImageTk.getimage(self.stage1)
-        self.img2_pil = ImageTk.getimage(self.stage2)
-
-        self.img1_pil = self.img1_pil.resize((1920, 1080))
-        self.img2_pil = self.img2_pil.resize((1920, 1080))
-
-        self.img2_pil_transparent = self.img2_pil.copy()
-        self.alpha = 100  # set the alpha value here (0-255)
-        self.img2_pil_transparent.putalpha(self.alpha)
-
-        self.result_pil = Image.alpha_composite(self.img1_pil, self.img2_pil_transparent)
-        self.result = ImageTk.PhotoImage(self.result_pil)
-
         self.num = [1,2,3]
         self.stage = 0
         self.state = False
@@ -227,11 +211,28 @@ class ModeBasic(tk.Frame):
         self.stage = stagenum
         print(self.stage)
         if self.stage == 1 :
+            self.img1_size = (self.stage1.width(), self.stage1.height())
+            self.img2_size = (self.stage2.width(), self.stage2.height())
+
+            self.img1_pil = ImageTk.getimage(self.stage1)
+            self.img2_pil = ImageTk.getimage(self.stage2)
+
+            self.img1_pil = self.img1_pil.resize((1920, 1080))
+            self.img2_pil = self.img2_pil.resize((1920, 1080))
+
+            self.img2_pil_transparent = self.img2_pil.copy()
+            self.alpha = 100  # set the alpha value here (0-255)
+            self.img2_pil_transparent.putalpha(self.alpha)
+
+            self.result_pil = Image.alpha_composite(self.img1_pil, self.img2_pil_transparent)
+            self.result = ImageTk.PhotoImage(self.result_pil)
+
             stageShow1 = Label(self, image=self.result)
             stageShow1.place(x=0, y=0)
             buttonfinish = Button(self,image=self.btnnext,bg="Black",bd=0,activebackground="Black"
                         ,command=lambda *args: self.close(stageShow1))
             buttonfinish.place(x=1820,y=550,width=70,height=70)
+            
         elif self.stage == 2 :
             stageShow2 = Label(self, image=self.stage2)
             stageShow2.place(x=0, y=0)
