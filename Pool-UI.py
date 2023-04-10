@@ -176,7 +176,7 @@ class ModeBasic(tk.Frame):
         btnnum3 = Button(self,text=self.num[2],bg="black",fg="#FFFFFF", bd=0,activeforeground="#E22424",activebackground="Black",font=self.Myfont(110)
                         , command=lambda *args: self.display(self.num[2]))
         btnnum3.place(x= 1310,y=460,width=475,height=360)
-
+ 
     def Myfont(self, sizefont):
         self.myfont = Font(family="Londrina Solid", size=sizefont)
         return self.myfont
