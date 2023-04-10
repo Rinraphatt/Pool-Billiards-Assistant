@@ -140,14 +140,6 @@ class ModeBasic(tk.Frame):
   
     def __init__(self, parent, controller):  
         tk.Frame.__init__(self, parent)
-<<<<<<< HEAD:GUI/Pool-UI.py
-        self.bg = PhotoImage(file="../basicmode.png")
-        self.btnback = PhotoImage(file="../left-arrow.png")
-        self.btnnext = PhotoImage(file="../arrow-forward.png")
-        self.stage1 = PhotoImage(file="../iMac - 18.png")
-        self.stage2 = PhotoImage(file="../iMac - 23.png")
-        self.stage3 = PhotoImage(file="../iMac - 24.png")
-=======
         self.bg = PhotoImage(file="basicmode.png")
         self.btnback = PhotoImage(file="left-arrow.png")
         self.btnnext = PhotoImage(file="arrow-forward.png")
@@ -155,7 +147,6 @@ class ModeBasic(tk.Frame):
         self.stage2 = PhotoImage(file="iMac - 23.png")
         self.stage3 = PhotoImage(file="iMac - 24.png")
 
->>>>>>> 147589358be238ab0e5b740c5d6068fc5f2ae0a4:Pool-UI.py
         self.num = [1,2,3]
         self.stage = 0
         self.state = False
