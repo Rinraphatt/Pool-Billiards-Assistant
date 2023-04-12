@@ -11,9 +11,7 @@ cameraHeight=1080
 cameraWidth=1920
 
 # cam = cv.VideoCapture('../Test_Perspective/newVid.mp4')
-# cam = cv.VideoCapture(0, cv.CAP_DSHOW)
-# cam.set(cv.CAP_PROP_FRAME_HEIGHT, cameraHeight)
-# cam.set(cv.CAP_PROP_FRAME_WIDTH, cameraWidth)
+
 
 # cam2 = cv.VideoCapture(0, cv.CAP_DSHOW)
 # cam2.set(cv.CAP_PROP_FRAME_HEIGHT, cameraHeight)
@@ -25,7 +23,7 @@ cameraWidth=1920
 prevCircle = None
 cropSize = (100, 100)
 
-# cv.namedWindow("Python Webcam Screenshot App")
+
 
 outputDrawing = np.zeros((784,1568,3), np.uint8)
 
@@ -82,13 +80,13 @@ def findSlope(start_x,start_y,end_x,end_y,find=None,interest_value=None) :
 
 width = 1920
 height = 1080
-# cap = cv2.VideoCapture(0)
-cap = cv2.VideoCapture('./videos/new1080.mp4')
+cap = cv2.VideoCapture(0)
+#cap = cv2.VideoCapture('./videos/new1080.mp4')
 # set frame rate to 30 fps
 fps = cap.get(cv2.CAP_PROP_FPS)
 print('fps = ', fps)
 # frame_interval = int(fps / 5)
-frame_interval = 3 #HAHAHA
+frame_interval = 1 #HAHAHA
 avg_center_x = []
 count_shot = 0
 ball_move = False
@@ -174,7 +172,7 @@ while True:
 
         hsvFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
         lower_green = np.array([30,30,30])
-        upper_green = np.array([70,255,255])
+        upper_green = np.array([100,255,255])
 
         mask = cv2.inRange(hsvFrame, lower_green, upper_green)
         blurFrame = cv2.GaussianBlur(mask, (7,7), 0)
@@ -318,6 +316,10 @@ while True:
             y1 = int(y - 200)
             x2 = int(x + 200)
             y2 = int(y + 200)
+            if x1 <0  :
+                x1 = 1
+            if y1 < 0 :
+                y1 = 1
             # Cropped White Zone IMG
             whiteball_zone = masked_img[y1:y2, x1:x2]
 

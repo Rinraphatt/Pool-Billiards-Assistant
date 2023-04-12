@@ -147,10 +147,10 @@ while True:
 
     if frame_count % frame_interval == 0:
         # Perspective Transform
-        tl = (177, 159)
-        bl = (180, 922)
-        tr = (1741, 155)
-        br = (1742, 925)
+        tl = (212 ,180)
+        bl = (159 ,923)
+        tr = (1696 ,178)
+        br = (1750 ,925)
         cv2.circle(frame, tl, 3, (0, 0, 255), -1)
         cv2.circle(frame, bl, 3, (0, 0, 255), -1)
         cv2.circle(frame, tr, 3, (0, 0, 255), -1)

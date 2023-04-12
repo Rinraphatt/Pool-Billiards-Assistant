@@ -6,7 +6,7 @@ def nothing(x):
     pass
 
 # Load image
-img = cv2.imread('./pics/new.jpg')
+img = cv2.imread('./pics/new13.jpg')
 
 img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 img = cv2.resize(img, (1280, 720))

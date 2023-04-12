@@ -24,40 +24,18 @@ width = 1920
 height = 1080
 
 cap = cv2.VideoCapture(0)
-# cap = cv2.VideoCapture('./videos/new1080.mp4')
+#cap = cv2.VideoCapture('./videos/new1080.mp4')
 # set frame rate to 30 fps
 fps = cap.get(cv2.CAP_PROP_FPS)
-frame_interval = int(fps / 5)
-cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+frame_interval = int(fps / 10)
+#cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
 
 # start processing loop
 frame_count = 0
 
-lowerColor = [
-    np.array([20,150,50]),
-    np.array([110,100,50]),
-    np.array([0,150,155]),
-    np.array([120,100,50]),
-    np.array([5,150,50]),
-    np.array([50,100,100]),
-    np.array([0,100,50]),
-    np.array([50,50,5]),
-    np.array([0,0,150]),
-
-]
-upperColor = [
-    np.array([40,255,255]),
-    np.array([130,255,255]),
-    np.array([20,255,255]),
-    np.array([140,255,255]),
-    np.array([25,255,255]),
-    np.array([70,255,255]),
-    np.array([20,255,155]),
-    np.array([179,255,75]),
-    np.array([179,80,255]),
-]
+hsv = 0
 
 while True:
     # Read the frame
@@ -65,7 +43,7 @@ while True:
     if not ret:
         break
     # frame = cv2.imread('./pics/new5.jpg')
-    # frame = cv2.resize(frame, (1920, 1080))
+    # frame = cv2.resize(frame, (1920, 1080))   
 
     # if not ret: break
     # increment frame count
@@ -74,10 +52,10 @@ while True:
     if frame_count % frame_interval == 0:
 
         # Perspective Transform
-        tl = (177, 159)
-        bl = (180, 922)
-        tr = (1741, 155)
-        br = (1742, 925)
+        tl = (212 ,180)
+        bl = (159 ,923)
+        tr = (1696 ,178)
+        br = (1750 ,925)
         cv2.circle(frame, tl, 3, (0, 0, 255), -1)
         cv2.circle(frame, bl, 3, (0, 0, 255), -1)
         cv2.circle(frame, tr, 3, (0, 0, 255), -1)
@@ -92,16 +70,16 @@ while True:
         matrix = cv2.getPerspectiveTransform(pts1, pts2)
         # Compute the perspective transform M
         frame = cv2.warpPerspective(frame, matrix, (width, height))
-        grayFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        blurFrame = cv2.GaussianBlur(grayFrame, (7, 7), 0)
+        #grayFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        #frame = cv2.GaussianBlur(frame, (5, 5), 0)
 
         # White ball detect
         # Convert to HSV color space
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
         # Define the range of white color in HSV
-        lower_white = np.array([0, 0, 200])
-        upper_white = np.array([179, 80, 255])
+        lower_white = np.array([0, 0, 150])
+        upper_white = np.array([179, 60, 255])
 
         # Threshold the image to get only white colors
         mask = cv2.inRange(hsv, lower_white, upper_white)
@@ -128,7 +106,12 @@ while True:
             y1 = int(y - 200)
             x2 = int(x + 200)
             y2 = int(y + 200)
+            if x1 <0  :
+                x1 = 1
+            if y1 < 0 :
+                y1 = 1
             # Cropped White Zone IMG
+            print(y1,y2)
             whiteball_zone = masked_img[y1:y2, x1:x2]
             cv2.circle(frame, center, radius, (0, 255, 0), 2)
 
@@ -137,17 +120,17 @@ while True:
         hsv = cv2.cvtColor(whiteball_zone, cv2.COLOR_BGR2HSV)
 
         # Define a cue white color threshold
-        lower_white = np.array([0, 60, 160])
-        upper_white = np.array([100, 100, 255])
+        lower_white = np.array([130, 20, 100])
+        upper_white = np.array([179, 255, 255])
 
         mask = cv2.inRange(hsv, lower_white, upper_white)
         output = cv2.bitwise_and(whiteball_zone, whiteball_zone, mask=mask)
 
         # Detect Edge of pool Cue
-        edges = cv2.Canny(output, 180, 255)
+        edges = cv2.Canny(output, 200, 255)
         # Detect points that form a line
-        lines = cv2.HoughLinesP(edges, 1, np.pi/180, 50,
-                                minLineLength=10, maxLineGap=100)
+        lines = cv2.HoughLinesP(edges, 1, np.pi/180, 60,
+                                minLineLength=50, maxLineGap=120)
         # Draw the detected line segments on the original frame
         if lines is not None:
             for line in lines:
