@@ -11,9 +11,7 @@ cameraHeight=1080
 cameraWidth=1920
 
 # cam = cv.VideoCapture('../Test_Perspective/newVid.mp4')
-# cam = cv.VideoCapture(0, cv.CAP_DSHOW)
-# cam.set(cv.CAP_PROP_FRAME_HEIGHT, cameraHeight)
-# cam.set(cv.CAP_PROP_FRAME_WIDTH, cameraWidth)
+
 
 # cam2 = cv.VideoCapture(0, cv.CAP_DSHOW)
 # cam2.set(cv.CAP_PROP_FRAME_HEIGHT, cameraHeight)
@@ -25,7 +23,7 @@ cameraWidth=1920
 prevCircle = None
 cropSize = (100, 100)
 
-# cv.namedWindow("Python Webcam Screenshot App")
+
 
 outputDrawing = np.zeros((784,1568,3), np.uint8)
 
@@ -82,13 +80,16 @@ def findSlope(start_x,start_y,end_x,end_y,find=None,interest_value=None) :
 
 width = 1920
 height = 1080
-# cap = cv2.VideoCapture(0)
-cap = cv2.VideoCapture('./videos/new1080.mp4')
+cap = cv2.VideoCapture(0)
+#cap = cv2.VideoCapture('./videos/new1080.mp4')
 # set frame rate to 30 fps
 fps = cap.get(cv2.CAP_PROP_FPS)
 print('fps = ', fps)
 # frame_interval = int(fps / 5)
-frame_interval = 3 #HAHAHA
+frame_interval = 1 #HAHAHA
+avg_center_x = []
+count_shot = 0
+ball_move = False
 # cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
@@ -147,10 +148,10 @@ while True:
 
     if frame_count % frame_interval == 0:
         # Perspective Transform
-        tl = (212 ,180)
-        bl = (159 ,923)
-        tr = (1696 ,178)
-        br = (1750 ,925)
+        tl = (177, 159)
+        bl = (180, 922)
+        tr = (1741, 155)
+        br = (1742, 925)
         cv2.circle(frame, tl, 3, (0, 0, 255), -1)
         cv2.circle(frame, bl, 3, (0, 0, 255), -1)
         cv2.circle(frame, tr, 3, (0, 0, 255), -1)
@@ -171,7 +172,7 @@ while True:
 
         hsvFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
         lower_green = np.array([30,30,30])
-        upper_green = np.array([70,255,255])
+        upper_green = np.array([100,255,255])
 
         mask = cv2.inRange(hsvFrame, lower_green, upper_green)
         blurFrame = cv2.GaussianBlur(mask, (7,7), 0)
@@ -209,12 +210,12 @@ while True:
                 # print('circles = ', circles)
                 # print('circleZonesColor = ', circleZonesColor)
 
-                print(i, ' = ', circleZonesColor[i])
-                print('len = ', len(circleZonesColor[i]))
-                if len(circleZonesColor[i]) != 0:
-                    print('Not Empty')
-                else:
-                    print('Empty')
+                # print(i, ' = ', circleZonesColor[i])
+                # print('len = ', len(circleZonesColor[i]))
+                # if len(circleZonesColor[i]) != 0:
+                #     print('Not Empty')
+                # else:
+                #     print('Empty')
 
                 if len(circleZonesColor[i]) != 0:
                     hsvcircleZone = cv2.cvtColor(circleZonesColor[i], cv2.COLOR_BGR2HSV)
@@ -292,12 +293,33 @@ while True:
             cv2.circle(mask, center, 200, (255, 255, 255), -1, cv2.LINE_AA)
             # Apply the mask to the original image using bitwise operations
             masked_img = cv2.bitwise_and(frame, mask)
+            #print(abs(center[0]-np.mean(avg_center_x)))
+            if len(avg_center_x) <= 1 :
+                avg_center_x.append(center[0])
+            
+            if abs(center[0] - np.mean(avg_center_x)) >= 100 and not ball_move:
+                print("Ball shot")
+                count_shot += 1
+                avg_center_x.clear()
+                ball_move = True
+            elif abs(center[0] - avg_center_x[0]) <= 10 and len(avg_center_x) != 5:
+                avg_center_x.append(center[0])
+            elif len(avg_center_x) < 5 and ball_move:
+                avg_center_x.clear()
+            elif len(avg_center_x) == 5:
+                ball_move = False
+            print(count_shot)
+            #print(np.mean(avg_center_x))
 
             # Crop the circular region of the pool ball
             x1 = int(x - 200)
             y1 = int(y - 200)
             x2 = int(x + 200)
             y2 = int(y + 200)
+            if x1 <0  :
+                x1 = 1
+            if y1 < 0 :
+                y1 = 1
             # Cropped White Zone IMG
             whiteball_zone = masked_img[y1:y2, x1:x2]
 
@@ -319,6 +341,9 @@ while True:
                                     minLineLength=10, maxLineGap=100)
             # Draw the detected line segments on the original frame
             if lines is not None:
+
+
+
                 for line in lines:
                     x1, y1, x2, y2 = line[0]
                     cv2.line(output, (x1, y1), (x2, y2), (0, 0, 255), 1)
@@ -568,7 +593,7 @@ while True:
         # cv2.imshow("CroppedBlurFrame",     blurFrame)
         cv2.imshow('White Ball Zone', whiteball_zone)
 
-        print('End Round')
+        #print('End Round')
 
     if cv2.waitKey(1) & 0xFF == ord('q'): break
 

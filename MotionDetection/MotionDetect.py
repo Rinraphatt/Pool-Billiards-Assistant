@@ -6,7 +6,6 @@ import numpy as np
 
 cam = cv.VideoCapture('../videos/new1080.mp4')
 
-cv.namedWindow("Python Webcam Screenshot App")
 
 bgFrame = None
 
