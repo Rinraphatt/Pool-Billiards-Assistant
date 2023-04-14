@@ -40,7 +40,7 @@ while succuess:
         circleCounter = 0
 
         # print(circles[0])
-
+        
         for i in circles[0, :]:
             # cv.circle(frame, (i[0], i[1]), 1, (0,200,200), 2)
             # cv.circle(frame, (i[0], i[1]), i[2], (255,0,255), 2)
@@ -62,6 +62,7 @@ while succuess:
             circleCounter += 1
     
     cv.imshow("Test_Perspectice", tansformed_frame)
+
     cv.imshow("Test", frame)
     
     if cv.waitKey(1) == 27:
