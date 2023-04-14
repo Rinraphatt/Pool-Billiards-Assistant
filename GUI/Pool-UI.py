@@ -138,19 +138,24 @@ class ModeBasic(tk.Frame):
         self.stage1 = PhotoImage(file="iMac - 18.png")
         self.stage2 = PhotoImage(file="iMac - 23.png")
         self.stage3 = PhotoImage(file="iMac - 24.png")
+
         self.num = [1,2,3]
         self.stage = 0
+        self.state = False
         bg = Label(self, image=self.bg)
         bg.place(x=0, y=0)
         buttonback = Button(self,image=self.btnback,bg="Black",bd=0,activebackground="Black",
-                            command=lambda: controller.show_frame(StartPage))
+                            command=lambda: [controller.show_frame(StartPage),self.setnum()])
         buttonback.place(x=20,y=20,width=100,height=100)
         
         buttonnext = Button(self,image=self.btnnext,bg="Black",bd=0,activebackground="Black")
         buttonnext.bind("<Button-1>", self.addnum)
         buttonnext.place(x=1820,y=550,width=70,height=70)
 
-        
+        buttonbackstage = Button(self,image=self.btnback,bg="Black",bd=0,activebackground="Black")
+        buttonbackstage.bind("<Button-1>", self.deletenum)
+        buttonbackstage.place(x=50,y=550,width=70,height=70)
+
         btnnum1 = Button(self,text=self.num[0],bg="black",fg="#FFFFFF", bd=0,activeforeground="#E22424",activebackground="Black",font=self.Myfont(110)
                         , command=lambda *args: self.display(self.num[0]))
         btnnum1.place(x=140,y=460,width=475,height=360)
@@ -161,7 +166,17 @@ class ModeBasic(tk.Frame):
                         , command=lambda *args: self.display(self.num[2]))
         btnnum3.place(x= 1310,y=460,width=475,height=360)
 
-        
+    def showbtn(self):
+        btnnum1 = Button(self,text=self.num[0],bg="black",fg="#FFFFFF", bd=0,activeforeground="#E22424",activebackground="Black",font=self.Myfont(110)
+                        , command=lambda *args: self.display(self.num[0]))
+        btnnum1.place(x=140,y=460,width=475,height=360)
+        btnnum2 = Button(self,text=self.num[1],bg="black",fg="#FFFFFF", bd=0,activeforeground="#E22424",activebackground="Black",font=self.Myfont(110)
+                        , command=lambda *args: self.display(self.num[1]))
+        btnnum2.place(x=720,y=460,width=475,height=360)
+        btnnum3 = Button(self,text=self.num[2],bg="black",fg="#FFFFFF", bd=0,activeforeground="#E22424",activebackground="Black",font=self.Myfont(110)
+                        , command=lambda *args: self.display(self.num[2]))
+        btnnum3.place(x= 1310,y=460,width=475,height=360)
+ 
     def Myfont(self, sizefont):
         self.myfont = Font(family="Londrina Solid", size=sizefont)
         return self.myfont
@@ -169,19 +184,67 @@ class ModeBasic(tk.Frame):
     def addnum(self,event):
         for i in range(len(self.num)):
             self.num[i]+= 3
+            print(self.num)
+        self.showbtn()
+
+    def deletenum(self,event):
+        for i in range(len(self.num)):
+            if self.num[i] > 3 :
+                self.num[i]-= 3
+                print(self.num)
+                self.showbtn()
     
+    def close(self,stage):
+        stage.destroy()
+        self.showbtn()
+        buttonnext = Button(self,image=self.btnnext,bg="Black",bd=0,activebackground="Black")
+        buttonnext.bind("<Button-1>", self.addnum)
+        buttonnext.place(x=1820,y=550,width=70,height=70)
+        print(self.num)
+    
+    def setnum(self):
+        self.num = [1,2,3]
+        self.showbtn()
+        print("set")
+
     def display(self,stagenum):
         self.stage = stagenum
         print(self.stage)
         if self.stage == 1 :
-            stage1 = Label(self, image=self.stage1)
-            stage1.place(x=0, y=0)
+            self.img1_size = (self.stage1.width(), self.stage1.height())
+            self.img2_size = (self.stage2.width(), self.stage2.height())
+
+            self.img1_pil = ImageTk.getimage(self.stage1)
+            self.img2_pil = ImageTk.getimage(self.stage2)
+
+            self.img1_pil = self.img1_pil.resize((1920, 1080))
+            self.img2_pil = self.img2_pil.resize((1920, 1080))
+
+            self.img2_pil_transparent = self.img2_pil.copy()
+            self.alpha = 100  # set the alpha value here (0-255)
+            self.img2_pil_transparent.putalpha(self.alpha)
+
+            self.result_pil = Image.alpha_composite(self.img1_pil, self.img2_pil_transparent)
+            self.result = ImageTk.PhotoImage(self.result_pil)
+
+            stageShow1 = Label(self, image=self.result)
+            stageShow1.place(x=0, y=0)
+            buttonfinish = Button(self,image=self.btnnext,bg="Black",bd=0,activebackground="Black"
+                        ,command=lambda *args: self.close(stageShow1))
+            buttonfinish.place(x=1820,y=550,width=70,height=70)
+            
         elif self.stage == 2 :
-            stage2 = Label(self, image=self.stage2)
-            stage2.place(x=0, y=0)
+            stageShow2 = Label(self, image=self.stage2)
+            stageShow2.place(x=0, y=0)
+            buttonfinish = Button(self,image=self.btnnext,bg="Black",bd=0,activebackground="Black"
+                        ,command=lambda *args: self.close(stageShow2))
+            buttonfinish.place(x=1820,y=550,width=70,height=70)
         elif self.stage == 3 :
-            stage3 = Label(self, image=self.stage3)
-            stage3.place(x=0, y=0)
+            stageShow3 = Label(self, image=self.stage3)
+            stageShow3.place(x=0, y=0)
+            buttonfinish = Button(self,image=self.btnnext,bg="Black",bd=0,activebackground="Black"
+                        ,command=lambda *args: self.close(stageShow3))
+            buttonfinish.place(x=1820,y=550,width=70,height=70)
 
 
 class ModeAmature(tk.Frame):  
