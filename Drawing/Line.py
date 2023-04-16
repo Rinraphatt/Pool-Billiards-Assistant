@@ -20,7 +20,7 @@ def on_trackbar(val):
     cv2.imshow('Hough Lines', img_copy)
 
 # Load an image
-img = cv2.imread('./pics/new13.jpg')
+img = cv2.imread('./pics/new15.jpg')
 
 # Convert to grayscale and apply Canny edge detection
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)

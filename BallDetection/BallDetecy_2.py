@@ -42,6 +42,7 @@ while True:
     ret, frame = cap.read()
     if not ret:
         break
+
     # frame = cv2.imread('./pics/new5.jpg')
     # frame = cv2.resize(frame, (1920, 1080))   
 
@@ -71,15 +72,15 @@ while True:
         # Compute the perspective transform M
         frame = cv2.warpPerspective(frame, matrix, (width, height))
         #grayFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        #frame = cv2.GaussianBlur(frame, (5, 5), 0)
+        frame = cv2.GaussianBlur(frame, (5, 5), 0)
 
         # White ball detect
         # Convert to HSV color space
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
         # Define the range of white color in HSV
-        lower_white = np.array([0, 0, 150])
-        upper_white = np.array([179, 60, 255])
+        lower_white = np.array([100, 0, 100])
+        upper_white = np.array([179, 130, 255])
 
         # Threshold the image to get only white colors
         mask = cv2.inRange(hsv, lower_white, upper_white)
@@ -125,9 +126,9 @@ while True:
 
         mask = cv2.inRange(hsv, lower_white, upper_white)
         output = cv2.bitwise_and(whiteball_zone, whiteball_zone, mask=mask)
-
+        h, s, v1 = cv2.split(output)
         # Detect Edge of pool Cue
-        edges = cv2.Canny(output, 200, 255)
+        edges = cv2.Canny(v1, 200, 255)
         # Detect points that form a line
         lines = cv2.HoughLinesP(edges, 1, np.pi/180, 60,
                                 minLineLength=50, maxLineGap=120)

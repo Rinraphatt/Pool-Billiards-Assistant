@@ -2,8 +2,8 @@ import numpy as np
 import cv2
 
 vidcap = cv2.VideoCapture(0)
-width = 1895
-height = 890
+width = 1920
+height = 900
 vidcap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
 vidcap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
 black1 = cv2.imread('./pics/Black.jpg')
@@ -41,22 +41,16 @@ while True:
     height2, width2 = black1.shape[:2]
 
     height3, width3 = black2.shape[:2]
-    height4, width4 = black3.shape[:2]
-    print(width4)
     # Create a new image with a height equal to the sum of the heights of the two images, and a width equal to the maximum width of the two images
-    new_image = np.zeros((1080, 1920, 3), np.uint8)
+    new_image = np.zeros((height1+height2+height3, 1920, 3), np.uint8)
 
     # Paste the first image onto the new image, starting at the top left corner
     new_image[:height2, :width2] = black1
-    print(new_image.shape[:2])
-    new_image[height2:height2+height4, :width4] = black3
-    print(new_image.shape[:2])
     # Paste the second image onto the new image, starting below the first image
-    print(width4+width1)
-    new_image[height2:height2+height1, width4:width4+width1] = tansformed_frame
+    new_image[height2:height2+height1, :width1] = tansformed_frame
 
      # Paste the second image onto the new image, starting below the first image
-    new_image[height2+height4:height2+height4+height3, :width3] = black2
+    new_image[height2+height1:height2+height1+height3, :width3] = black2
 
     print(new_image.shape[:2])
     cv2.namedWindow('Test_Projector',cv2.WND_PROP_FULLSCREEN)
