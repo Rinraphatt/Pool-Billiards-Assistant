@@ -4,7 +4,8 @@ import numpy as np
 
 # cam = cv.VideoCapture(0)
 
-cam = cv.VideoCapture('../videos/new1080.mp4')
+# cam = cv.VideoCapture('../videos/new1080.mp4')
+cam = cv.VideoCapture('../videos/Level1_White1.mp4')
 
 
 bgFrame = None
@@ -12,7 +13,8 @@ bgFrame = None
 while True:
     ret, frame = cam.read()
 
-    if not ret: break
+    if not ret: 
+        break
 
     grayFrame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
     blurFrame = cv.GaussianBlur(grayFrame, (35,35), 0)

@@ -187,11 +187,11 @@ while True:
     # frame = img
     # showFrame = img2
 
-    frame = cv.imread('./pics/pool_table_ball_3.jpg')
+    frame = cv.imread('../pics/pool_table_ball_3.jpg')
     frame = cv.resize(frame, (1920, 1080))
     # print('frame', frame)
 
-    showFrame = cv.imread('./pics/pool_table_ball_3.jpg')
+    showFrame = cv.imread('../pics/pool_table_ball_3.jpg')
     showFrame = cv.resize(showFrame, (1920, 1080))
 
     # if not ret: break

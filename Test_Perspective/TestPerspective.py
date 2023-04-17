@@ -6,8 +6,8 @@ width = 1920
 height = 880
 vidcap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
 vidcap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
-black = cv2.imread('./pics/Black.jpg')
-mac = cv2.imread('./iMac - 18.png')
+black = cv2.imread('../pics/Black.jpg')
+mac = cv2.imread('../iMac - 18.png')
 
 while True:
     succuess, img = vidcap.read()

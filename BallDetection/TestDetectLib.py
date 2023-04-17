@@ -17,7 +17,7 @@ cropSize = (100, 100)
 width = 1920
 height = 1080
 # cap = cv2.VideoCapture(0)
-cap = cv2.VideoCapture('../videos/new1080.mp4')
+cap = cv2.VideoCapture('../videos/Level1_Blue1.mp4')
 # set frame rate to 30 fps
 fps = cap.get(cv2.CAP_PROP_FPS)
 print('fps = ', fps)
@@ -49,7 +49,7 @@ while True:
 
         res = BDLib.getCircles(perspectFrame)
 
-        BDLib.createGuideline(perspectFrame, res[0], res[1], outputDrawing)
+        # BDLib.createGuideline(perspectFrame, res[0], res[1], outputDrawing)
         
         updatedBall = []
 
