@@ -637,8 +637,22 @@ while True:
                     stage1State = 2  
             
 
-            cv2.putText(showFrame, f'Number : {stage1State}', (100, 100), cv2.FONT_HERSHEY_SIMPLEX, 
+            cv2.putText(showFrame, f'State : {stage1State}', (100, 100), cv2.FONT_HERSHEY_SIMPLEX, 
                             0.7, (255, 0, 255), 2, cv2.LINE_AA)
+            
+            if stage1State == 0 :
+                cv2.putText(showFrame, 'Please put Cue Ball and Black Ball(8)', (100, 200), cv2.FONT_HERSHEY_SIMPLEX, 
+                            1, (255, 0, 255), 3, cv2.LINE_AA)
+                cv2.putText(showFrame, 'at determined position.', (100, 250), cv2.FONT_HERSHEY_SIMPLEX, 
+                            1, (255, 0, 255), 3, cv2.LINE_AA)
+            elif stage1State == 1 :
+                cv2.putText(showFrame, 'Make cue ball hit black ball(8)', (100, 200), cv2.FONT_HERSHEY_SIMPLEX, 
+                            1, (255, 0, 255), 3, cv2.LINE_AA)
+                cv2.putText(showFrame, 'to sinks black ball(8) into the pocket.', (100, 250), cv2.FONT_HERSHEY_SIMPLEX, 
+                            1, (255, 0, 255), 3, cv2.LINE_AA)
+            elif stage1State == 2 :
+                cv2.putText(showFrame, 'Stage Success.', (100, 200), cv2.FONT_HERSHEY_SIMPLEX, 
+                            1, (255, 0, 255), 3, cv2.LINE_AA)
 
             cv2.imshow("CroppedShowFrame", showFrame)
             # cv2.imshow("CroppedBlurFrame", blurFrame)
