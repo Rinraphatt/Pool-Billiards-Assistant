@@ -361,10 +361,16 @@ while True:
                 x2 = int(x + 200)
                 y2 = int(y + 200)
                 # Cropped White Zone IMG
+                if x1 <= 0 :
+                    x1 = 1
+                if y1 <= 0 :
+                    y1 = 1
                 whiteball_zone = masked_img[y1:y2, x1:x2]
+                
 
                 # Cue Detection
                 # Convert the frame to HSV color space
+                print(whiteball_zone.shape[:2])
                 hsv = cv2.cvtColor(whiteball_zone, cv2.COLOR_BGR2HSV)
 
                 # Define a cue white color threshold
@@ -638,21 +644,21 @@ while True:
             
 
             cv2.putText(showFrame, f'State : {stage1State}', (100, 100), cv2.FONT_HERSHEY_SIMPLEX, 
-                            0.7, (255, 0, 255), 2, cv2.LINE_AA)
+                            0.7, (0, 0, 0), 2, cv2.LINE_AA)
             
             if stage1State == 0 :
                 cv2.putText(showFrame, 'Please put Cue Ball and Black Ball(8)', (100, 200), cv2.FONT_HERSHEY_SIMPLEX, 
-                            1, (255, 0, 255), 3, cv2.LINE_AA)
+                            2, (0, 0, 0), 3, cv2.LINE_AA)
                 cv2.putText(showFrame, 'at determined position.', (100, 250), cv2.FONT_HERSHEY_SIMPLEX, 
-                            1, (255, 0, 255), 3, cv2.LINE_AA)
+                            2, (0, 0, 0), 3, cv2.LINE_AA)
             elif stage1State == 1 :
                 cv2.putText(showFrame, 'Make cue ball hit black ball(8)', (100, 200), cv2.FONT_HERSHEY_SIMPLEX, 
-                            1, (255, 0, 255), 3, cv2.LINE_AA)
+                            2, (0, 0, 0), 3, cv2.LINE_AA)
                 cv2.putText(showFrame, 'to sinks black ball(8) into the pocket.', (100, 250), cv2.FONT_HERSHEY_SIMPLEX, 
-                            1, (255, 0, 255), 3, cv2.LINE_AA)
+                            2, (0, 0, 0), 3, cv2.LINE_AA)
             elif stage1State == 2 :
                 cv2.putText(showFrame, 'Stage Success.', (100, 200), cv2.FONT_HERSHEY_SIMPLEX, 
-                            1, (255, 0, 255), 3, cv2.LINE_AA)
+                            2, (0, 0, 0), 3, cv2.LINE_AA)
 
             cv2.imshow("CroppedShowFrame", showFrame)
             # cv2.imshow("CroppedBlurFrame", blurFrame)
