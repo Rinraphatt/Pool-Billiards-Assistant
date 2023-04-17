@@ -82,8 +82,8 @@ def findSlope(start_x,start_y,end_x,end_y,find=None,interest_value=None) :
 
 width = 1920
 height = 1080
-# cap = cv2.VideoCapture(0)
-cap = cv2.VideoCapture('../videos/Level1_White1.mp4')
+cap = cv2.VideoCapture(0)
+#cap = cv2.VideoCapture('../videos/Level1_White1.mp4')
 # set frame rate to 30 fps
 fps = cap.get(cv2.CAP_PROP_FPS)
 print('fps = ', fps)
@@ -157,10 +157,10 @@ while True:
 
     if frame_count % frame_interval == 0:
         # Perspective Transform
-        tl = (212 ,180)
-        bl = (159 ,923)
-        tr = (1696 ,178)
-        br = (1750 ,925)
+        tl = (251, 180)
+        bl = (179, 927)
+        tr = (1697, 197)
+        br = (1749, 942)
         cv2.circle(frame, tl, 3, (0, 0, 255), -1)
         cv2.circle(frame, bl, 3, (0, 0, 255), -1)
         cv2.circle(frame, tr, 3, (0, 0, 255), -1)
@@ -192,8 +192,9 @@ while True:
         if n_white_pix <= 100:
             print("IDLE")
             hsvFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-            lower_green = np.array([20,10,10])
-            upper_green = np.array([90,255,255])
+            lower_green = np.array([50,20,40])
+            upper_green = np.array([100,255,255])
+
 
             mask = cv2.inRange(hsvFrame, lower_green, upper_green)
             blurFrame = cv2.GaussianBlur(mask, (7,7), 0)
