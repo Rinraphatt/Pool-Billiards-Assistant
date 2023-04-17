@@ -97,27 +97,27 @@ cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
 frame_count = 0
 
 lowerColor = [
-    np.array([20,150,50]), # Yellow
-    np.array([110,100,50]), # Blue
-    np.array([0,150,155]), # Red
-    np.array([120,100,50]), # Purple
-    np.array([5,150,50]), # Orange
-    np.array([50,100,100]), # Green 
-    np.array([0,100,50]), # Crimson
-    np.array([50,50,5]), # Black
-    np.array([0,0,150]), # White
+    np.array([20,150,50]), #Yellow
+    np.array([110,200,125]), #Blue
+    np.array([0,150,155]), #Red
+    np.array([110,215,150]), #Purple
+    np.array([5,150,50]), #Orange
+    np.array([50,100,100]), #Green
+    np.array([0,100,50]), #Crimson
+    np.array([0,0,0]), #Black
+    np.array([100,0,100]), #White
 
 ]
 upperColor = [
     np.array([40,255,255]),
     np.array([130,255,255]),
     np.array([20,255,255]),
-    np.array([140,255,255]),
+    np.array([145,255,255]),
     np.array([25,255,255]),
     np.array([70,255,255]),
     np.array([20,255,155]),
-    np.array([179,255,75]),
-    np.array([179,80,255]),
+    np.array([179,255,40]),
+    np.array([179,130,255]),
 ]
 
 grayScaleValues = [
@@ -202,9 +202,9 @@ while True:
             # cropped_image = frame[148:932, 174:1742]
             # cropped_Blur_image = blurFrame[148:932, 174:1742]
             # cropped_Show_image = showFrame[148:932, 174:1742]
-
+            cv2.imshow("CroppedShowFrame1", mask)
             circles = cv2.HoughCircles(blurFrame, cv2.HOUGH_GRADIENT, 1.4, 30,
-                                        param1=100, param2=20, minRadius=25, maxRadius=30)
+                                        param1=100, param2=20, minRadius=30, maxRadius=40)
 
             circleZones = []
             circleZonesColor = []
