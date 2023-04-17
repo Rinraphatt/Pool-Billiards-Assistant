@@ -4,7 +4,7 @@ import time
 
 # Define the lower and upper bounds of the skin color in the HSV color space
 lower_skin = np.array([0, 21, 180], dtype=np.uint8)
-upper_skin = np.array([179, 50, 255], dtype=np.uint8)
+upper_skin = np.array([179, 250, 255], dtype=np.uint8)
 
 # Define the rectangular zone
 x1, y1 = 200, 200  # top-left corner
@@ -27,9 +27,11 @@ while True:
     mask = cv2.inRange(hsv, lower_skin, upper_skin)
 
     # Apply morphological operations to remove noise and fill holes in the mask
-    kernel = np.ones((5, 5), np.uint8)
+    kernel = np.ones((2, 2), np.uint8)
     mask = cv2.erode(mask, kernel, iterations=1)
     mask = cv2.dilate(mask, kernel, iterations=1)
+
+    cv2.imshow('Hand Zone1', mask)
 
     # Find the contours in the mask
     contours, hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
