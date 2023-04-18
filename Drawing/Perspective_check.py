@@ -1,9 +1,12 @@
 import cv2
 import numpy as np
 import time
+import math
 
 width = 1920
 height = 1080
+output_width = 1920
+output_height = 1080
 # Define the lower and upper bounds of the skin color in the HSV color space
 lower_skin = np.array([0, 21, 180], dtype=np.uint8)
 upper_skin = np.array([179, 250, 255], dtype=np.uint8)
@@ -23,6 +26,17 @@ bl = (179, 927)
 tr = (1697, 197)
 br = (1749, 942)
 
+def max_width_height(p1, p2, p3, p4):
+    s1 = abs(p1[0]-p3[0])
+    s2 = abs(p2[0]-p4[0])
+    s3 = abs(p1[1]-p2[1])
+    s4 = abs(p3[1]-p4[1])
+    width = max(s1,s2)
+    height = max(s3,s4)
+
+    return (width,height)
+
+
 def are_rectangles_overlapping(rect1, rect2):
     """
     Checks if two rectangles are overlapping
@@ -34,16 +48,17 @@ def are_rectangles_overlapping(rect1, rect2):
     if x1 + w1 < x2 or x2 + w2 < x1 or y1 + h1 < y2 or y2 + h2 < y1:
         return False
     return True
-
+print(max_width_height(tl,bl,tr,br))
+output_width , output_height = max_width_height(tl,bl,tr,br)
 while True:
     # Read a frame from the video feed
     ret, frame = cap.read()
     pts1 = np.float32([tl, bl, tr, br])
-    pts2 = np.float32([[0, 0], [0, height], [width, 0], [width, height]])
+    pts2 = np.float32([[0, 0], [0, output_height], [output_width, 0], [output_width, output_height]])
 
     matrix = cv2.getPerspectiveTransform(pts1, pts2)
     # Compute the perspective transform M
-    frame = cv2.warpPerspective(frame, matrix, (width, height))
+    frame = cv2.warpPerspective(frame, matrix, (output_width ,output_height))
     # Convert the frame to the HSV color space
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
