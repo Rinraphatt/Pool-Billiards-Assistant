@@ -74,7 +74,8 @@ ball_move = False
 # cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
-
+mtx = np.loadtxt('./arUco/calib_data/camera_matrix.txt')
+dist = np.loadtxt('./arUco/calib_data/dist_coeffs.txt')
 # start processing loop
 frame_count = 0
 
@@ -120,7 +121,9 @@ updatedBall = []
 
 while True:
     ret, frame = cap.read()
-    ret2, frame2 = cap.read()
+    
+    frame = cv2.undistort(frame, mtx, dist)
+    frame2 = frame.copy()
     if not ret:
         print("Break")
         break
@@ -129,10 +132,10 @@ while True:
     black = np.zeros((1080, 1920, 3), np.uint8)
     if frame_count % frame_interval == 0:
         # Perspective Transform
-        tl = (251, 180)
-        bl = (179, 927)
-        tr = (1697, 197)
-        br = (1749, 942)
+        tl = (252 ,21)
+        bl = (174 ,906)
+        tr = (1701 ,31)
+        br = (1764 ,933)
         cv2.circle(frame, tl, 3, (0, 0, 255), -1)
         cv2.circle(frame, bl, 3, (0, 0, 255), -1)
         cv2.circle(frame, tr, 3, (0, 0, 255), -1)
@@ -269,6 +272,7 @@ while True:
 
             x = circles[0][whitePos][0]
             y = circles[0][whitePos][1]
+
             center = (int(x), int(y))
             mask = np.zeros_like(frame)
             cv2.circle(mask, center, 200, (255, 255, 255), -1, cv2.LINE_AA)

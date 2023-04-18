@@ -17,6 +17,10 @@ while True:
     succuess, img = vidcap.read()
     frame = img
     frame = cv2.undistort(frame, mtx, dist)
+    # tl = (252 ,21)
+    # bl = (174 ,906)
+    # tr = (1695 ,31)
+    # br = (1748 ,933)
     tl = (252 ,21)
     bl = (174 ,906)
     tr = (1701 ,31)
@@ -35,7 +39,7 @@ while True:
     matrix = cv2.getPerspectiveTransform(pts1, pts2)
     # Compute the perspective transform M
     tansformed_frame = cv2.warpPerspective(frame, matrix, (width, height))
-    tansformed_frame[200:1080,0:1920] = mac
+    #tansformed_frame[200:1080,0:1920] = mac
   
     cv2.namedWindow('Test_Perspectice',cv2.WND_PROP_FULLSCREEN)
     cv2.setWindowProperty('Test_Perspectice', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)

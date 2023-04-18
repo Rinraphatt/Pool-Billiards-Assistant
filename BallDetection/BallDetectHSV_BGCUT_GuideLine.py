@@ -648,9 +648,9 @@ while True:
                     whiteCoordPos = updatedBall.index('White')
                     BlackCoordPos = updatedBall.index('Black')
                     if (updatedBallTablePos[whiteCoordPos][0] >= 880 and updatedBallTablePos[whiteCoordPos][0] <= 950 and 
-                        updatedBallTablePos[whiteCoordPos][1] >= 630 and updatedBallTablePos[whiteCoordPos][1] <= 700 and
+                        updatedBallTablePos[whiteCoordPos][1] >= 650 and updatedBallTablePos[whiteCoordPos][1] <= 720 and
                         updatedBallTablePos[BlackCoordPos][0] >= 880 and updatedBallTablePos[BlackCoordPos][0] <= 950 and 
-                        updatedBallTablePos[BlackCoordPos][1] >= 285 and updatedBallTablePos[BlackCoordPos][1] <= 350) :
+                        updatedBallTablePos[BlackCoordPos][1] >= 280 and updatedBallTablePos[BlackCoordPos][1] <= 350) :
                         stageState = 1
             if stageState == 1 :
                 if 'Black' not in updatedBall : 
