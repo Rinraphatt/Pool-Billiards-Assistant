@@ -302,9 +302,9 @@ while True:
                             0.7, (255, 0, 255), 2, cv2.LINE_AA)
                         cv2.putText(showFrame, f'Color : {similarColor}', (circles[0][i][0], circles[0][i][1]-50), cv2.FONT_HERSHEY_SIMPLEX, 
                             0.7, (255, 0, 255), 2, cv2.LINE_AA)
-                        cv2.putText(showFrame, f'x : {circles[0][i][0]}', (circles[0][i][0], circles[0][i][1]-30), cv2.FONT_HERSHEY_SIMPLEX, 
+                        cv2.putText(showFrame, f'X : {circles[0][i][0]}', (circles[0][i][0], circles[0][i][1]-30), cv2.FONT_HERSHEY_SIMPLEX, 
                             0.7, (255, 0, 255), 2, cv2.LINE_AA)
-                        cv2.putText(showFrame, f'y : {circles[0][i][1]}', (circles[0][i][0], circles[0][i][1]-10), cv2.FONT_HERSHEY_SIMPLEX, 
+                        cv2.putText(showFrame, f'Y : {circles[0][i][1]}', (circles[0][i][0], circles[0][i][1]-10), cv2.FONT_HERSHEY_SIMPLEX, 
                             0.7, (255, 0, 255), 2, cv2.LINE_AA)
                         # if (maxSameColorPos >= 0 and maxSameColorPos <= 6):
                         #         cv2.putText(showFrame, f'Type : {ballType}', (circles[0][i][0], circles[0][i][1]-30), cv2.FONT_HERSHEY_SIMPLEX, 
@@ -642,12 +642,18 @@ while True:
             detectedBallTablePos = []
 
             # State Checking Stage1
-            if stageState == 0 :
+            if stage1State == 0 :
                 if 'White' in updatedBall and 'Black' in updatedBall :
-                    stageState = 1
-            if stageState == 1 :
+                    whiteCoordPos = updatedBall.index('White')
+                    BlackCoordPos = updatedBall.index('Black')
+                    if (updatedBallTablePos[whiteCoordPos][0] >= 880 and updatedBallTablePos[whiteCoordPos][0] <= 950 and 
+                        updatedBallTablePos[whiteCoordPos][1] >= 610 and updatedBallTablePos[whiteCoordPos][1] <= 680 and
+                        updatedBallTablePos[BlackCoordPos][0] >= 880 and updatedBallTablePos[BlackCoordPos][0] <= 950 and 
+                        updatedBallTablePos[BlackCoordPos][1] >= 265 and updatedBallTablePos[BlackCoordPos][1] <= 335) :
+                        stage1State = 1
+            if stage1State == 1 :
                 if 'Black' not in updatedBall : 
-                    stageState = 2  
+                    stage1State = 2  
 
             # State Checking Stage2
             # if stageState == 0 :
