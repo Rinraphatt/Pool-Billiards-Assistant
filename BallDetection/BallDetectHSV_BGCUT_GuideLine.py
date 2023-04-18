@@ -640,7 +640,7 @@ while True:
             # checkWinCondition(updatedBall)
             detectedBall = []
             detectedBallPos = []
-            detectedBallTablePos = []
+            detectedBallTablePos = [] 
 
             # State Checking Stage1
             if stageState == 0 :
@@ -648,7 +648,7 @@ while True:
                     whiteCoordPos = updatedBall.index('White')
                     BlackCoordPos = updatedBall.index('Black')
                     if (updatedBallTablePos[whiteCoordPos][0] >= 880 and updatedBallTablePos[whiteCoordPos][0] <= 950 and 
-                        updatedBallTablePos[whiteCoordPos][1] >= 610 and updatedBallTablePos[whiteCoordPos][1] <= 680 and
+                        updatedBallTablePos[whiteCoordPos][1] >= 650 and updatedBallTablePos[whiteCoordPos][1] <= 720 and
                         updatedBallTablePos[BlackCoordPos][0] >= 880 and updatedBallTablePos[BlackCoordPos][0] <= 950 and 
                         updatedBallTablePos[BlackCoordPos][1] >= 265 and updatedBallTablePos[BlackCoordPos][1] <= 335) :
                         stageState = 1
