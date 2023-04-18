@@ -643,14 +643,28 @@ while True:
             #         stage1State = 2  
 
             # State Checking Stage2
+            # if stageState == 0 :
+            #     if 'White' in updatedBall and 'Black' in updatedBall :
+            #         stageState = 1
+            # if stageState == 1 :
+            #     if 'Black' not in updatedBall : 
+            #         stageState = 2  
+            # if stageState == 2 :
+            #     if 'White' in updatedBall and 'Black' in updatedBall :
+            #         stageState = 3
+            # if stageState == 3 :
+            #     if 'Black' not in updatedBall : 
+            #         stageState = 4  
+
+            # State Checking Stage3
             if stageState == 0 :
-                if 'White' in updatedBall and 'Black' in updatedBall :
+                if 'White' in updatedBall and 'Black' in updatedBall and 'Orange' in updatedBall:
                     stageState = 1
             if stageState == 1 :
                 if 'Black' not in updatedBall : 
                     stageState = 2  
             if stageState == 2 :
-                if 'White' in updatedBall and 'Black' in updatedBall :
+                if 'White' in updatedBall and 'Black' in updatedBall and 'Orange' in updatedBall:
                     stageState = 3
             if stageState == 3 :
                 if 'Black' not in updatedBall : 
@@ -675,28 +689,63 @@ while True:
             #     cv2.putText(showFrame, 'Stage Success.', (100, 200), cv2.FONT_HERSHEY_SIMPLEX, 
             #                 2, (0, 0, 0), 3, cv2.LINE_AA)
 
-            # Text For Stage 1
+            # Text For Stage 2
+            # if stageState == 0 :
+            #     cv2.putText(showFrame, 'Please put Cue Ball and Black Ball(8)', (100, 200), cv2.FONT_HERSHEY_SIMPLEX, 
+            #                 2, (0, 0, 0), 3, cv2.LINE_AA)
+            #     cv2.putText(showFrame, 'at determined position.', (100, 250), cv2.FONT_HERSHEY_SIMPLEX, 
+            #                 2, (0, 0, 0), 3, cv2.LINE_AA)
+            # elif stageState == 1 :
+            #     cv2.putText(showFrame, 'Make cue ball hit black ball(8)', (100, 200), cv2.FONT_HERSHEY_SIMPLEX, 
+            #                 2, (0, 0, 0), 3, cv2.LINE_AA)
+            #     cv2.putText(showFrame, 'to sinks black ball(8) into the pocket.', (100, 250), cv2.FONT_HERSHEY_SIMPLEX, 
+            #                 2, (0, 0, 0), 3, cv2.LINE_AA)
+            # elif stageState == 2 :
+            #     cv2.putText(showFrame, 'Nice Shot. Let try again.', (100, 200), cv2.FONT_HERSHEY_SIMPLEX, 
+            #                 2, (0, 0, 0), 3, cv2.LINE_AA)
+            #     cv2.putText(showFrame, 'Please put Cue Ball and Black Ball(8)', (100, 250), cv2.FONT_HERSHEY_SIMPLEX, 
+            #                 2, (0, 0, 0), 3, cv2.LINE_AA)
+            #     cv2.putText(showFrame, 'at determined position.', (100, 300), cv2.FONT_HERSHEY_SIMPLEX, 
+            #                 2, (0, 0, 0), 3, cv2.LINE_AA)
+            # elif stageState == 3 :
+            #     cv2.putText(showFrame, 'Make cue ball hit black ball(8)', (100, 200), cv2.FONT_HERSHEY_SIMPLEX, 
+            #                 2, (0, 0, 0), 3, cv2.LINE_AA)
+            #     cv2.putText(showFrame, 'to sinks black ball(8) into the pocket.', (100, 250), cv2.FONT_HERSHEY_SIMPLEX, 
+            #                 2, (0, 0, 0), 3, cv2.LINE_AA)
+            # elif stageState == 4 :
+            #     cv2.putText(showFrame, 'Stage Success.', (100, 200), cv2.FONT_HERSHEY_SIMPLEX, 
+            #                 2, (0, 0, 0), 3, cv2.LINE_AA)
+
+            # Text For Stage 3
             if stageState == 0 :
-                cv2.putText(showFrame, 'Please put Cue Ball and Black Ball(8)', (100, 200), cv2.FONT_HERSHEY_SIMPLEX, 
+                cv2.putText(showFrame, 'Please put Cue Ball, Black Ball(8)', (100, 200), cv2.FONT_HERSHEY_SIMPLEX, 
                             2, (0, 0, 0), 3, cv2.LINE_AA)
-                cv2.putText(showFrame, 'at determined position.', (100, 250), cv2.FONT_HERSHEY_SIMPLEX, 
-                            2, (0, 0, 0), 3, cv2.LINE_AA)
-            elif stageState == 1 :
-                cv2.putText(showFrame, 'Make cue ball hit black ball(8)', (100, 200), cv2.FONT_HERSHEY_SIMPLEX, 
-                            2, (0, 0, 0), 3, cv2.LINE_AA)
-                cv2.putText(showFrame, 'to sinks black ball(8) into the pocket.', (100, 250), cv2.FONT_HERSHEY_SIMPLEX, 
-                            2, (0, 0, 0), 3, cv2.LINE_AA)
-            elif stageState == 2 :
-                cv2.putText(showFrame, 'Nice Shot. Let try again.', (100, 200), cv2.FONT_HERSHEY_SIMPLEX, 
-                            2, (0, 0, 0), 3, cv2.LINE_AA)
-                cv2.putText(showFrame, 'Please put Cue Ball and Black Ball(8)', (100, 250), cv2.FONT_HERSHEY_SIMPLEX, 
+                cv2.putText(showFrame, 'and Orange Ball(5)', (100, 250), cv2.FONT_HERSHEY_SIMPLEX, 
                             2, (0, 0, 0), 3, cv2.LINE_AA)
                 cv2.putText(showFrame, 'at determined position.', (100, 300), cv2.FONT_HERSHEY_SIMPLEX, 
                             2, (0, 0, 0), 3, cv2.LINE_AA)
-            elif stageState == 3 :
-                cv2.putText(showFrame, 'Make cue ball hit black ball(8)', (100, 200), cv2.FONT_HERSHEY_SIMPLEX, 
+            elif stageState == 1 :
+                cv2.putText(showFrame, 'ํYour objective is to sinks', (100, 200), cv2.FONT_HERSHEY_SIMPLEX, 
                             2, (0, 0, 0), 3, cv2.LINE_AA)
-                cv2.putText(showFrame, 'to sinks black ball(8) into the pocket.', (100, 250), cv2.FONT_HERSHEY_SIMPLEX, 
+                cv2.putText(showFrame, 'black ball(8) into the pocket', (100, 250), cv2.FONT_HERSHEY_SIMPLEX, 
+                            2, (0, 0, 0), 3, cv2.LINE_AA)
+                cv2.putText(showFrame, 'and avoid to collide with', (100, 300), cv2.FONT_HERSHEY_SIMPLEX, 
+                            2, (0, 0, 0), 3, cv2.LINE_AA)
+                cv2.putText(showFrame, 'orange ball(5).', (100, 350), cv2.FONT_HERSHEY_SIMPLEX, 
+                            2, (0, 0, 0), 3, cv2.LINE_AA)
+            elif stageState == 2 :
+                cv2.putText(showFrame, 'Nice Shot. Then..', (100, 200), cv2.FONT_HERSHEY_SIMPLEX, 
+                            2, (0, 0, 0), 3, cv2.LINE_AA)
+                cv2.putText(showFrame, 'Please put Cue Ball and Black Ball(8)', (100, 250), cv2.FONT_HERSHEY_SIMPLEX, 
+                            2, (0, 0, 0), 3, cv2.LINE_AA)
+                cv2.putText(showFrame, 'and Orange Ball(5)', (100, 300), cv2.FONT_HERSHEY_SIMPLEX, 
+                            2, (0, 0, 0), 3, cv2.LINE_AA)
+                cv2.putText(showFrame, 'at determined position.', (100, 350), cv2.FONT_HERSHEY_SIMPLEX, 
+                            2, (0, 0, 0), 3, cv2.LINE_AA)
+            elif stageState == 3 :
+                cv2.putText(showFrame, 'Same objective.', (100, 200), cv2.FONT_HERSHEY_SIMPLEX, 
+                            2, (0, 0, 0), 3, cv2.LINE_AA)
+                cv2.putText(showFrame, 'Let\'s go.', (100, 250), cv2.FONT_HERSHEY_SIMPLEX, 
                             2, (0, 0, 0), 3, cv2.LINE_AA)
             elif stageState == 4 :
                 cv2.putText(showFrame, 'Stage Success.', (100, 200), cv2.FONT_HERSHEY_SIMPLEX, 
