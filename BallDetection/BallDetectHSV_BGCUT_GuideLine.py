@@ -642,18 +642,18 @@ while True:
             detectedBallTablePos = []
 
             # State Checking Stage1
-            if stage1State == 0 :
+            if stageState == 0 :
                 if 'White' in updatedBall and 'Black' in updatedBall :
                     whiteCoordPos = updatedBall.index('White')
                     BlackCoordPos = updatedBall.index('Black')
                     if (updatedBallTablePos[whiteCoordPos][0] >= 880 and updatedBallTablePos[whiteCoordPos][0] <= 950 and 
-                        updatedBallTablePos[whiteCoordPos][1] >= 610 and updatedBallTablePos[whiteCoordPos][1] <= 680 and
+                        updatedBallTablePos[whiteCoordPos][1] >= 630 and updatedBallTablePos[whiteCoordPos][1] <= 700 and
                         updatedBallTablePos[BlackCoordPos][0] >= 880 and updatedBallTablePos[BlackCoordPos][0] <= 950 and 
-                        updatedBallTablePos[BlackCoordPos][1] >= 265 and updatedBallTablePos[BlackCoordPos][1] <= 335) :
-                        stage1State = 1
-            if stage1State == 1 :
+                        updatedBallTablePos[BlackCoordPos][1] >= 285 and updatedBallTablePos[BlackCoordPos][1] <= 350) :
+                        stageState = 1
+            if stageState == 1 :
                 if 'Black' not in updatedBall : 
-                    stage1State = 2  
+                    stageState = 2  
 
             # State Checking Stage2
             # if stageState == 0 :
