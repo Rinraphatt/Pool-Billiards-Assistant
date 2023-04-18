@@ -28,8 +28,8 @@ cropSize = (100, 100)
 # cv.namedWindow("Python Webcam Screenshot App")
 
 outputDrawing = np.zeros((784,1568,3), np.uint8)
-mtx = np.loadtxt('./arUco/calib_data/camera_matrix.txt')
-dist = np.loadtxt('./arUco/calib_data/dist_coeffs.txt')
+mtx = np.loadtxt('../arUco/calib_data/camera_matrix.txt')
+dist = np.loadtxt('../arUco/calib_data/dist_coeffs.txt')
 def loadSetting():
     print("loadSetting")
 
@@ -83,8 +83,8 @@ def findSlope(start_x,start_y,end_x,end_y,find=None,interest_value=None) :
 
 width = 1920
 height = 1080
-cap = cv2.VideoCapture(0)
-#cap = cv2.VideoCapture('../videos/Level1_White1.mp4')
+# cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture('../videos/Level1_White1.mp4')
 # set frame rate to 30 fps
 fps = cap.get(cv2.CAP_PROP_FPS)
 print('fps = ', fps)
@@ -336,7 +336,7 @@ while True:
                     ballProbs[updatedBallPos[k]] += 1
                     if ballProbs[updatedBallPos[k]] >= 10:
                         ballProbs[updatedBallPos[k]] = 10
-                        updatedBallTablePos[k] = detectedBallTablePos[k] 
+                        updatedBallTablePos[k] = detectedBallTablePos[detectedBall.index(updatedBall[k])] 
 
             print('DetectedBall = ', detectedBall)
             print('DetectedBallPos = ', detectedBallPos)
@@ -643,7 +643,7 @@ while True:
             detectedBallTablePos = []
 
             # State Checking Stage1
-            if stage1State == 0 :
+            if stageState == 0 :
                 if 'White' in updatedBall and 'Black' in updatedBall :
                     whiteCoordPos = updatedBall.index('White')
                     BlackCoordPos = updatedBall.index('Black')
@@ -651,10 +651,10 @@ while True:
                         updatedBallTablePos[whiteCoordPos][1] >= 610 and updatedBallTablePos[whiteCoordPos][1] <= 680 and
                         updatedBallTablePos[BlackCoordPos][0] >= 880 and updatedBallTablePos[BlackCoordPos][0] <= 950 and 
                         updatedBallTablePos[BlackCoordPos][1] >= 265 and updatedBallTablePos[BlackCoordPos][1] <= 335) :
-                        stage1State = 1
-            if stage1State == 1 :
+                        stageState = 1
+            if stageState == 1 :
                 if 'Black' not in updatedBall : 
-                    stage1State = 2  
+                    stageState = 2  
 
             # State Checking Stage2
             # if stageState == 0 :
