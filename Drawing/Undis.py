@@ -10,7 +10,7 @@ dist_coef = calib_data["distCoef"]
 r_vectors = calib_data["rVector"]
 t_vectors = calib_data["tVector"]
 # Load the image
-img = cv2.imread('./pics/pic10.jpg')
+img = cv2.imread('./pics/pic12.jpg')
 img = cv2.resize(img, (1920, 1080))
 img = cv2.undistort(img, cam_mat, dist_coef)
 # Define a mouse callback function

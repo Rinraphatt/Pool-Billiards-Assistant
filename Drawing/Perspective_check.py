@@ -48,6 +48,7 @@ def are_rectangles_overlapping(rect1, rect2):
     if x1 + w1 < x2 or x2 + w2 < x1 or y1 + h1 < y2 or y2 + h2 < y1:
         return False
     return True
+    
 print(max_width_height(tl,bl,tr,br))
 output_width , output_height = max_width_height(tl,bl,tr,br)
 while True:
