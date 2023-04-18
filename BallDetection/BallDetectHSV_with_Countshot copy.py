@@ -7,25 +7,6 @@ import cv2
 import numpy as np
 import math
 
-cameraHeight=1080 
-cameraWidth=1920
-
-# cam = cv.VideoCapture('../Test_Perspective/newVid.mp4')
-
-
-# cam2 = cv.VideoCapture(0, cv.CAP_DSHOW)
-# cam2.set(cv.CAP_PROP_FRAME_HEIGHT, cameraHeight)
-# cam2.set(cv.CAP_PROP_FRAME_WIDTH, cameraWidth)
-
-# success, img = cam.read()
-# success2, img2 = cam2.read()
-
-prevCircle = None
-cropSize = (100, 100)
-
-
-
-outputDrawing = np.zeros((784,1568,3), np.uint8)
 
 def loadSetting():
     print("loadSetting")
@@ -86,7 +67,7 @@ cap = cv2.VideoCapture(0)
 fps = cap.get(cv2.CAP_PROP_FPS)
 print('fps = ', fps)
 # frame_interval = int(fps / 5)
-frame_interval = 1 #HAHAHA
+frame_interval = 1 
 avg_center_x = []
 count_shot = 0
 ball_move = False
