@@ -2,7 +2,10 @@
 import cv2 as cv
 import numpy as np
 
-cam = cv.VideoCapture(0)
+# cam = cv.VideoCapture(0)
+
+# cam = cv.VideoCapture('../videos/new1080.mp4')
+cam = cv.VideoCapture('../videos/Level1_White1.mp4')
 
 
 bgFrame = None
@@ -10,7 +13,8 @@ bgFrame = None
 while True:
     ret, frame = cam.read()
 
-    if not ret: break
+    if not ret: 
+        break
 
     grayFrame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
     blurFrame = cv.GaussianBlur(grayFrame, (35,35), 0)
@@ -20,6 +24,14 @@ while True:
 
     frameDelta = cv.absdiff(bgFrame, blurFrame)
     _,thresh = cv.threshold(frameDelta, 10, 255, cv.THRESH_BINARY)
+
+    n_white_pix = np.sum(thresh == 255)
+    # print('Number of white pixels:', n_white_pix)
+
+    if n_white_pix <= 100:
+        print("IDLE")
+    else:
+        print("MOVING")
 
     # thresh = cv.dilate(thresh, None, iterations = 6)
 

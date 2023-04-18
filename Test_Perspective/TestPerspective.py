@@ -2,14 +2,12 @@ import numpy as np
 import cv2
 
 vidcap = cv2.VideoCapture(0)
-width = 1895
-height = 890
-vidcap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
-vidcap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
-black1 = cv2.imread('./pics/Black.jpg')
-black2 = cv2.imread('./pics/black2.jpg')
-black3 = cv2.imread('./pics/black_side2.jpg')
-mac = cv2.imread('./iMac - 18.png')
+width = 1920
+height = 880
+vidcap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
+vidcap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
+black = cv2.imread('../pics/Black.jpg')
+mac = cv2.imread('../iMac - 18.png')
 
 while True:
     succuess, img = vidcap.read()
