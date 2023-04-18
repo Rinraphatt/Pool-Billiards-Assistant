@@ -79,6 +79,9 @@ dist = np.loadtxt('./arUco/calib_data/dist_coeffs.txt')
 # start processing loop
 frame_count = 0
 
+roi_x, roi_y = 0, 200
+roi_w, roi_h = 1920, 880
+
 lowerColor = [
     np.array([20,150,50]), #Yellow
     np.array([110,100,50]), #Blue
@@ -124,6 +127,7 @@ while True:
     
     frame = cv2.undistort(frame, mtx, dist)
     frame2 = frame.copy()
+    original_frame = frame.copy()
     if not ret:
         print("Break")
         break
@@ -136,33 +140,32 @@ while True:
         bl = (174 ,906)
         tr = (1701 ,31)
         br = (1764 ,933)
-        cv2.circle(frame, tl, 3, (0, 0, 255), -1)
-        cv2.circle(frame, bl, 3, (0, 0, 255), -1)
-        cv2.circle(frame, tr, 3, (0, 0, 255), -1)
-        cv2.circle(frame, br, 3, (0, 0, 255), -1)
-        cv2.line(frame, tl, bl, (0, 255, 0), 2)
-        cv2.line(frame, bl, br, (0, 255, 0), 2)
-        cv2.line(frame, br, tr, (0, 255, 0), 2)
-        cv2.line(frame, tl, tr, (0, 255, 0), 2)
+        # cv2.circle(frame, tl, 3, (0, 0, 255), -1)
+        # cv2.circle(frame, bl, 3, (0, 0, 255), -1)
+        # cv2.circle(frame, tr, 3, (0, 0, 255), -1)
+        # cv2.circle(frame, br, 3, (0, 0, 255), -1)
+        # cv2.line(frame, tl, bl, (0, 255, 0), 2)
+        # cv2.line(frame, bl, br, (0, 255, 0), 2)
+        # cv2.line(frame, br, tr, (0, 255, 0), 2)
+        # cv2.line(frame, tl, tr, (0, 255, 0), 2)
         pts1 = np.float32([tl, bl, tr, br])
         pts2 = np.float32([[0, 0], [0, height], [width, 0], [width, height]])
 
-        matrix = cv2.getPerspectiveTransform(pts1, pts2)
+        M = cv2.getPerspectiveTransform(pts1, pts2)
+        M_inv = cv2.invert(M)[1]
         # Compute the perspective transform M
-        frame = cv2.warpPerspective(frame, matrix, (width, height))
-        showFrame = cv2.warpPerspective(frame2, matrix, (width, height))
-        # grayFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        blurFrame = cv2.GaussianBlur(frame, (5, 5), 0)
+        frame = cv2.warpPerspective(frame, M, (width, height))
+        frame = frame[200:1080,:1920]
+        showFrame = cv2.warpPerspective(frame2, M, (width, height))
+        showFrame = showFrame[200:1080,:1920]
 
+
+        blurFrame = cv2.GaussianBlur(frame, (5, 5), 0)
         hsvFrame = cv2.cvtColor(blurFrame, cv2.COLOR_BGR2HSV)
         lower_green = np.array([50,20,40])
         upper_green = np.array([100,255,255])
 
         mask = cv2.inRange(hsvFrame, lower_green, upper_green)
-
-        # cropped_image = frame[148:932, 174:1742]
-        # cropped_Blur_image = blurFrame[148:932, 174:1742]
-        # cropped_Show_image = showFrame[148:932, 174:1742]
 
         circles = cv2.HoughCircles(mask, cv2.HOUGH_GRADIENT, 1.4, 30,
                                     param1=100, param2=15, minRadius=30, maxRadius=40)
@@ -274,6 +277,20 @@ while True:
             y = circles[0][whitePos][1]
 
             center = (int(x), int(y))
+            print("From Crop : ")
+            print(center)
+            
+            circle_pos_on_img = (int(roi_x + int(x)), int(roi_y + int(y))) # Add ROI position to circle position
+            print("Large Crop Img : ")
+            print(circle_pos_on_img)
+            homogeneous_coord = np.array([circle_pos_on_img[0], circle_pos_on_img[1], 1]).reshape(-1, 1)
+            original_coord = np.matmul(M_inv, homogeneous_coord)
+            original_coord /= original_coord[2]
+            # The resulting original coordinate is (x_o, y_o)
+            x_o = original_coord[0][0]
+            y_o = original_coord[1][0]
+            print(x_o,y_o)
+
             mask = np.zeros_like(frame)
             cv2.circle(mask, center, 200, (255, 255, 255), -1, cv2.LINE_AA)
             # Apply the mask to the original image using bitwise operations
@@ -296,16 +313,16 @@ while True:
             #print(np.mean(avg_center_x))
 
             # Crop the circular region of the pool ball
-            x1 = int(x - 200)
-            y1 = int(y - 200)
-            x2 = int(x + 200)
-            y2 = int(y + 200)
+            x1 = int(x_o - 200)
+            y1 = int(y_o - 200)
+            x2 = int(x_o + 200)
+            y2 = int(y_o + 200)
             if x1 <0  :
                 x1 = 1
             if y1 < 0 :
                 y1 = 1
             # Cropped White Zone IMG
-            whiteball_zone = masked_img[y1:y2, x1:x2]
+            whiteball_zone = original_frame[y1:y2, x1:x2]
 
             # Cue Detection
             # Convert the frame to HSV color space
