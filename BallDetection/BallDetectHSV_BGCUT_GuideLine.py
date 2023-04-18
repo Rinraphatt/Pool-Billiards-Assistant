@@ -28,7 +28,8 @@ cropSize = (100, 100)
 # cv.namedWindow("Python Webcam Screenshot App")
 
 outputDrawing = np.zeros((784,1568,3), np.uint8)
-
+mtx = np.loadtxt('./arUco/calib_data/camera_matrix.txt')
+dist = np.loadtxt('./arUco/calib_data/dist_coeffs.txt')
 def loadSetting():
     print("loadSetting")
 
@@ -82,8 +83,8 @@ def findSlope(start_x,start_y,end_x,end_y,find=None,interest_value=None) :
 
 width = 1920
 height = 1080
-# cap = cv2.VideoCapture(0)
-cap = cv2.VideoCapture('../videos/Level1_White1.mp4')
+cap = cv2.VideoCapture(0)
+#cap = cv2.VideoCapture('../videos/Level1_White1.mp4')
 # set frame rate to 30 fps
 fps = cap.get(cv2.CAP_PROP_FPS)
 print('fps = ', fps)
@@ -149,6 +150,7 @@ stageState = 0
 while True:
     ret, frame = cap.read()
     ret2, frame2 = cap.read()
+    frame = cv2.undistort(frame, mtx, dist)
     if not ret:
         print("Break")
         break
@@ -157,10 +159,10 @@ while True:
 
     if frame_count % frame_interval == 0:
         # Perspective Transform
-        tl = (251, 180)
-        bl = (179, 927)
-        tr = (1697, 197)
-        br = (1749, 942)
+        tl = (252 ,21)
+        bl = (174 ,906)
+        tr = (1701 ,31)
+        br = (1764 ,933)
         cv2.circle(frame, tl, 3, (0, 0, 255), -1)
         cv2.circle(frame, bl, 3, (0, 0, 255), -1)
         cv2.circle(frame, tr, 3, (0, 0, 255), -1)
@@ -175,8 +177,9 @@ while True:
         matrix = cv2.getPerspectiveTransform(pts1, pts2)
         # Compute the perspective transform M
         frame = cv2.warpPerspective(frame, matrix, (width, height))
+        frame = frame[200:1080,0:1920]
         showFrame = cv2.warpPerspective(frame2, matrix, (width, height))
-
+        showFrame = showFrame[200:1080,0:1920]
         # Check if there are motion or not
         motionGrayFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         motionBlurFrame = cv2.GaussianBlur(motionGrayFrame, (35,35), 0)
@@ -299,9 +302,13 @@ while True:
                             0.7, (255, 0, 255), 2, cv2.LINE_AA)
                         cv2.putText(showFrame, f'Color : {similarColor}', (circles[0][i][0], circles[0][i][1]-50), cv2.FONT_HERSHEY_SIMPLEX, 
                             0.7, (255, 0, 255), 2, cv2.LINE_AA)
-                        if (maxSameColorPos >= 0 and maxSameColorPos <= 6):
-                                cv2.putText(showFrame, f'Type : {ballType}', (circles[0][i][0], circles[0][i][1]-30), cv2.FONT_HERSHEY_SIMPLEX, 
-                                    0.7, (255, 0, 255), 2, cv2.LINE_AA)
+                        cv2.putText(showFrame, f'x : {circles[0][i][0]}', (circles[0][i][0], circles[0][i][1]-30), cv2.FONT_HERSHEY_SIMPLEX, 
+                            0.7, (255, 0, 255), 2, cv2.LINE_AA)
+                        cv2.putText(showFrame, f'y : {circles[0][i][1]}', (circles[0][i][0], circles[0][i][1]-10), cv2.FONT_HERSHEY_SIMPLEX, 
+                            0.7, (255, 0, 255), 2, cv2.LINE_AA)
+                        # if (maxSameColorPos >= 0 and maxSameColorPos <= 6):
+                        #         cv2.putText(showFrame, f'Type : {ballType}', (circles[0][i][0], circles[0][i][1]-30), cv2.FONT_HERSHEY_SIMPLEX, 
+                        #             0.7, (255, 0, 255), 2, cv2.LINE_AA)
 
             for k in range(len(detectedBallPos)) :
                 if detectedBall[k] not in updatedBall:
@@ -635,12 +642,12 @@ while True:
             detectedBallTablePos = []
 
             # State Checking Stage1
-            # if stage1State == 0 :
-            #     if 'White' in updatedBall and 'Black' in updatedBall :
-            #         stage1State = 1
-            # if stage1State == 1 :
-            #     if 'Black' not in updatedBall : 
-            #         stage1State = 2  
+            if stageState == 0 :
+                if 'White' in updatedBall and 'Black' in updatedBall :
+                    stageState = 1
+            if stageState == 1 :
+                if 'Black' not in updatedBall : 
+                    stageState = 2  
 
             # State Checking Stage2
             # if stageState == 0 :
@@ -657,37 +664,37 @@ while True:
             #         stageState = 4  
 
             # State Checking Stage3
-            if stageState == 0 :
-                if 'White' in updatedBall and 'Black' in updatedBall and 'Orange' in updatedBall:
-                    stageState = 1
-            if stageState == 1 :
-                if 'Black' not in updatedBall : 
-                    stageState = 2  
-            if stageState == 2 :
-                if 'White' in updatedBall and 'Black' in updatedBall and 'Orange' in updatedBall:
-                    stageState = 3
-            if stageState == 3 :
-                if 'Black' not in updatedBall : 
-                    stageState = 4  
+            # if stageState == 0 :
+            #     if 'White' in updatedBall and 'Black' in updatedBall and 'Orange' in updatedBall:
+            #         stageState = 1
+            # if stageState == 1 :
+            #     if 'Black' not in updatedBall : 
+            #         stageState = 2  
+            # if stageState == 2 :
+            #     if 'White' in updatedBall and 'Black' in updatedBall and 'Orange' in updatedBall:
+            #         stageState = 3
+            # if stageState == 3 :
+            #     if 'Black' not in updatedBall : 
+            #         stageState = 4  
             
 
             cv2.putText(showFrame, f'State : {stageState}', (100, 100), cv2.FONT_HERSHEY_SIMPLEX, 
                             0.7, (0, 0, 0), 2, cv2.LINE_AA)
             
             # Text For Stage 1
-            # if stageState == 0 :
-            #     cv2.putText(showFrame, 'Please put Cue Ball and Black Ball(8)', (100, 200), cv2.FONT_HERSHEY_SIMPLEX, 
-            #                 2, (0, 0, 0), 3, cv2.LINE_AA)
-            #     cv2.putText(showFrame, 'at determined position.', (100, 250), cv2.FONT_HERSHEY_SIMPLEX, 
-            #                 2, (0, 0, 0), 3, cv2.LINE_AA)
-            # elif stageState == 1 :
-            #     cv2.putText(showFrame, 'Make cue ball hit black ball(8)', (100, 200), cv2.FONT_HERSHEY_SIMPLEX, 
-            #                 2, (0, 0, 0), 3, cv2.LINE_AA)
-            #     cv2.putText(showFrame, 'to sinks black ball(8) into the pocket.', (100, 250), cv2.FONT_HERSHEY_SIMPLEX, 
-            #                 2, (0, 0, 0), 3, cv2.LINE_AA)
-            # elif stageState == 2 :
-            #     cv2.putText(showFrame, 'Stage Success.', (100, 200), cv2.FONT_HERSHEY_SIMPLEX, 
-            #                 2, (0, 0, 0), 3, cv2.LINE_AA)
+            if stageState == 0 :
+                cv2.putText(showFrame, 'Please put Cue Ball and Black Ball(8)', (100, 200), cv2.FONT_HERSHEY_SIMPLEX, 
+                            2, (0, 0, 0), 3, cv2.LINE_AA)
+                cv2.putText(showFrame, 'at determined position.', (100, 250), cv2.FONT_HERSHEY_SIMPLEX, 
+                            2, (0, 0, 0), 3, cv2.LINE_AA)
+            elif stageState == 1 :
+                cv2.putText(showFrame, 'Make cue ball hit black ball(8)', (100, 200), cv2.FONT_HERSHEY_SIMPLEX, 
+                            2, (0, 0, 0), 3, cv2.LINE_AA)
+                cv2.putText(showFrame, 'to sinks black ball(8) into the pocket.', (100, 250), cv2.FONT_HERSHEY_SIMPLEX, 
+                            2, (0, 0, 0), 3, cv2.LINE_AA)
+            elif stageState == 2 :
+                cv2.putText(showFrame, 'Stage Success.', (100, 200), cv2.FONT_HERSHEY_SIMPLEX, 
+                            2, (0, 0, 0), 3, cv2.LINE_AA)
 
             # Text For Stage 2
             # if stageState == 0 :
@@ -717,39 +724,39 @@ while True:
             #                 2, (0, 0, 0), 3, cv2.LINE_AA)
 
             # Text For Stage 3
-            if stageState == 0 :
-                cv2.putText(showFrame, 'Please put Cue Ball, Black Ball(8)', (100, 200), cv2.FONT_HERSHEY_SIMPLEX, 
-                            2, (0, 0, 0), 3, cv2.LINE_AA)
-                cv2.putText(showFrame, 'and Orange Ball(5)', (100, 250), cv2.FONT_HERSHEY_SIMPLEX, 
-                            2, (0, 0, 0), 3, cv2.LINE_AA)
-                cv2.putText(showFrame, 'at determined position.', (100, 300), cv2.FONT_HERSHEY_SIMPLEX, 
-                            2, (0, 0, 0), 3, cv2.LINE_AA)
-            elif stageState == 1 :
-                cv2.putText(showFrame, 'ํYour objective is to sinks', (100, 200), cv2.FONT_HERSHEY_SIMPLEX, 
-                            2, (0, 0, 0), 3, cv2.LINE_AA)
-                cv2.putText(showFrame, 'black ball(8) into the pocket', (100, 250), cv2.FONT_HERSHEY_SIMPLEX, 
-                            2, (0, 0, 0), 3, cv2.LINE_AA)
-                cv2.putText(showFrame, 'and avoid to collide with', (100, 300), cv2.FONT_HERSHEY_SIMPLEX, 
-                            2, (0, 0, 0), 3, cv2.LINE_AA)
-                cv2.putText(showFrame, 'orange ball(5).', (100, 350), cv2.FONT_HERSHEY_SIMPLEX, 
-                            2, (0, 0, 0), 3, cv2.LINE_AA)
-            elif stageState == 2 :
-                cv2.putText(showFrame, 'Nice Shot. Then..', (100, 200), cv2.FONT_HERSHEY_SIMPLEX, 
-                            2, (0, 0, 0), 3, cv2.LINE_AA)
-                cv2.putText(showFrame, 'Please put Cue Ball and Black Ball(8)', (100, 250), cv2.FONT_HERSHEY_SIMPLEX, 
-                            2, (0, 0, 0), 3, cv2.LINE_AA)
-                cv2.putText(showFrame, 'and Orange Ball(5)', (100, 300), cv2.FONT_HERSHEY_SIMPLEX, 
-                            2, (0, 0, 0), 3, cv2.LINE_AA)
-                cv2.putText(showFrame, 'at determined position.', (100, 350), cv2.FONT_HERSHEY_SIMPLEX, 
-                            2, (0, 0, 0), 3, cv2.LINE_AA)
-            elif stageState == 3 :
-                cv2.putText(showFrame, 'Same objective.', (100, 200), cv2.FONT_HERSHEY_SIMPLEX, 
-                            2, (0, 0, 0), 3, cv2.LINE_AA)
-                cv2.putText(showFrame, 'Let\'s go.', (100, 250), cv2.FONT_HERSHEY_SIMPLEX, 
-                            2, (0, 0, 0), 3, cv2.LINE_AA)
-            elif stageState == 4 :
-                cv2.putText(showFrame, 'Stage Success.', (100, 200), cv2.FONT_HERSHEY_SIMPLEX, 
-                            2, (0, 0, 0), 3, cv2.LINE_AA)
+            # if stageState == 0 :
+            #     cv2.putText(showFrame, 'Please put Cue Ball, Black Ball(8)', (100, 200), cv2.FONT_HERSHEY_SIMPLEX, 
+            #                 2, (0, 0, 0), 3, cv2.LINE_AA)
+            #     cv2.putText(showFrame, 'and Orange Ball(5)', (100, 250), cv2.FONT_HERSHEY_SIMPLEX, 
+            #                 2, (0, 0, 0), 3, cv2.LINE_AA)
+            #     cv2.putText(showFrame, 'at determined position.', (100, 300), cv2.FONT_HERSHEY_SIMPLEX, 
+            #                 2, (0, 0, 0), 3, cv2.LINE_AA)
+            # elif stageState == 1 :
+            #     cv2.putText(showFrame, 'ํYour objective is to sinks', (100, 200), cv2.FONT_HERSHEY_SIMPLEX, 
+            #                 2, (0, 0, 0), 3, cv2.LINE_AA)
+            #     cv2.putText(showFrame, 'black ball(8) into the pocket', (100, 250), cv2.FONT_HERSHEY_SIMPLEX, 
+            #                 2, (0, 0, 0), 3, cv2.LINE_AA)
+            #     cv2.putText(showFrame, 'and avoid to collide with', (100, 300), cv2.FONT_HERSHEY_SIMPLEX, 
+            #                 2, (0, 0, 0), 3, cv2.LINE_AA)
+            #     cv2.putText(showFrame, 'orange ball(5).', (100, 350), cv2.FONT_HERSHEY_SIMPLEX, 
+            #                 2, (0, 0, 0), 3, cv2.LINE_AA)
+            # elif stageState == 2 :
+            #     cv2.putText(showFrame, 'Nice Shot. Then..', (100, 200), cv2.FONT_HERSHEY_SIMPLEX, 
+            #                 2, (0, 0, 0), 3, cv2.LINE_AA)
+            #     cv2.putText(showFrame, 'Please put Cue Ball and Black Ball(8)', (100, 250), cv2.FONT_HERSHEY_SIMPLEX, 
+            #                 2, (0, 0, 0), 3, cv2.LINE_AA)
+            #     cv2.putText(showFrame, 'and Orange Ball(5)', (100, 300), cv2.FONT_HERSHEY_SIMPLEX, 
+            #                 2, (0, 0, 0), 3, cv2.LINE_AA)
+            #     cv2.putText(showFrame, 'at determined position.', (100, 350), cv2.FONT_HERSHEY_SIMPLEX, 
+            #                 2, (0, 0, 0), 3, cv2.LINE_AA)
+            # elif stageState == 3 :
+            #     cv2.putText(showFrame, 'Same objective.', (100, 200), cv2.FONT_HERSHEY_SIMPLEX, 
+            #                 2, (0, 0, 0), 3, cv2.LINE_AA)
+            #     cv2.putText(showFrame, 'Let\'s go.', (100, 250), cv2.FONT_HERSHEY_SIMPLEX, 
+            #                 2, (0, 0, 0), 3, cv2.LINE_AA)
+            # elif stageState == 4 :
+            #     cv2.putText(showFrame, 'Stage Success.', (100, 200), cv2.FONT_HERSHEY_SIMPLEX, 
+            #                 2, (0, 0, 0), 3, cv2.LINE_AA)
 
             cv2.imshow("CroppedShowFrame", showFrame)
             # cv2.imshow("CroppedBlurFrame", blurFrame)
