@@ -28,8 +28,8 @@ cropSize = (100, 100)
 # cv.namedWindow("Python Webcam Screenshot App")
 
 outputDrawing = np.zeros((784,1568,3), np.uint8)
-mtx = np.loadtxt('./arUco/calib_data/camera_matrix.txt')
-dist = np.loadtxt('./arUco/calib_data/dist_coeffs.txt')
+mtx = np.loadtxt('../arUco/calib_data/camera_matrix.txt')
+dist = np.loadtxt('../arUco/calib_data/dist_coeffs.txt')
 def loadSetting():
     print("loadSetting")
 
@@ -83,8 +83,8 @@ def findSlope(start_x,start_y,end_x,end_y,find=None,interest_value=None) :
 
 width = 1920
 height = 1080
-cap = cv2.VideoCapture(0)
-#cap = cv2.VideoCapture('../videos/Level1_White1.mp4')
+# cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture('../videos/Level1_White1.mp4')
 # set frame rate to 30 fps
 fps = cap.get(cv2.CAP_PROP_FPS)
 print('fps = ', fps)
@@ -336,7 +336,7 @@ while True:
                     ballProbs[updatedBallPos[k]] += 1
                     if ballProbs[updatedBallPos[k]] >= 10:
                         ballProbs[updatedBallPos[k]] = 10
-                        updatedBallTablePos[k] = detectedBallTablePos[k] 
+                        updatedBallTablePos[k] = detectedBallTablePos[detectedBall.index(updatedBall[k])] 
 
             print('DetectedBall = ', detectedBall)
             print('DetectedBallPos = ', detectedBallPos)
@@ -640,7 +640,7 @@ while True:
             # checkWinCondition(updatedBall)
             detectedBall = []
             detectedBallPos = []
-            detectedBallTablePos = []
+            detectedBallTablePos = [] 
 
             # State Checking Stage1
             if stageState == 0 :
