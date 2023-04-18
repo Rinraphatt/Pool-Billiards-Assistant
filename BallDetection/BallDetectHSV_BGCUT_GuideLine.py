@@ -336,6 +336,7 @@ while True:
                     ballProbs[updatedBallPos[k]] += 1
                     if ballProbs[updatedBallPos[k]] >= 10:
                         ballProbs[updatedBallPos[k]] = 10
+                        updatedBallTablePos[k] = detectedBallTablePos[k] 
 
             print('DetectedBall = ', detectedBall)
             print('DetectedBallPos = ', detectedBallPos)
