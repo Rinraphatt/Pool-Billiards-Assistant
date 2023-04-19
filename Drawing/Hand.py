@@ -77,6 +77,7 @@ while True:
 
             elif time.time() - start_time >= 2:
                 print('Hand stayed in the zone for 3 seconds!')
+                cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 0, 255), 3)
         else:
             start_time = None
     # Display the frame
