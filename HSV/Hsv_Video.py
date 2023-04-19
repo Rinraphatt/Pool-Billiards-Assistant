@@ -9,8 +9,10 @@ def nothing(x):
 cap = cv2.VideoCapture(0)
 
 # Create a window
-cv2.namedWindow('image')
-
+cv2.namedWindow('image',cv2.WND_PROP_FULLSCREEN)
+cv2.setWindowProperty('image', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
 # create trackbars for color change
 cv2.createTrackbar('HMin','image',0,179,nothing) # Hue is from 0-179 for Opencv
 cv2.createTrackbar('SMin','image',0,255,nothing)
