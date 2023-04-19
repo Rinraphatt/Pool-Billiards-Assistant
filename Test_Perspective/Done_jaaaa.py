@@ -11,12 +11,16 @@ vidcap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
 mtx = np.loadtxt('./arUco/calib_data/camera_matrix.txt')
 dist = np.loadtxt('./arUco/calib_data/dist_coeffs.txt')
 print("Loaded")
-mac = cv2.imread('./pics/Stage/stage1.png')
+mac = cv2.imread('./pics/Stage/stage2_2.png')
 mac = cv2.resize(mac, (1920, 880))
 while True:
     succuess, img = vidcap.read()
     frame = img
     frame = cv2.undistort(frame, mtx, dist)
+    # tl = (252 ,21)
+    # bl = (174 ,906)
+    # tr = (1695 ,31)
+    # br = (1748 ,933)
     tl = (252 ,21)
     bl = (174 ,906)
     tr = (1701 ,31)
@@ -35,12 +39,12 @@ while True:
     matrix = cv2.getPerspectiveTransform(pts1, pts2)
     # Compute the perspective transform M
     tansformed_frame = cv2.warpPerspective(frame, matrix, (width, height))
-    tansformed_frame[200:1080,0:1920] = mac
+    #tansformed_frame[200:1080,0:1920] = mac
   
     cv2.namedWindow('Test_Perspectice',cv2.WND_PROP_FULLSCREEN)
     cv2.setWindowProperty('Test_Perspectice', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
     cv2.imshow("Test_Perspectice", tansformed_frame)
-    cv2.imshow("Test", frame)
+    #cv2.imshow("Test", frame)
 
     
     if cv2.waitKey(1) == 27:

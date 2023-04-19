@@ -650,7 +650,7 @@ while True:
                     if (updatedBallTablePos[whiteCoordPos][0] >= 880 and updatedBallTablePos[whiteCoordPos][0] <= 950 and 
                         updatedBallTablePos[whiteCoordPos][1] >= 650 and updatedBallTablePos[whiteCoordPos][1] <= 720 and
                         updatedBallTablePos[BlackCoordPos][0] >= 880 and updatedBallTablePos[BlackCoordPos][0] <= 950 and 
-                        updatedBallTablePos[BlackCoordPos][1] >= 265 and updatedBallTablePos[BlackCoordPos][1] <= 335) :
+                        updatedBallTablePos[BlackCoordPos][1] >= 280 and updatedBallTablePos[BlackCoordPos][1] <= 350) :
                         stageState = 1
             if stageState == 1 :
                 if 'Black' not in updatedBall : 
