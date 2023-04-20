@@ -39,17 +39,27 @@ start_time = None
 #     'modeBasic.png'
 # ]
 
-stage1Pics = [
-    'stageDiamond.png',
-    'stageDiamond_2.png',
-    'stageDiamond_3.png',
-    'stageDiamond_4.png',
-    'stageDiamond_5.png',
-    'stageDiamond_6.png',
-    'stageDiamond_7.png',
-    'stageDiamond_8.png',
-    'stageDiamond_9.png',
-]
+# stage1Pics = [
+#     'stageDiamond.png',
+#     'stageDiamond_2.png',
+#     'stageDiamond_3.png',
+#     'stageDiamond_4.png',
+#     'stageDiamond_5.png',
+#     'stageDiamond_6.png',
+#     'stageDiamond_7.png',
+#     'stageDiamond_8.png',
+#     'stageDiamond_9.png',
+# ]
+
+# stage1Pics = [
+#     'stageBallControl.png',
+#     'stageBallControl_2.png',
+#     'stageBallControl_3.png',
+#     'stageBallControl_4.png',
+#     'stageBallControl_5.png',
+#     'stageBallControl_6.png',
+#     'stageBallControl_7.png',
+# ]
 
 stage1State = 0
 
@@ -66,10 +76,10 @@ def are_rectangles_overlapping(rect1, rect2):
     return True
 
 # Load the camera matrix and distortion coefficients from the calibration file
-mtx = np.loadtxt('../arUco/calib_data/camera_matrix.txt')
-dist = np.loadtxt('../arUco/calib_data/dist_coeffs.txt')
+mtx = np.loadtxt('./arUco/calib_data/camera_matrix.txt')
+dist = np.loadtxt('./arUco/calib_data/dist_coeffs.txt')
 print("Loaded")
-mac = cv2.imread('../pics/Stage/'+stage1Pics[0])
+mac = cv2.imread('./pics/Stage/'+stage1Pics[0])
 mac = cv2.resize(mac, (1920, 880))
 while True:
     succuess, img = vidcap.read()
@@ -144,7 +154,7 @@ while True:
                     stage1State = len(stage1Pics) - 1
                     
                 print('Stage1State : ', stage1State)
-                mac = cv2.imread('../pics/Stage/'+stage1Pics[stage1State])
+                mac = cv2.imread('./pics/Stage/'+stage1Pics[stage1State])
                 mac = cv2.resize(mac, (1920, 880))
                 start_time = time.time()
         elif are_rectangles_overlapping(rect1,rect3) == True :
@@ -160,7 +170,7 @@ while True:
                     stage1State = 0
                     
                 print('Stage1State : ', stage1State)
-                mac = cv2.imread('../pics/Stage/'+stage1Pics[stage1State])
+                mac = cv2.imread('./pics/Stage/'+stage1Pics[stage1State])
                 mac = cv2.resize(mac, (1920, 880))
                 start_time = time.time()
         else:
@@ -169,7 +179,7 @@ while True:
     cv2.namedWindow('Test_Perspectice',cv2.WND_PROP_FULLSCREEN)
     cv2.setWindowProperty('Test_Perspectice', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
     cv2.imshow("Test_Perspectice", tansformed_frame)
-    cv2.imshow('Hand Zone', handDetectFrame)
+    # cv2.imshow('Hand Zone', handDetectFrame)
     #cv2.imshow("Test", frame)
 
     
