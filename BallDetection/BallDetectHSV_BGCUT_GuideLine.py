@@ -83,13 +83,13 @@ def findSlope(start_x,start_y,end_x,end_y,find=None,interest_value=None) :
 
 width = 1920
 height = 1080
-# cap = cv2.VideoCapture(0)
-cap = cv2.VideoCapture('./videos/Level1_White1.mp4')
+cap = cv2.VideoCapture(0)
+#cap = cv2.VideoCapture('./videos/Level1_White1.mp4')
 # set frame rate to 30 fps
 fps = cap.get(cv2.CAP_PROP_FPS)
 print('fps = ', fps)
 # frame_interval = int(fps / 5)
-frame_interval = 3 #HAHAHA
+frame_interval = 1 #HAHAHA
 # cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
@@ -103,10 +103,10 @@ lowerColor = [
     np.array([0,150,155]), #Red
     np.array([110,215,150]), #Purple
     np.array([5,150,50]), #Orange
-    np.array([50,100,100]), #Green
+    np.array([95,100,100]), #Green
     np.array([0,100,50]), #Crimson
     np.array([0,0,0]), #Black
-    np.array([100,0,100]), #White
+    np.array([100,0,130]), #White
 
 ]
 upperColor = [
@@ -115,10 +115,10 @@ upperColor = [
     np.array([20,255,255]),
     np.array([145,255,255]),
     np.array([25,255,255]),
-    np.array([70,255,255]),
+    np.array([110,255,255]),
     np.array([20,255,155]),
     np.array([179,255,40]),
-    np.array([179,130,255]),
+    np.array([179,180,255]),
 ]
 
 grayScaleValues = [
@@ -193,7 +193,7 @@ while True:
         n_white_pix = np.sum(thresh == 255)
 
         if n_white_pix <= 100:
-            print("IDLE")
+            #print("IDLE")
             hsvFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
             lower_green = np.array([50,20,40])
             upper_green = np.array([100,255,255])
@@ -214,7 +214,6 @@ while True:
             
             if circles is not None:
                 circles = np.uint16(np.around(circles))
-
                 for i in circles[0, :]:
                     circleZoneColor = frame[int(i[1].item())-22:int(i[1].item())+22, int(i[0].item())-22:int(i[0].item())+22]
                     circleZonesColor.append(circleZoneColor)
@@ -322,7 +321,7 @@ while True:
                         updatedBallTablePos.append(detectedBallTablePos[k])
 
             for k in range(len(updatedBall)-1, -1, -1) :
-                print('K = ', k)
+                #print('K = ', k)
                 if updatedBall[k] not in detectedBall :
                     ballProbs[updatedBallPos[k]] -= 1
                     if ballProbs[updatedBallPos[k]] <= 0:
@@ -339,12 +338,12 @@ while True:
                         updatedBallTablePos[k] = detectedBallTablePos[detectedBall.index(updatedBall[k])] 
 
             print('DetectedBall = ', detectedBall)
-            print('DetectedBallPos = ', detectedBallPos)
-            print('DetectedBallTablePos = ', detectedBallTablePos)
-            print('UpdatedBall = ', updatedBall)
-            print('UpdatedBallPos = ', updatedBallPos)
-            print('UpdatedBallTablePos = ', updatedBallTablePos)
-            print('BallProbs = ', ballProbs)
+            # print('DetectedBallPos = ', detectedBallPos)
+            # print('DetectedBallTablePos = ', detectedBallTablePos)
+            # print('UpdatedBall = ', updatedBall)
+            # print('UpdatedBallPos = ', updatedBallPos)
+            # print('UpdatedBallTablePos = ', updatedBallTablePos)
+            # print('BallProbs = ', ballProbs)
             whitePos = -1
             if 'White' in detectedBall:
                 whitePos = detectedBall.index('White')

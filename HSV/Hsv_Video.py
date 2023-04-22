@@ -52,7 +52,11 @@ while(1):
 
     # Create HSV Image and threshold into a range.
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-    mask = cv2.inRange(hsv, lower, upper)
+    blurFrame = cv2.GaussianBlur(hsv, (5, 5), 0)
+    mask = cv2.inRange(blurFrame, lower, upper)
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
+    mask = cv2.erode(mask, kernel, iterations=1)
+    mask = cv2.dilate(mask, kernel, iterations=1)
     output = cv2.bitwise_and(frame,frame, mask= mask)
 
     # Print if there is a change in HSV value
@@ -66,7 +70,8 @@ while(1):
         pvMax = vMax
 
     # Display output image
-    cv2.imshow('image',output)
+    cv2.imshow('image',mask)
+    cv2.imshow('Origin',output)
 
     # Wait longer to prevent freeze for videos.
     if cv2.waitKey(wait_time) & 0xFF == ord('q'):
