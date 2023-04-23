@@ -33,59 +33,58 @@ def realPosition(x,y):
     y_o = int(original_coord[1][0])
 
     return x_o,y_o
+# White open light
+lowerColor = [
+    np.array([25,80,80]),   #Yellow
+    np.array([100,125,90]),  #Blue
+    np.array([0,25,220]),   #Red
+    np.array([125,90,130]), #Purple
+    np.array([11,100,129]), #Orange
+    np.array([75,70,90]),  #Green
+    np.array([140,70,30]),    #Crimson
+    np.array([55,0,0]),     #Black
+    np.array([0,0,180]),     #White
+
+]
+
+upperColor = [
+    np.array([40,255,255]),  #Yellow
+    np.array([125,255,255]), #Blue
+    np.array([10,255,255]),  #Red
+    np.array([135,255,255]), #Purple
+    np.array([22,255,255]),  #Orange
+    np.array([95,255,255]),  #Green
+    np.array([179,255,255]),  #Crimson
+    np.array([179,145,100]),  #Black
+    np.array([179,60,255]), #White
+
+
+]
+
 
 # lowerColor = [
-#     np.array([0,0,200]),     #White
-#     np.array([100,0,0]),     #Black
-#     np.array([25,60,130]),   #Yellow
-#     np.array([100,30,90]), #Blue
-#     np.array([0,25,220]),   #Red
-#     np.array([125,90,130]), #Purple
-#     np.array([15,110,100]),    #Orange
-#     np.array([75,100,90]),  #Green
-#     np.array([0,100,50]),    #Crimson
-
-
+#     np.array([20,150,50]), #Yellow
+#     np.array([110,200,125]), #Blue
+#     np.array([0,150,155]), #Red
+#     np.array([110,215,150]), #Purple
+#     np.array([5,150,50]), #Orange
+#     np.array([95,100,100]), #Green
+#     np.array([0,100,50]), #Crimson
+#     np.array([0,0,0]), #Black
+#     np.array([100,0,130]), #White
 
 # ]
 # upperColor = [
-#     np.array([179,100,255]), #White
-#     np.array([179,100,245]),  #Black
-#     np.array([40,255,255]),  #Yellow
-#     np.array([125,255,255]), #Blue
-#     np.array([10,255,255]),  #Red
-#     np.array([135,255,255]), #Purple
-#     np.array([25,245,255]),  #Orange
-#     np.array([95,255,255]),  #Green
-#     np.array([20,255,155]),  #Crimson
-
-
+#     np.array([40,255,255]),
+#     np.array([130,255,255]),
+#     np.array([20,255,255]),
+#     np.array([145,255,255]),
+#     np.array([25,255,255]),
+#     np.array([110,255,255]),
+#     np.array([20,255,155]),
+#     np.array([179,255,40]),
+#     np.array([179,180,255]),
 # ]
-
-
-lowerColor = [
-    np.array([20,150,50]), #Yellow
-    np.array([110,200,125]), #Blue
-    np.array([0,150,155]), #Red
-    np.array([110,215,150]), #Purple
-    np.array([5,150,50]), #Orange
-    np.array([95,100,100]), #Green
-    np.array([0,100,50]), #Crimson
-    np.array([0,0,0]), #Black
-    np.array([100,0,130]), #White
-
-]
-upperColor = [
-    np.array([40,255,255]),
-    np.array([130,255,255]),
-    np.array([20,255,255]),
-    np.array([145,255,255]),
-    np.array([25,255,255]),
-    np.array([110,255,255]),
-    np.array([20,255,155]),
-    np.array([179,255,40]),
-    np.array([179,180,255]),
-]
 
 
 # Load the camera matrix and distortion coefficients from the calibration file
@@ -142,19 +141,22 @@ while True:
     # Blue
     # lower_white = np.array([0, 200, 140])
     # upper_white = np.array([179, 255, 255])
+
     # White with light room
-    lower_white = np.array([0,0,200])
-    upper_white = np.array([179,100,255])
+    lower_white = np.array([40,80,40])
+    upper_white = np.array([75,255,255])
+
     mask = cv2.inRange(blurFrame, lower_white, upper_white)
     kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
     mask = cv2.erode(mask, kernel, iterations=1)
     mask = cv2.dilate(mask, kernel, iterations=1)
     inv_mask = cv2.bitwise_not(mask)
     output = cv2.bitwise_and(table_frame,table_frame, mask= inv_mask)
+    
     gray = cv2.cvtColor(output, cv2.COLOR_BGR2GRAY)
     # Detect circles in the image
-    circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1, 30, param1=50, param2=20, minRadius=23, maxRadius=35)
-
+    circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1, 30, param1=50, param2=17, minRadius=22, maxRadius=35)
+    cv2.imshow("1",gray)
     circleZones = []
     circleZonesColor = []
     if circles is not None :
@@ -273,7 +275,7 @@ while True:
                 ballProbs[updatedBallPos[k]] = 10
                 updatedBallTablePos[k] = detectedBallTablePos[detectedBall.index(updatedBall[k])] 
 
-    #print('DetectedBall = ', detectedBall)
+    print('DetectedBall = ', detectedBall)
     whitePos = -1
     blackPos = -1
     if 'White' in detectedBall:
@@ -337,250 +339,250 @@ while True:
         # Detect points that form a line
         lines = cv2.HoughLinesP(edges, 1, np.pi/180, 50,
                                 minLineLength=10, maxLineGap=100)
-        # Draw the detected line segments on the original frame
-        if lines is not None:
-            for line in lines:
-                x1, y1, x2, y2 = line[0]
-                cv2.line(output, (x1, y1), (x2, y2), (0, 0, 255), 1)
-                # Calculate the center of two line segments
+        #Draw the detected line segments on the original frame
 
-            # Find the distance between the two parallel lines
-            if len(lines) == 2:
-                # print(lines)
+        # if lines is not None:
+        #     for line in lines:
+        #         x1, y1, x2, y2 = line[0]
+        #         cv2.line(output, (x1, y1), (x2, y2), (0, 0, 255), 1)
+        #         # Calculate the center of two line segments
 
-                x1, y1, x2, y2 = lines[0][0]
-                x3, y3, x4, y4 = lines[1][0]
-                # Point of line
-                # cv.circle(cropped_whiteZone, (x1, y1), 2, (0, 255, 255), -1)
-                # cv.circle(cropped_whiteZone, (x2, y2), 2, (0, 255, 255), -1)
-                # cv.circle(cropped_whiteZone, (x3, y3), 2, (0, 255, 255), -1)
-                # cv.circle(cropped_whiteZone, (x4, y4), 2, (0, 255, 255), -1)
+        #     # Find the distance between the two parallel lines
+        #     if len(lines) == 2:
+        #         # print(lines)
 
-                m1 = (int(round((x1+x3) / 2)), int(round((y1+y3) / 2)))
-                m3 = (int(round((x2+x4) / 2)), int(round((y2+y4) / 2)))
-                # Convert point in Crop into Original frame
-                m1 = (m1[0]+center[0]-200, m1[1]+center[1]-200)
-                m3 = (m3[0]+center[0]-200, m3[1]+center[1]-200)
+        #         x1, y1, x2, y2 = lines[0][0]
+        #         x3, y3, x4, y4 = lines[1][0]
+        #         # Point of line
+        #         # cv.circle(cropped_whiteZone, (x1, y1), 2, (0, 255, 255), -1)
+        #         # cv.circle(cropped_whiteZone, (x2, y2), 2, (0, 255, 255), -1)
+        #         # cv.circle(cropped_whiteZone, (x3, y3), 2, (0, 255, 255), -1)
+        #         # cv.circle(cropped_whiteZone, (x4, y4), 2, (0, 255, 255), -1)
 
-                dis1ToCen = math.sqrt(pow(m1[0]-center[0], 2)+pow(m1[1]-center[1], 2))
-                dis2ToCen = math.sqrt(pow(m3[0]-center[0], 2)+pow(m3[1]-center[1], 2))
+        #         m1 = (int(round((x1+x3) / 2)), int(round((y1+y3) / 2)))
+        #         m3 = (int(round((x2+x4) / 2)), int(round((y2+y4) / 2)))
+        #         # Convert point in Crop into Original frame
+        #         m1 = (m1[0]+center[0]-200, m1[1]+center[1]-200)
+        #         m3 = (m3[0]+center[0]-200, m3[1]+center[1]-200)
 
-                # print(m1)
-                cv2.circle(showFrame, m1, 2, (0, 0, 255), -1)
-                cv2.circle(showFrame, m3, 2, (0, 0, 255), -1)
+        #         dis1ToCen = math.sqrt(pow(m1[0]-center[0], 2)+pow(m1[1]-center[1], 2))
+        #         dis2ToCen = math.sqrt(pow(m3[0]-center[0], 2)+pow(m3[1]-center[1], 2))
 
-                font = cv2.FONT_HERSHEY_SIMPLEX
-                cv2.putText(showFrame, 'M1 X: '+ str(m1[0])+ " Y: "+ str(m1[1]), m1, font, 1, (0, 255, 0), 2, cv2.LINE_AA)
-                cv2.putText(showFrame, 'M3 X: '+ str(m3[0])+ " Y: "+ str(m3[1]), m3, font, 1, (0, 255, 0), 2, cv2.LINE_AA)
+        #         # print(m1)
+        #         cv2.circle(showFrame, m1, 2, (0, 0, 255), -1)
+        #         cv2.circle(showFrame, m3, 2, (0, 0, 255), -1)
 
-                hor = '0'
-                ver = '0'
+        #         font = cv2.FONT_HERSHEY_SIMPLEX
+        #         cv2.putText(showFrame, 'M1 X: '+ str(m1[0])+ " Y: "+ str(m1[1]), m1, font, 1, (0, 255, 0), 2, cv2.LINE_AA)
+        #         cv2.putText(showFrame, 'M3 X: '+ str(m3[0])+ " Y: "+ str(m3[1]), m3, font, 1, (0, 255, 0), 2, cv2.LINE_AA)
 
-                head = (0,0)
-                if dis1ToCen < dis2ToCen:
-                    head = m1
-                    if m1[0] < m3[0]:
-                        hor = 'left'
-                    else:
-                        hor = 'right'
+        #         hor = '0'
+        #         ver = '0'
 
-                    if m1[1] < m3[1]:
-                        ver = 'up'
-                    else:
-                        ver = 'down'
-                else:
-                    head = m3
-                    if m1[0] < m3[0]:
-                        hor = 'right'
-                    else:
-                        hor = 'left'
+        #         head = (0,0)
+        #         if dis1ToCen < dis2ToCen:
+        #             head = m1
+        #             if m1[0] < m3[0]:
+        #                 hor = 'left'
+        #             else:
+        #                 hor = 'right'
 
-                    if m1[1] < m3[1]:
-                        ver = 'down'
-                    else:
-                        ver = 'up'
+        #             if m1[1] < m3[1]:
+        #                 ver = 'up'
+        #             else:
+        #                 ver = 'down'
+        #         else:
+        #             head = m3
+        #             if m1[0] < m3[0]:
+        #                 hor = 'right'
+        #             else:
+        #                 hor = 'left'
+
+        #             if m1[1] < m3[1]:
+        #                 ver = 'down'
+        #             else:
+        #                 ver = 'up'
                 
 
-                cv2.putText(showFrame, 'Hor : '+ hor + " Ver : "+ ver, (100, 300), font, 1, (0, 255, 0), 2, cv2.LINE_AA)
-                x1, y1 = m1
-                x2, y2 = m3
-                x3, y3 = (0,0)
-                x4, y4 = (0,0)
-                # Calculate the slope and intercept of the line
-                m,b = findSlope(x1, y1,x2, y2)
-                y_top = 0
-                y_bottom = height
-                x_left = 0
-                x_right = width
-                # Calculate the intersection points of the line with the image boundaries
-                if abs(m) > 1e-6:
-                    # Calculate the intersection points with the top and bottom image boundaries
-                    x_top = int(round((y_top - b) / m))
-                    x_bottom = int(round((y_bottom - b) / m))
+        #         cv2.putText(showFrame, 'Hor : '+ hor + " Ver : "+ ver, (100, 300), font, 1, (0, 255, 0), 2, cv2.LINE_AA)
+        #         x1, y1 = m1
+        #         x2, y2 = m3
+        #         x3, y3 = (0,0)
+        #         x4, y4 = (0,0)
+        #         # Calculate the slope and intercept of the line
+        #         m,b = findSlope(x1, y1,x2, y2)
+        #         y_top = 0
+        #         y_bottom = height
+        #         x_left = 0
+        #         x_right = width
+        #         # Calculate the intersection points of the line with the image boundaries
+        #         if abs(m) > 1e-6:
+        #             # Calculate the intersection points with the top and bottom image boundaries
+        #             x_top = int(round((y_top - b) / m))
+        #             x_bottom = int(round((y_bottom - b) / m))
 
-                    # Check if the intersection points are inside the image boundaries
-                    if x_top < x_left:
-                        x_top = x_left
-                        y_top = int(round(m * x_top + b))
-                    elif x_top > x_right:
-                        x_top = x_right
-                        y_top = int(round(m * x_top + b))
+        #             # Check if the intersection points are inside the image boundaries
+        #             if x_top < x_left:
+        #                 x_top = x_left
+        #                 y_top = int(round(m * x_top + b))
+        #             elif x_top > x_right:
+        #                 x_top = x_right
+        #                 y_top = int(round(m * x_top + b))
 
-                    if x_bottom < x_left:
-                        x_bottom = x_left
-                        y_bottom = int(round(m * x_bottom + b))
-                    elif x_bottom > x_right:
-                        x_bottom = x_right
-                        y_bottom = int(round(m * x_bottom + b))
-                else:
-                    # If the line is vertical, set the intersection points to the left and right image boundaries
-                    x_top = x1
-                    x_bottom = x2
+        #             if x_bottom < x_left:
+        #                 x_bottom = x_left
+        #                 y_bottom = int(round(m * x_bottom + b))
+        #             elif x_bottom > x_right:
+        #                 x_bottom = x_right
+        #                 y_bottom = int(round(m * x_bottom + b))
+        #         else:
+        #             # If the line is vertical, set the intersection points to the left and right image boundaries
+        #             x_top = x1
+        #             x_bottom = x2
 
-                    if y1 < y2:
-                        y_top = y1
-                        y_bottom = y_bottom
-                    else:
-                        y_top = y2
-                        y_bottom = y1
+        #             if y1 < y2:
+        #                 y_top = y1
+        #                 y_bottom = y_bottom
+        #             else:
+        #                 y_top = y2
+        #                 y_bottom = y1
 
-                    if y_top < y_top:
-                        y_top = y_top
-                        x_top = int(round((y_top - b) / m))
-                    elif y_top > y_bottom:
-                        y_top = y_bottom
-                        x_top = int(round((y_top - b) / m))
+        #             if y_top < y_top:
+        #                 y_top = y_top
+        #                 x_top = int(round((y_top - b) / m))
+        #             elif y_top > y_bottom:
+        #                 y_top = y_bottom
+        #                 x_top = int(round((y_top - b) / m))
 
-                    if y_bottom < y_top:
-                        y_bottom = y_top
-                        x_bottom = int(round((y_bottom - b) / m))
-                    elif y_bottom > y_bottom:
-                        y_bottom = y_bottom
-                        x_bottom = int(round((y_bottom - b) / m))
+        #             if y_bottom < y_top:
+        #                 y_bottom = y_top
+        #                 x_bottom = int(round((y_bottom - b) / m))
+        #             elif y_bottom > y_bottom:
+        #                 y_bottom = y_bottom
+        #                 x_bottom = int(round((y_bottom - b) / m))
 
-                cv2.line(showFrame, (x_top, y_top),
-                        (x_bottom, y_bottom), (0, 255, 0), 2)
+        #         cv2.line(showFrame, (x_top, y_top),
+        #                 (x_bottom, y_bottom), (0, 255, 0), 2)
 
 
 
-                if (ver == 'up' and hor == 'left'):
-                    x3,y3 = (x_top,y_top)
-                    if (y_top == 0 and y_bottom == 1080):
-                        cv2.line(showFrame, (x_top,y_top),(x_top-abs(x_bottom-x_top),1080), (0, 0, 255), 2)
-                        x4,y4 = (x_top-abs(x_bottom-x_top),1080)
-                        #cv2.line(frame, (x_top-abs(x_bottom-x_top),1080),(x_top-abs(x_bottom-x_top)-abs(x_top-x_top-abs(x_bottom-x_top)),0), (255, 0, 0), 2)
+        #         if (ver == 'up' and hor == 'left'):
+        #             x3,y3 = (x_top,y_top)
+        #             if (y_top == 0 and y_bottom == 1080):
+        #                 cv2.line(showFrame, (x_top,y_top),(x_top-abs(x_bottom-x_top),1080), (0, 0, 255), 2)
+        #                 x4,y4 = (x_top-abs(x_bottom-x_top),1080)
+        #                 #cv2.line(frame, (x_top-abs(x_bottom-x_top),1080),(x_top-abs(x_bottom-x_top)-abs(x_top-x_top-abs(x_bottom-x_top)),0), (255, 0, 0), 2)
 
-                    elif (x_top == 0 and x_bottom == 1920):
-                        cv2.line(showFrame, (x_top,y_top),(1920,y_top-abs(y_top-y_bottom)), (0, 0, 255), 2)
-                        x4,y4 = (1920,y_top-abs(y_top-y_bottom))
-                        #cv2.line(frame, (1920,y_top-abs(y_top-y_bottom)),(0,y_top-abs(y_bottom-y_top)-abs(y_top-y_top-abs(y_bottom-y_top))), (255, 0, 0), 2)  
+        #             elif (x_top == 0 and x_bottom == 1920):
+        #                 cv2.line(showFrame, (x_top,y_top),(1920,y_top-abs(y_top-y_bottom)), (0, 0, 255), 2)
+        #                 x4,y4 = (1920,y_top-abs(y_top-y_bottom))
+        #                 #cv2.line(frame, (1920,y_top-abs(y_top-y_bottom)),(0,y_top-abs(y_bottom-y_top)-abs(y_top-y_top-abs(y_bottom-y_top))), (255, 0, 0), 2)  
 
-                if (ver == 'up' and hor == 'right'):
-                    x3,y3 = (x_top,y_top)
-                    if (y_top == 0 and y_bottom == 1080):
-                        cv2.line(showFrame, (x_top,y_top),(x_top+abs(x_bottom-x_top),1080), (0, 0, 255), 2)
-                        x4,y4 = (x_top+abs(x_bottom-x_top),1080)
-                        #cv2.line(frame, (x_top+abs(x_bottom-x_top),1080),(x_top-abs(x_bottom-x_top)-abs(x_top-x_top-abs(x_bottom-x_top)),0), (255, 0, 0), 2)
-                    elif (x_top == 0 and x_bottom == 1920):
-                        cv2.line(showFrame, (x_top,y_top),(0,y_top-abs(y_top-y_bottom)), (0, 0, 255), 2)
-                        x4,y4 = (0,y_top-abs(y_top-y_bottom))                        
-                        #cv2.line(frame, (0,y_top-abs(y_top-y_bottom)),(1920,y_top-abs(y_bottom-y_top)-abs(y_top-y_top-abs(y_bottom-y_top))), (255, 0, 0), 2)     
+        #         if (ver == 'up' and hor == 'right'):
+        #             x3,y3 = (x_top,y_top)
+        #             if (y_top == 0 and y_bottom == 1080):
+        #                 cv2.line(showFrame, (x_top,y_top),(x_top+abs(x_bottom-x_top),1080), (0, 0, 255), 2)
+        #                 x4,y4 = (x_top+abs(x_bottom-x_top),1080)
+        #                 #cv2.line(frame, (x_top+abs(x_bottom-x_top),1080),(x_top-abs(x_bottom-x_top)-abs(x_top-x_top-abs(x_bottom-x_top)),0), (255, 0, 0), 2)
+        #             elif (x_top == 0 and x_bottom == 1920):
+        #                 cv2.line(showFrame, (x_top,y_top),(0,y_top-abs(y_top-y_bottom)), (0, 0, 255), 2)
+        #                 x4,y4 = (0,y_top-abs(y_top-y_bottom))                        
+        #                 #cv2.line(frame, (0,y_top-abs(y_top-y_bottom)),(1920,y_top-abs(y_bottom-y_top)-abs(y_top-y_top-abs(y_bottom-y_top))), (255, 0, 0), 2)     
 
-                if (ver == 'down' and hor == 'left'):
-                    x3,y3 = (x_bottom,y_bottom)
-                    if (y_top == 0 and y_bottom == 1080):
-                        cv2.line(showFrame, (x_bottom,y_bottom),(x_bottom-abs(x_bottom-x_top),0), (0, 0, 255), 2)
-                        x4,y4 = (x_bottom-abs(x_bottom-x_top),0)                      
-                        #cv2.line(frame, (x_bottom-abs(x_bottom-x_top),0),(x_bottom-abs(x_bottom-x_top)-abs(x_bottom-x_bottom-abs(x_bottom-x_top)),0), (255, 0, 0), 2)
-                    elif (x_top == 1920 and x_bottom == 0):
-                        cv2.line(showFrame, (x_bottom,y_bottom),(1920,y_bottom+abs(y_top-y_bottom)), (0, 0, 255), 2)   
-                        x4,y4 = (1920,y_bottom+abs(y_top-y_bottom))
-                if (ver == 'down' and hor == 'right'):
-                    x3,y3 = (x_bottom,y_bottom)
-                    if (y_top == 0 and y_bottom == 1080):
-                        cv2.line(showFrame, (x_bottom,y_bottom),(x_bottom+abs(x_bottom-x_top),0), (0, 0, 255), 2)
-                        x4,y4 = (x_bottom+abs(x_bottom-x_top),0)
-                    elif (x_top == 0 and x_bottom == 1920):
-                        cv2.line(showFrame, (x_bottom,y_bottom),(0,y_bottom+abs(y_top-y_bottom)), (0, 0, 255), 2)
-                        x4,y4 = (0,y_bottom+abs(y_top-y_bottom))
+        #         if (ver == 'down' and hor == 'left'):
+        #             x3,y3 = (x_bottom,y_bottom)
+        #             if (y_top == 0 and y_bottom == 1080):
+        #                 cv2.line(showFrame, (x_bottom,y_bottom),(x_bottom-abs(x_bottom-x_top),0), (0, 0, 255), 2)
+        #                 x4,y4 = (x_bottom-abs(x_bottom-x_top),0)                      
+        #                 #cv2.line(frame, (x_bottom-abs(x_bottom-x_top),0),(x_bottom-abs(x_bottom-x_top)-abs(x_bottom-x_bottom-abs(x_bottom-x_top)),0), (255, 0, 0), 2)
+        #             elif (x_top == 1920 and x_bottom == 0):
+        #                 cv2.line(showFrame, (x_bottom,y_bottom),(1920,y_bottom+abs(y_top-y_bottom)), (0, 0, 255), 2)   
+        #                 x4,y4 = (1920,y_bottom+abs(y_top-y_bottom))
+        #         if (ver == 'down' and hor == 'right'):
+        #             x3,y3 = (x_bottom,y_bottom)
+        #             if (y_top == 0 and y_bottom == 1080):
+        #                 cv2.line(showFrame, (x_bottom,y_bottom),(x_bottom+abs(x_bottom-x_top),0), (0, 0, 255), 2)
+        #                 x4,y4 = (x_bottom+abs(x_bottom-x_top),0)
+        #             elif (x_top == 0 and x_bottom == 1920):
+        #                 cv2.line(showFrame, (x_bottom,y_bottom),(0,y_bottom+abs(y_top-y_bottom)), (0, 0, 255), 2)
+        #                 x4,y4 = (0,y_bottom+abs(y_top-y_bottom))
 
-                if x3 >= x4 :
-                    hor = 'left'
-                    if y3 >=y4:
-                        ver = 'up'
-                    else :
-                        ver = 'down'
-                else :
-                    hor = 'right'
-                    if y3 >=y4:
-                        ver = 'up'
-                    else :
-                        ver = 'down'
-                # print(ver,hor)
-                # print(x3,y3)
-                # print(x4,y4)
+        #         if x3 >= x4 :
+        #             hor = 'left'
+        #             if y3 >=y4:
+        #                 ver = 'up'
+        #             else :
+        #                 ver = 'down'
+        #         else :
+        #             hor = 'right'
+        #             if y3 >=y4:
+        #                 ver = 'up'
+        #             else :
+        #                 ver = 'down'
+        #         # print(ver,hor)
+        #         # print(x3,y3)
+        #         # print(x4,y4)
                 
-                #real_y = mx + b
-                # print(m)
-                # print(b)
-                # Create Third reflex line    
-                if (ver == 'up' and hor == 'left'):
-                    if (y3 == 1080 and y4 == 0):
-                        if x4 < 0 :
-                            cv2.line(showFrame, (0,int(findSlope(x3, y3, x4, y4,"y",0)[2])),(abs(x4),0), (255, 0, 0), 2)
-                        else :
-                            cv2.line(showFrame, (x4,y4),(x4-abs(x4-x3),1080), (255, 0, 0), 2)
+        #         #real_y = mx + b
+        #         # print(m)
+        #         # print(b)
+        #         # Create Third reflex line    
+        #         if (ver == 'up' and hor == 'left'):
+        #             if (y3 == 1080 and y4 == 0):
+        #                 if x4 < 0 :
+        #                     cv2.line(showFrame, (0,int(findSlope(x3, y3, x4, y4,"y",0)[2])),(abs(x4),0), (255, 0, 0), 2)
+        #                 else :
+        #                     cv2.line(showFrame, (x4,y4),(x4-abs(x4-x3),1080), (255, 0, 0), 2)
 
-                    elif (x3 == 1920 and x4 == 0):
-                        if y4 < 0 :
-                            cv2.line(showFrame, (int(findSlope(x3, y3, x4, y4,"x",0)[2]),0),(0,abs(y4)), (255, 0, 0), 2)
-                        else :
-                            cv2.line(showFrame, (x4,y4),(1920,y4-abs(y4-y3)), (255, 0, 0), 2)
+        #             elif (x3 == 1920 and x4 == 0):
+        #                 if y4 < 0 :
+        #                     cv2.line(showFrame, (int(findSlope(x3, y3, x4, y4,"x",0)[2]),0),(0,abs(y4)), (255, 0, 0), 2)
+        #                 else :
+        #                     cv2.line(showFrame, (x4,y4),(1920,y4-abs(y4-y3)), (255, 0, 0), 2)
 
-                if (ver == 'up' and hor == 'right'):
-                    if (y3 == 1080 and y4 == 0):
-                        if x4 > 1920 :
-                            cv2.line(showFrame, (1920,int(findSlope(x3, y3, x4, y4,"y",1920)[2])),(1920-abs(x4-1920),1080), (255, 0, 0), 2)
-                        else :
-                            cv2.line(showFrame, (x4,y4),(x4+abs(x3-x4),1080), (255, 0, 0), 2)
-                    elif (x3 == 0 and x4 == 1920):
-                        if y4 < 0 :
-                            cv2.line(showFrame, (int(findSlope(x3, y3, x4, y4,"x",0)[2]),0),(1920,abs(y4)), (255, 0, 0), 2)
-                        else :
-                            cv2.line(showFrame, (x4,y4),(0,y4-abs(y4-y3)), (255, 0, 0), 2)                     
+        #         if (ver == 'up' and hor == 'right'):
+        #             if (y3 == 1080 and y4 == 0):
+        #                 if x4 > 1920 :
+        #                     cv2.line(showFrame, (1920,int(findSlope(x3, y3, x4, y4,"y",1920)[2])),(1920-abs(x4-1920),1080), (255, 0, 0), 2)
+        #                 else :
+        #                     cv2.line(showFrame, (x4,y4),(x4+abs(x3-x4),1080), (255, 0, 0), 2)
+        #             elif (x3 == 0 and x4 == 1920):
+        #                 if y4 < 0 :
+        #                     cv2.line(showFrame, (int(findSlope(x3, y3, x4, y4,"x",0)[2]),0),(1920,abs(y4)), (255, 0, 0), 2)
+        #                 else :
+        #                     cv2.line(showFrame, (x4,y4),(0,y4-abs(y4-y3)), (255, 0, 0), 2)                     
 
-                if (ver == 'down' and hor == 'left'):
-                    if (y3 == 0 and y4 == 1080):
-                        if x4 < 0 :
-                            cv2.line(showFrame, (0,int(findSlope(x3, y3, x4, y4,"y",0)[2])),(abs(x4),1080), (255, 0, 0), 2)  
-                        else : 
-                            cv2.line(showFrame, (x4,y4),(x4-abs(x4-x3),0), (255, 0, 0), 2)                 
-                    elif (x3 == 1920 and x4 == 0):
-                        if y4 > 1080 :
-                            cv2.line(showFrame, (int(findSlope(x3, y3, x4, y4,"x",1080)[2]),1080),(0,1080-(y4-1080)), (255, 0, 0), 2)
-                        else :
-                            cv2.line(showFrame, (x4,y4),(1920,y4-abs(y4-y3)), (255, 0, 0), 2)      
-                if (ver == 'down' and hor == 'right'):
-                    if (y3 == 0 and y4 == 1080):
-                        if x4 > 1920 :
-                            cv2.line(showFrame, (1920,int(findSlope(x3, y3, x4, y4,"y",1920)[2])),(1920-abs(1920-x4),1080), (255, 0, 0), 2)
-                        cv2.line(showFrame, (x4,y4),(x4+abs(x4-x3),0), (255, 0, 0), 2)
+        #         if (ver == 'down' and hor == 'left'):
+        #             if (y3 == 0 and y4 == 1080):
+        #                 if x4 < 0 :
+        #                     cv2.line(showFrame, (0,int(findSlope(x3, y3, x4, y4,"y",0)[2])),(abs(x4),1080), (255, 0, 0), 2)  
+        #                 else : 
+        #                     cv2.line(showFrame, (x4,y4),(x4-abs(x4-x3),0), (255, 0, 0), 2)                 
+        #             elif (x3 == 1920 and x4 == 0):
+        #                 if y4 > 1080 :
+        #                     cv2.line(showFrame, (int(findSlope(x3, y3, x4, y4,"x",1080)[2]),1080),(0,1080-(y4-1080)), (255, 0, 0), 2)
+        #                 else :
+        #                     cv2.line(showFrame, (x4,y4),(1920,y4-abs(y4-y3)), (255, 0, 0), 2)      
+        #         if (ver == 'down' and hor == 'right'):
+        #             if (y3 == 0 and y4 == 1080):
+        #                 if x4 > 1920 :
+        #                     cv2.line(showFrame, (1920,int(findSlope(x3, y3, x4, y4,"y",1920)[2])),(1920-abs(1920-x4),1080), (255, 0, 0), 2)
+        #                 cv2.line(showFrame, (x4,y4),(x4+abs(x4-x3),0), (255, 0, 0), 2)
 
-                    elif (x3 == 0 and x4 == 1920):
-                        if y4 > 1080:
-                            cv2.line(showFrame, (int(findSlope(x3, y3, x4, y4,"x",1080)[2]),1080),(1920,1080-abs(y4-1080)), (255, 0, 0), 2) 
-                        else :
-                            cv2.line(showFrame, (x4,y4),(0,y4+abs(y4-y3)), (255, 0, 0), 2)
+        #             elif (x3 == 0 and x4 == 1920):
+        #                 if y4 > 1080:
+        #                     cv2.line(showFrame, (int(findSlope(x3, y3, x4, y4,"x",1080)[2]),1080),(1920,1080-abs(y4-1080)), (255, 0, 0), 2) 
+        #                 else :
+        #                     cv2.line(showFrame, (x4,y4),(0,y4+abs(y4-y3)), (255, 0, 0), 2)
 
                 
-                cv2.putText(showFrame, 'X_top: '+ str(x_top)+ " Y_top: "+ str(y_top), (100,100), font, 1, (0, 255, 0), 2, cv2.LINE_AA)
-                cv2.putText(showFrame, 'X_bottom: '+ str(x_bottom)+ " Y_bottom: "+ str(y_bottom), (100,200), font, 1, (0, 255, 0), 2, cv2.LINE_AA)
+        #         cv2.putText(showFrame, 'X_top: '+ str(x_top)+ " Y_top: "+ str(y_top), (100,100), font, 1, (0, 255, 0), 2, cv2.LINE_AA)
+        #         cv2.putText(showFrame, 'X_bottom: '+ str(x_bottom)+ " Y_bottom: "+ str(y_bottom), (100,200), font, 1, (0, 255, 0), 2, cv2.LINE_AA)
 
-                # print("Top : ", end=" ")         
-                # print(x_top, y_top)
-                # print("Botton : ", end=" ")    
-                # print(x_bottom, y_bottom)
-
+        #         # print("Top : ", end=" ")         
+        #         # print(x_top, y_top)
+        #         # print("Botton : ", end=" ")    
+        #         # print(x_bottom, y_bottom)
 
 
 
@@ -594,8 +596,8 @@ while True:
     cv2.namedWindow('Frame',cv2.WND_PROP_FULLSCREEN)
     cv2.setWindowProperty('Frame', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
     cv2.imshow("Frame", projection_frame)
-    cv2.imshow("Frame2", whiteball_zone)
-    cv2.imshow("Frame3", original_frame)
+    cv2.imshow("Frame2", black_bg)
+    cv2.imshow("Frame3", whiteball_zone)
 
 
 

@@ -49,10 +49,12 @@ while(cap.isOpened()):
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     blurFrame = cv2.GaussianBlur(hsv, (5, 5), 0)
     # White open light
-    # lower= np.array([40, 50, 85])
-    # upper = np.array([75, 240, 255])
-    lower= np.array([50, 0, 0])
-    upper = np.array([90, 255, 255])
+    lower = np.array([40,80,90])
+    upper = np.array([75,255,255])
+    # White close light
+    # lower= np.array([50, 0, 0])
+    # upper = np.array([90, 255, 255])
+    
     mask = cv2.inRange(blurFrame, lower, upper)
     # kernel = np.ones((1, 1), np.uint8)
     # mask = cv2.erode(mask, kernel, iterations=1)
