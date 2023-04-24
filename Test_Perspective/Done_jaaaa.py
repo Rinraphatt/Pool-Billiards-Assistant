@@ -141,11 +141,11 @@ def are_rectangles_overlapping(rect1, rect2):
     return True
 
 # Load the camera matrix and distortion coefficients from the calibration file
-mtx = np.loadtxt('../arUco/calib_data/camera_matrix.txt')
-dist = np.loadtxt('../arUco/calib_data/dist_coeffs.txt')
+mtx = np.loadtxt('./arUco/calib_data/camera_matrix.txt')
+dist = np.loadtxt('./arUco/calib_data/dist_coeffs.txt')
 print("Loaded")
-# mac = cv2.imread('../pics/Stage/modeSelect')
-mac = cv2.imread('../pics/Stage/modeSelect.png')
+# mac = cv2.imread('./pics/Stage/modeSelect')
+mac = cv2.imread('./pics/Stage/modeSelect.png')
 mac = cv2.resize(mac, (1920, 880))
 while True:
     succuess, img = vidcap.read()
@@ -155,10 +155,6 @@ while True:
     # bl = (174 ,906)
     # tr = (1695 ,31)
     # br = (1748 ,933)
-    # tl = (252 ,21)
-    # bl = (174 ,906)
-    # tr = (1701 ,31)
-    # br = (1764 ,933)
     tl = (245 ,10)
     bl = (180 ,900)
     tr = (1717 ,22)
@@ -240,7 +236,7 @@ while True:
                 elif time.time() - start_time >= debounceTime:
                     prevMainStage = 'modeSelect'
                     mainStage = 'difficultSelect'
-                    mac = cv2.imread('../pics/Stage/difficultSelect.png')
+                    mac = cv2.imread('./pics/Stage/difficultSelect.png')
                     mac = cv2.resize(mac, (1920, 880))
                     start_time = time.time()
             else:
@@ -254,7 +250,7 @@ while True:
                 elif time.time() - start_time >= debounceTime:
                     prevMainStage = 'difficultSelect'
                     mainStage = 'basicStageSelect'
-                    mac = cv2.imread('../pics/Stage/basicStageSelect.png')
+                    mac = cv2.imread('./pics/Stage/basicStageSelect.png')
                     mac = cv2.resize(mac, (1920, 880))
                     start_time = time.time()
             elif are_rectangles_overlapping(cursorRect,amatureBtnRect) == True :
@@ -264,7 +260,7 @@ while True:
                 elif time.time() - start_time >= debounceTime:
                     prevMainStage = 'difficultSelect'
                     mainStage = 'amatureStageSelect'
-                    mac = cv2.imread('../pics/Stage/amatureStageSelect.png')
+                    mac = cv2.imread('./pics/Stage/amatureStageSelect.png')
                     mac = cv2.resize(mac, (1920, 880))
                     start_time = time.time()
             elif are_rectangles_overlapping(cursorRect,proBtnRect) == True :
@@ -285,7 +281,7 @@ while True:
                     cv2.rectangle(tansformed_frame, (x1BackBtn, y1BackBtn+200), (x2BackBtn, y2BackBtn+200), (0, 255, 255), 3)
                     prevMainStage = 'modeSelect'
                     mainStage = 'modeSelect'
-                    mac = cv2.imread('../pics/Stage/modeSelect.png')
+                    mac = cv2.imread('./pics/Stage/modeSelect.png')
                     mac = cv2.resize(mac, (1920, 880))
                     start_time = time.time()
             else:
@@ -300,7 +296,7 @@ while True:
                     mainStage = 'trainingStage'
                     currentStagePics = stageBasic1Pics
                     currentStageState = 0
-                    mac = cv2.imread('../pics/Stage/' + currentStagePics[currentStageState])
+                    mac = cv2.imread('./pics/Stage/' + currentStagePics[currentStageState])
                     mac = cv2.resize(mac, (1920, 880))
                     start_time = time.time()
             elif are_rectangles_overlapping(cursorRect,middleStageBtnRect) == True :
@@ -312,7 +308,7 @@ while True:
                     mainStage = 'trainingStage'
                     currentStagePics = stageBasic2Pics
                     currentStageState = 0
-                    mac = cv2.imread('../pics/Stage/' + currentStagePics[currentStageState])
+                    mac = cv2.imread('./pics/Stage/' + currentStagePics[currentStageState])
                     mac = cv2.resize(mac, (1920, 880))
                     start_time = time.time()
             elif are_rectangles_overlapping(cursorRect,rightStageBtnRect) == True :
@@ -324,7 +320,7 @@ while True:
                     mainStage = 'trainingStage'
                     currentStagePics = stageBasic3Pics
                     currentStageState = 0
-                    mac = cv2.imread('../pics/Stage/' + currentStagePics[currentStageState])
+                    mac = cv2.imread('./pics/Stage/' + currentStagePics[currentStageState])
                     mac = cv2.resize(mac, (1920, 880))
                     start_time = time.time()
             elif are_rectangles_overlapping(cursorRect,backBtnRect) == True :
@@ -335,7 +331,7 @@ while True:
                     cv2.rectangle(tansformed_frame, (x1BackBtn, y1BackBtn+200), (x2BackBtn, y2BackBtn+200), (0, 255, 255), 3)
                     prevMainStage = 'modeSelect'
                     mainStage = 'difficultSelect'
-                    mac = cv2.imread('../pics/Stage/difficultSelect.png') 
+                    mac = cv2.imread('./pics/Stage/difficultSelect.png') 
                     mac = cv2.resize(mac, (1920, 880))
                     start_time = time.time()
             else:
@@ -350,7 +346,7 @@ while True:
                     mainStage = 'trainingStage'
                     currentStagePics = stageAmature1Pics
                     currentStageState = 0
-                    mac = cv2.imread('../pics/Stage/' + currentStagePics[currentStageState])
+                    mac = cv2.imread('./pics/Stage/' + currentStagePics[currentStageState])
                     mac = cv2.resize(mac, (1920, 880))
                     start_time = time.time()
             elif are_rectangles_overlapping(cursorRect,middleStageBtnRect) == True :
@@ -362,7 +358,7 @@ while True:
                     mainStage = 'trainingStage'
                     currentStagePics = stageAmature2Pics
                     currentStageState = 0
-                    mac = cv2.imread('../pics/Stage/' + currentStagePics[currentStageState])
+                    mac = cv2.imread('./pics/Stage/' + currentStagePics[currentStageState])
                     mac = cv2.resize(mac, (1920, 880))
                     start_time = time.time()
             elif are_rectangles_overlapping(cursorRect,rightStageBtnRect) == True :
@@ -435,7 +431,7 @@ while True:
                     cv2.rectangle(tansformed_frame, (x1BackBtn, y1BackBtn+200), (x2BackBtn, y2BackBtn+200), (0, 255, 255), 3)
                     prevMainStage = 'modeSelect'
                     mainStage = 'difficultSelect'
-                    mac = cv2.imread('../pics/Stage/difficultSelect.png') 
+                    mac = cv2.imread('./pics/Stage/difficultSelect.png') 
                     mac = cv2.resize(mac, (1920, 880))
                     start_time = time.time()
             else:
@@ -452,7 +448,7 @@ while True:
                         currentStageState = len(currentStagePics) - 1
                         
                     print('currentStageState : ', currentStageState)
-                    mac = cv2.imread('../pics/Stage/' + currentStagePics[currentStageState])
+                    mac = cv2.imread('./pics/Stage/' + currentStagePics[currentStageState])
                     mac = cv2.resize(mac, (1920, 880))
                     start_time = time.time()
             elif are_rectangles_overlapping(cursorRect,prevBtnRect) == True :
@@ -466,7 +462,7 @@ while True:
                         currentStageState = 0
                         
                     print('currentStageState : ', currentStageState)
-                    mac = cv2.imread('../pics/Stage/'+currentStagePics[currentStageState])
+                    mac = cv2.imread('./pics/Stage/'+currentStagePics[currentStageState])
                     mac = cv2.resize(mac, (1920, 880))
                     start_time = time.time()
             elif are_rectangles_overlapping(cursorRect,backBtnRect) == True :
@@ -479,15 +475,15 @@ while True:
                     if prevMainStage == 'basicStageSelect' : 
                         prevMainStage = 'difficultSelect'
                         mainStage = 'basicStageSelect'
-                        mac = cv2.imread('../pics/Stage/basicStageSelect.png')
+                        mac = cv2.imread('./pics/Stage/basicStageSelect.png')
                     elif prevMainStage == 'amatureStageSelect' : 
                         prevMainStage = 'difficultSelect'
                         mainStage = 'amatureStageSelect'
-                        mac = cv2.imread('../pics/Stage/amatureStageSelect.png')
+                        mac = cv2.imread('./pics/Stage/amatureStageSelect.png')
                     elif prevMainStage == 'proStageSelect' : 
                         prevMainStage = 'difficultSelect'
                         mainStage = 'proStageSelect'
-                        mac = cv2.imread('../pics/Stage/proStageSelect.png')
+                        mac = cv2.imread('./pics/Stage/proStageSelect.png')
 
                     mac = cv2.resize(mac, (1920, 880))
                     start_time = time.time()
