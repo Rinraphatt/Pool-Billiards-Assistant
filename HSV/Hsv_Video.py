@@ -58,11 +58,19 @@ while(1):
     # mask = cv2.erode(mask, kernel, iterations=1)
     # mask = cv2.dilate(mask, kernel, iterations=1)
     # output = cv2.bitwise_and(frame,frame, mask= mask)
+
     # apply closing
-    kernel = np.ones((3,3),np.uint8)
+    # kernel = np.ones((3,3),np.uint8)
+    # mask_closing = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel) # dilate->erode
+    # mask = cv2.dilate(mask_closing,kernel,iterations = 1)
+
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
     mask_closing = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel) # dilate->erode
     mask = cv2.dilate(mask_closing,kernel,iterations = 1)
+
     output = cv2.bitwise_and(frame,frame, mask= mask)
+
+    
 
     # Print if there is a change in HSV value
     if( (phMin != hMin) | (psMin != sMin) | (pvMin != vMin) | (phMax != hMax) | (psMax != sMax) | (pvMax != vMax) ):
@@ -76,7 +84,7 @@ while(1):
 
     # Display output image
     cv2.imshow('image',output)
-    cv2.imshow('Origin',mask_closing)
+    cv2.imshow('Origin',mask)
 
     # Wait longer to prevent freeze for videos.
     if cv2.waitKey(wait_time) & 0xFF == ord('q'):
