@@ -296,6 +296,7 @@ while True:
             y = circles[0][whitePos][1]
             # White Ball Position on Crop 1920x880
             center = (int(x), int(y))
+            print(center)
             cv2.circle(black, center, 200, (255, 255, 255), 5, cv2.LINE_AA)
             # White Ball Position on Crop 1920x1080
             # Add ROI position to circle position

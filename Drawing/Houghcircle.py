@@ -13,8 +13,8 @@ cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
 # Create a window for trackbars
 
 cv2.namedWindow('Hough Circle Detection')
-#cv2.namedWindow('Hough Circle Detection',cv2.WND_PROP_FULLSCREEN)
-# cv2.setWindowProperty('Hough Circle Detection', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+cv2.namedWindow('Hough Circle Detection',cv2.WND_PROP_FULLSCREEN)
+cv2.setWindowProperty('Hough Circle Detection', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 # Create trackbars for parameters
 cv2.createTrackbar('minRadius', 'Hough Circle Detection', 40, 100, nothing)
 cv2.createTrackbar('maxRadius', 'Hough Circle Detection', 40, 100, nothing)
@@ -41,33 +41,25 @@ while(cap.isOpened()):
     # Compute the perspective transform M
     frame = cv2.warpPerspective(frame, matrix, (width, height))
     frame = frame[200:1080,0:1920]
-    # blurFrame = cv2.GaussianBlur(frame, (5, 5), 0)
-    # hsvFrame = cv2.cvtColor(blurFrame, cv2.COLOR_BGR2HSV)
-    # lower_green = np.array([45,80,70])
-    # upper_green = np.array([75,255,255])
+    blurFrame = cv2.GaussianBlur(frame, (7, 7), 0)
+    # Apply Canny edge detection
+    gray = cv2.cvtColor(blurFrame, cv2.COLOR_BGR2GRAY)
+    # edges = cv2.Canny(gray, 20, 50)
+    # kernel = np.ones((3,3),np.uint8)
+    # mask_closing = cv2.morphologyEx(edges, cv2.MORPH_CLOSE, kernel) # dilate->erode
 
-    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-    blurFrame = cv2.GaussianBlur(hsv, (5, 5), 0)
-    # White open light
-    lower = np.array([40,80,90])
-    upper = np.array([75,255,255])
-    # White close light
-    # lower= np.array([50, 0, 0])
-    # upper = np.array([90, 255, 255])
-    
-    mask = cv2.inRange(blurFrame, lower, upper)
-    # kernel = np.ones((1, 1), np.uint8)
-    # mask = cv2.erode(mask, kernel, iterations=1)
-    # mask = cv2.dilate(mask, kernel, iterations=1)
-    # Apply morphological operations to clean up the mask
-    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
-    mask = cv2.erode(mask, kernel, iterations=1)
-    mask = cv2.dilate(mask, kernel, iterations=1)
+    hsv = cv2.cvtColor(blurFrame, cv2.COLOR_BGR2HSV)
+    # Set minimum and max HSV values to display
+    lower = np.array([50, 0, 0])
+    upper = np.array([90, 255, 255])
+    kernel = np.ones((3,3),np.uint8)
+    mask = cv2.inRange(hsv, lower, upper)
+    mask_closing = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel) # dilate->erode
+    mask = cv2.dilate(mask_closing,kernel,iterations = 1)
     inv_mask = cv2.bitwise_not(mask)
     output = cv2.bitwise_and(frame,frame, mask= inv_mask)
-    #mask = cv2.inRange(hsvFrame, lower_green, upper_green)
-    # Find the contours of the ball blobs
-    contours, _ = cv2.findContours(inv_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+
     if ret:
         # Get current values of trackbars
         minRadius = cv2.getTrackbarPos('minRadius', 'Hough Circle Detection')
@@ -76,10 +68,10 @@ while(cap.isOpened()):
         param2 = cv2.getTrackbarPos('param2', 'Hough Circle Detection')
 
         # Convert the frame to grayscale
-        gray = cv2.cvtColor(output, cv2.COLOR_BGR2GRAY)
+        #gray = cv2.cvtColor(output, cv2.COLOR_BGR2GRAY)
 
         #Apply Hough Circle detection
-        circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1, 30, param1=param1, param2=param2, minRadius=minRadius, maxRadius=maxRadius)
+        circles = cv2.HoughCircles(inv_mask, cv2.HOUGH_GRADIENT, 1, 30, param1=param1, param2=param2, minRadius=minRadius, maxRadius=maxRadius)
 
         # Draw detected circles on the original frame
         if circles is not None:
@@ -103,7 +95,7 @@ while(cap.isOpened()):
         # Display the original frame and the detected circles
         cv2.imshow('Hough Circle Detection', frame)
         cv2.imshow('Hough Circle Detection2', output)
-        cv2.imshow('Hough Circle Detection1', inv_mask)
+
         k = cv2.waitKey(1) & 0xFF
         if k == 27:
             break

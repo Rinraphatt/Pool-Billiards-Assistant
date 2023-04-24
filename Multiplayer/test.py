@@ -15,7 +15,7 @@ while True:
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     blurFrame = cv2.GaussianBlur(hsv, (5, 5), 0)
 
-    lower= np.array([145, 0, 136])
+    lower= np.array([145, 110, 205])
     upper = np.array([179, 255, 255])
     mask = cv2.inRange(blurFrame, lower, upper)
     kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
@@ -31,27 +31,39 @@ while True:
         [vx, vy, x, y] = cv2.fitLine(cue_contour, cv2.DIST_L2, 0, 0.01, 0.01)
 
         # Compute the start and end points of the cue line
-        start_x = int(x - vx * 1000)
-        start_y = int(y - vy * 1000)
-        end_x = int(x + vx * 1000)
-        end_y = int(y + vy * 1000)
+        start_x = int(x - vx * 2000)
+        start_y = int(y - vy * 2000)
+        end_x = int(x + vx * 2000)
+        end_y = int(y + vy * 2000)
+        
+        height, width, _ = frame.shape
+        if start_x < 0:
+            start_x = 0
+            start_y = int(y + (start_x - x) * vy / vx)
+        elif start_x >= width:
+            start_x = width - 1
+            start_y = int(y + (start_x - x) * vy / vx)
+        if start_y < 0:
+            start_y = 0
+            start_x = int(x + (start_y - y) * vx / vy)
+        elif start_y >= height:
+            start_y = height - 1
+            start_x = int(x + (start_y - y) * vx / vy)
 
-        # # Limit the line to the edges of the screen
-        # height, width, _ = frame.shape
-        # if start_y < 0:
-        #     start_x = int(x - (vy/vx) * (start_y - y))
-        #     start_y = 0
-        # if end_y > height:
-        #     end_x = int(x + (vy/vx) * (height - end_y))
-        #     end_y = height
-        # if start_x < 0:
-        #     start_y = int(y - (vx/vy) * (start_x - x))
-        #     start_x = 0 
-        # if end_x > width:
-        #     end_y = int(y + (vx/vy) * (width - end_x))
-        #     end_x = width
-
+        if end_x < 0:
+            end_x = 0
+            end_y = int(y + (end_x - x) * vy / vx)
+        elif end_x >= width:
+            end_x = width - 1
+            end_y = int(y + (end_x - x) * vy / vx)
+        if end_y < 0:
+            end_y = 0
+            end_x = int(x + (end_y - y) * vx / vy)
+        elif end_y >= height:
+            end_y = height - 1
+            end_x = int(x + (end_y - y) * vx / vy)
         # Draw the cue line on the original frame
+        print(start_x, start_y,end_x, end_y)
         cv2.line(frame, (start_x, start_y), (end_x, end_y), (0, 255, 0), 3)
 
     # Display the frame

@@ -6,7 +6,7 @@ mtx = np.loadtxt('./arUco/calib_data/camera_matrix.txt')
 dist = np.loadtxt('./arUco/calib_data/dist_coeffs.txt')
 print("Loaded")
 # Load the image
-img = cv2.imread('./pics/pic13.jpg')
+img = cv2.imread('./pics/pic14.jpg')
 img = cv2.resize(img, (1920, 1080))
 h, w = img.shape[:2]
 newcameramtx, roi = cv2.getOptimalNewCameraMatrix(mtx, dist, (w, h), 1, (w, h))

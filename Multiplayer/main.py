@@ -33,58 +33,64 @@ def realPosition(x,y):
     y_o = int(original_coord[1][0])
 
     return x_o,y_o
-# White open light
-lowerColor = [
-    np.array([25,80,80]),   #Yellow
-    np.array([100,125,90]),  #Blue
-    np.array([0,25,220]),   #Red
-    np.array([125,90,130]), #Purple
-    np.array([11,100,129]), #Orange
-    np.array([75,70,90]),  #Green
-    np.array([140,70,30]),    #Crimson
-    np.array([55,0,0]),     #Black
-    np.array([0,0,180]),     #White
 
-]
-
-upperColor = [
-    np.array([40,255,255]),  #Yellow
-    np.array([125,255,255]), #Blue
-    np.array([10,255,255]),  #Red
-    np.array([135,255,255]), #Purple
-    np.array([22,255,255]),  #Orange
-    np.array([95,255,255]),  #Green
-    np.array([179,255,255]),  #Crimson
-    np.array([179,145,100]),  #Black
-    np.array([179,60,255]), #White
-
-
-]
-
-
+def createTable():
+    h,w = 880,1920
+    frame = np.zeros((h, w, 3), np.uint8)
+    pocket_point = [(0,0),(int(w/2),0),(w,0),(0,h),(int(w/2),h),(w,h)]
+    for i in pocket_point:
+        cv2.circle(frame, i , 50, (255, 255, 255), 5)
+    return frame
+# # White open light
 # lowerColor = [
-#     np.array([20,150,50]), #Yellow
-#     np.array([110,200,125]), #Blue
-#     np.array([0,150,155]), #Red
-#     np.array([110,215,150]), #Purple
-#     np.array([5,150,50]), #Orange
-#     np.array([95,100,100]), #Green
-#     np.array([0,100,50]), #Crimson
-#     np.array([0,0,0]), #Black
-#     np.array([100,0,130]), #White
+#     np.array([25,80,80]),   #Yellow
+#     np.array([100,125,90]),  #Blue
+#     np.array([0,25,220]),   #Red
+#     np.array([125,90,130]), #Purple
+#     np.array([11,100,129]), #Orange
+#     np.array([75,70,90]),  #Green
+#     np.array([140,70,30]),    #Crimson
+#     np.array([55,0,0]),     #Black
+#     np.array([0,0,180]),     #White
 
 # ]
+
 # upperColor = [
-#     np.array([40,255,255]),
-#     np.array([130,255,255]),
-#     np.array([20,255,255]),
-#     np.array([145,255,255]),
-#     np.array([25,255,255]),
-#     np.array([110,255,255]),
-#     np.array([20,255,155]),
-#     np.array([179,255,40]),
-#     np.array([179,180,255]),
+#     np.array([40,255,255]),  #Yellow
+#     np.array([125,255,255]), #Blue
+#     np.array([10,255,255]),  #Red
+#     np.array([135,255,255]), #Purple
+#     np.array([22,255,255]),  #Orange
+#     np.array([95,255,255]),  #Green
+#     np.array([179,255,255]),  #Crimson
+#     np.array([179,145,100]),  #Black
+#     np.array([179,60,255]), #White
 # ]
+
+# white close light 22:PM
+lowerColor = [
+    np.array([12,100,10]), #Yellow
+    np.array([105,200,0]), #Blue
+    np.array([150,150,160]), #Red
+    np.array([125,150,70]), #Purple
+    np.array([0,50,60]), #Orange
+    np.array([85,155,85]), #Green
+    np.array([135,170,80]), #Crimson
+    np.array([0,0,0]), #Black
+    np.array([120,0,170]), #White
+
+]
+upperColor = [
+    np.array([35,255,255]),
+    np.array([125,255,255]),
+    np.array([179,255,255]),
+    np.array([155,255,135]),
+    np.array([10,255,255]),
+    np.array([110,255,255]),
+    np.array([170,255,180]),
+    np.array([179,255,50]),
+    np.array([179,120,255]),
+]
 
 
 # Load the camera matrix and distortion coefficients from the calibration file
@@ -107,7 +113,9 @@ roi_x, roi_y = 0, 200
 roi_w, roi_h = 1920, 880
 isShowline = True
 avg_center_x = []
-count_shot = 0
+avg_center_y = []
+count_shot_p1 = 0
+count_shot_p2 = 0
 ball_move = False
 cue_move = False
 updatedBall = []
@@ -116,11 +124,16 @@ updatedBallTablePos = []
 detectedBall = []
 detectedBallPos = []
 detectedBallTablePos = []
-
+whiteballpos = []
+blackballpos = []
+realtime_blackball = (0,0)
+avg_blackball = (0,0)
+avg_whiteball = None
 ballProbs = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+pocket_point = [(240,166),(974,148),(1720,188),(180,905),(965,950),(1761,928)]
 while True:
     succuess, frame = cap.read()
-    black_bg = np.zeros((table_height, table_width, 3), np.uint8)
+    black_bg = createTable()
     whiteball_zone = np.zeros((400, 400, 3), np.uint8)
     newcameramtx, roi = cv2.getOptimalNewCameraMatrix(mtx, dist, (width, height), 1, (width, height))
     # Load the image to be projected
@@ -142,31 +155,31 @@ while True:
     # lower_white = np.array([0, 200, 140])
     # upper_white = np.array([179, 255, 255])
 
-    # White with light room
-    lower_white = np.array([40,80,40])
-    upper_white = np.array([75,255,255])
+    # # White with light room
+    # lower_white = np.array([40,80,40])
+    # upper_white = np.array([75,255,255])
+    # White close light room
+    lower_white = np.array([50,10,45])
+    upper_white = np.array([100,255,255])
 
     mask = cv2.inRange(blurFrame, lower_white, upper_white)
-    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
-    mask = cv2.erode(mask, kernel, iterations=1)
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
     mask = cv2.dilate(mask, kernel, iterations=1)
     inv_mask = cv2.bitwise_not(mask)
     output = cv2.bitwise_and(table_frame,table_frame, mask= inv_mask)
-    
     gray = cv2.cvtColor(output, cv2.COLOR_BGR2GRAY)
     # Detect circles in the image
-    circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1, 30, param1=50, param2=17, minRadius=22, maxRadius=35)
-    cv2.imshow("1",gray)
+    circles = cv2.HoughCircles(inv_mask, cv2.HOUGH_GRADIENT, 1, 30, param1=100, param2=8, minRadius=25, maxRadius=35)
     circleZones = []
     circleZonesColor = []
     if circles is not None :
         circles = np.round(circles[0, :]).astype("int")
-        i=0
         if len(circles) <= 20 :
+
             for (x, y, r) in circles:
-                i+=1
+
                 # Find Position on Original Frame
-                x_o,y_o = realPosition(x, y)
+                x_o,y_o = x,y
                 x1 = x_o - 30
                 y1 = y_o - 30
                 x2 = x_o + 30
@@ -175,9 +188,9 @@ while True:
                     x1 = 1
                 if y1 < 0:
                     y1 = 1
-                circleZoneColor = original_frame[y1:y2, x1:x2]
+                circleZoneColor = table_frame[y1:y2, x1:x2]
                 circleZonesColor.append(circleZoneColor)
-
+                
                 #cv2.imshow("test"+str(i),circleZoneColor)
                 cv2.circle(original_frame, (x_o,y_o), r, (0,255,0), 2)
 
@@ -193,6 +206,9 @@ while True:
                 hsvcircleZone = cv2.cvtColor(circleZonesColor[i], cv2.COLOR_BGR2HSV)
                 for j in range(len(lowerColor)):
                     mask = cv2.inRange(hsvcircleZone, lowerColor[j], upperColor[j])
+                    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (5, 5))
+                    mask = cv2.erode(mask, kernel, iterations=1)
+                    mask = cv2.dilate(mask, kernel, iterations=1)
                     samePixs = np.sum(mask == 255)
 
                     if j == 8:
@@ -235,63 +251,92 @@ while True:
                 elif maxSameColorPos == 8:
                     similarColor = 'White'
 
-                detectedBall.append(similarColor)
-                detectedBallPos.append(maxSameColorPos)
-                detectedBallTablePos.append((circles[i][0], circles[i][1]))
-                
-                cv2.putText(table_frame, f'Number : {i}', (circles[i][0], circles[i][1]-80), cv2.FONT_HERSHEY_SIMPLEX, 
-                    0.7, (255, 0, 255), 2, cv2.LINE_AA)
-                cv2.putText(table_frame, f'Color : {similarColor}', (circles[i][0], circles[i][1]-50), cv2.FONT_HERSHEY_SIMPLEX, 
-                    0.7, (255, 0, 255), 2, cv2.LINE_AA)
-                cv2.putText(table_frame, f'X : {circles[i][0]}', (circles[i][0], circles[i][1]-30), cv2.FONT_HERSHEY_SIMPLEX, 
-                    0.7, (255, 0, 255), 2, cv2.LINE_AA)
-                cv2.putText(table_frame, f'Y : {circles[i][1]}', (circles[i][0], circles[i][1]-10), cv2.FONT_HERSHEY_SIMPLEX, 
-                    0.7, (255, 0, 255), 2, cv2.LINE_AA)
 
-    for k in range(len(detectedBallPos)) :
-        if detectedBall[k] not in updatedBall:
-            ballProbs[detectedBallPos[k]] += 1
-            if ballProbs[detectedBallPos[k]] >= 10:
-                ballProbs[detectedBallPos[k]] = 10
-                
-            if ballProbs[detectedBallPos[k]] == 10:
-                updatedBall.append(detectedBall[k])
-                updatedBallPos.append(detectedBallPos[k])
-                updatedBallTablePos.append(detectedBallTablePos[k])
+                if(similarColor in ["Black","White"]):
+                    
+                    cv2.putText(table_frame, f'Number : {i}', (circles[i][0], circles[i][1]-80), cv2.FONT_HERSHEY_SIMPLEX, 
+                        0.7, (255, 0, 255), 2, cv2.LINE_AA)
+                    cv2.putText(table_frame, f'Color : {similarColor}', (circles[i][0], circles[i][1]-50), cv2.FONT_HERSHEY_SIMPLEX, 
+                        0.7, (255, 0, 255), 2, cv2.LINE_AA)
+                    cv2.putText(table_frame, f'X : {circles[i][0]}', (circles[i][0], circles[i][1]-30), cv2.FONT_HERSHEY_SIMPLEX, 
+                        0.7, (255, 0, 255), 2, cv2.LINE_AA)
+                    cv2.putText(table_frame, f'Y : {circles[i][1]}', (circles[i][0], circles[i][1]-10), cv2.FONT_HERSHEY_SIMPLEX, 
+                        0.7, (255, 0, 255), 2, cv2.LINE_AA)
 
-    for k in range(len(updatedBall)-1, -1, -1) :
-        if updatedBall[k] not in detectedBall :
-            ballProbs[updatedBallPos[k]] -= 1
-            if ballProbs[updatedBallPos[k]] <= 0:
-                ballProbs[updatedBallPos[k]] = 0
-                
-            if ballProbs[updatedBallPos[k]] == 0:
-                updatedBall.pop(k)
-                updatedBallPos.pop(k)
-                updatedBallTablePos.pop(k)
-        else :
-            ballProbs[updatedBallPos[k]] += 1
-            if ballProbs[updatedBallPos[k]] >= 10:
-                ballProbs[updatedBallPos[k]] = 10
-                updatedBallTablePos[k] = detectedBallTablePos[detectedBall.index(updatedBall[k])] 
 
-    print('DetectedBall = ', detectedBall)
-    whitePos = -1
-    blackPos = -1
-    if 'White' in detectedBall:
-        whitePos = detectedBall.index('White')
-        detectedBall.pop(detectedBall.index('White'))
-    if 'Black' in detectedBall:
-        blackPos = detectedBall.index('Black')
-        detectedBall.pop(detectedBall.index('Black'))
+                if similarColor == "White":
+                    #print(whiteballpos)
+                    if len(whiteballpos) < 25:
+                        whiteballpos.append((circles[i][0],circles[i][1]))
+                    else :
+                        # Compute the average position
+                        avg_pos = (round(sum(p[0] for p in whiteballpos)/len(whiteballpos)), round(sum(p[1] for p in whiteballpos)/len(whiteballpos)))
+                        # Compute the standard deviation of the positions
+                        std_dev = math.sqrt(sum((p[0]-avg_pos[0])**2 + (p[1]-avg_pos[1])**2 for p in whiteballpos)/len(whiteballpos))
+                        # Check if the standard deviation is less than 10 pixels
+                        if std_dev < 5:
+                            #print(f"The position of White is accurate within 10 pixels.")
 
-    if whitePos != -1:
+                            whiteballpos.pop(0)
+                            whiteballpos.append((circles[i][0],circles[i][1]))
+                            avg_whiteball = avg_pos
+                        else:
+                            whiteballpos.clear()
+                            avg_whiteball = None
+                            print(f"The position of White may be inaccurate.")
 
-        x = circles[whitePos][0]
-        y = circles[whitePos][1]
+                elif similarColor == "Black" :
+                    realtime_blackball = (circles[i][0],circles[i][1])
+                    if len(blackballpos) < 5:
+                        blackballpos.append((circles[i][0],circles[i][1]))
+                    else :
+                        # Compute the average position
+                        avg_pos = (sum(p[0] for p in blackballpos)/len(blackballpos), sum(p[1] for p in blackballpos)/len(blackballpos))
+                        # Compute the standard deviation of the positions
+                        std_dev = math.sqrt(sum((p[0]-avg_pos[0])**2 + (p[1]-avg_pos[1])**2 for p in blackballpos)/len(blackballpos))
+                        # Check if the standard deviation is less than 10 pixels
+                        if std_dev < 5:
+                            #print(f"The position of Black is accurate within 10 pixels.")
+                            blackballpos.pop(0)
+                            blackballpos.append((circles[i][0],circles[i][1]))
+                            avg_blackball = avg_pos
+                        else:
+                            blackballpos.clear()
+                            print(f"The position of Black may be inaccurate.")
+                else :
+                    detectedBall.append(similarColor)
+                    detectedBallPos.append(maxSameColorPos)
+                    detectedBallTablePos.append((circles[i][0], circles[i][1]))
+
+    if avg_whiteball is not None:
+        x = avg_whiteball[0]
+        y = avg_whiteball[1]
         center = (int(x), int(y))
-        cv2.circle(black_bg, center, 200, (255, 255, 255), 5, cv2.LINE_AA)
+        #print(center)
+        cv2.circle(black_bg, (int(x), int(y)), 200, (255, 255, 255), 5, cv2.LINE_AA)
+        cv2.circle(black_bg, (int(x), int(y)), 30, (255, 255, 255), 2, cv2.LINE_AA)
         x_o,y_o = realPosition(x, y)
+        mask = np.zeros_like(original_frame)
+        cv2.circle(mask, (x_o,y_o), 200, (255, 255, 255), -1, cv2.LINE_AA)
+        # Apply the mask to the original image using bitwise operations
+        masked_img = cv2.bitwise_and(original_frame, mask)
+        if len(avg_center_x) <= 1:
+            avg_center_x.append(center[0])
+            avg_center_y.append(center[1])
+        if (abs(center[0] - np.mean(avg_center_x)) >= 100 or abs(center[1] - np.mean(avg_center_y)) >= 100) and not ball_move:
+            print("Ball shot")
+            count_shot_p1 += 1
+            avg_center_x.clear()
+            avg_center_y.clear()
+            ball_move = True
+        elif abs(center[0] - avg_center_x[0]) <= 10 and len(avg_center_x) != 5:
+            avg_center_x.append(center[0])
+            avg_center_y.append(center[1])
+        elif len(avg_center_x) < 5 and ball_move:
+            avg_center_x.clear()
+            avg_center_y.clear()
+        elif len(avg_center_x) == 5:
+            ball_move = False
         x1 = x_o - 200
         y1 = y_o - 200
         x2 = x_o + 200
@@ -300,45 +345,196 @@ while True:
             x1 = 1
         if y1 < 0:
             y1 = 1
-        mask = np.zeros_like(original_frame)
-        cv2.circle(mask, (x_o,y_o), 200, (255, 255, 255), -1, cv2.LINE_AA)
-        # Apply the mask to the original image using bitwise operations
-        masked_img = cv2.bitwise_and(original_frame, mask)
-        if len(avg_center_x) <= 1:
-            avg_center_x.append(center[0])
 
-        if abs(center[0] - np.mean(avg_center_x)) >= 100 and not ball_move:
-            print("Ball shot")
-            count_shot += 1
-            avg_center_x.clear()
-            ball_move = True
-        elif abs(center[0] - avg_center_x[0]) <= 10 and len(avg_center_x) != 5:
-            avg_center_x.append(center[0])
-        elif len(avg_center_x) < 5 and ball_move:
-            avg_center_x.clear()
-        elif len(avg_center_x) == 5:
-            ball_move = False
         # Crop around white ball
         whiteball_zone = masked_img[y1:y2, x1:x2]
+        hsv = cv2.cvtColor(whiteball_zone, cv2.COLOR_BGR2HSV)
+        blurFrame = cv2.GaussianBlur(hsv, (7, 7), 0)
+        # Define a cue white color threshold
+        lower_cue = np.array([145, 120, 140])
+        upper_cue = np.array([170, 255, 255])
+        mask = cv2.inRange(blurFrame, lower_cue, upper_cue)
+        kernel = np.ones((3,3),np.uint8)
+        mask_closing = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel) # dilate->erode
+        mask = cv2.dilate(mask_closing,kernel,iterations = 1)
+        # # Apply Canny edge detection
+        # edges = cv2.Canny(mask, 180, 255)
+        # mask_closing = cv2.morphologyEx(edges, cv2.MORPH_CLOSE, kernel) # dilate->erode
+        # lines = cv2.HoughLinesP(edges, 1, np.pi/180, 50,
+        #                 minLineLength=10, maxLineGap=100)
+
+        # # Find contours in the thresholded image
+        # contours, hierarchy = cv2.findContours(mask_closing, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+        # # Find the largest contour by area
+        # largest_contour = max(contours, key=cv2.contourArea)
+
+        # # Calculate the moments of the largest contour
+        # M = cv2.moments(largest_contour)
+
+        # # Calculate the centroid of the largest contour
+        # centroid_x = int(M['m10']/M['m00'])
+        # centroid_y = int(M['m01']/M['m00'])
+        # cv2.circle(whiteball_zone, (x_o,y_o), 200, (255, 255, 255), -1, cv2.LINE_AA)
+        contours, hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        if contours:
+            # Extract the largest contour that has more than 10 points
+            contours = [c for c in contours if len(c) > 10]
+            if not contours:
+                continue
+            else:
+                cue_contour = max(contours, key=cv2.contourArea)
+            cue_contour += (center[0],center[1]-400)
+            # Fit a line to the cue contour
+            [vx, vy, x, y] = cv2.fitLine(cue_contour, cv2.DIST_L2, 0, 0.01, 0.01)
+            # Calculate the angle of the line with respect to the x-axis
+            # Compute the start and end points of the cue line
+            start_x = int(x - vx * 2000)
+            start_y = int(y - vy * 2000)
+            end_x = int(x + vx * 2000)
+            end_y = int(y + vy * 2000)
+
+            # Print out the values of vx, vy, and angle
+            print("vx:", vx)
+            print("vy:", vy)
+            angle = np.arctan2(vy, vx) * 180 / np.pi
+            if angle < 0:
+                angle += 360
+            print("angle:", angle)
+
+            
+            height, width, _ = black_bg.shape
+            if start_x < 0:
+                start_x = 0
+                start_y = int(y + (start_x - x) * vy / vx)
+            elif start_x >= width:
+                start_x = width - 1
+                start_y = int(y + (start_x - x) * vy / vx)
+            if start_y < 0:
+                start_y = 0
+                start_x = int(x + (start_y - y) * vx / vy)
+            elif start_y >= height:
+                start_y = height - 1
+                start_x = int(x + (start_y - y) * vx / vy)
+
+            if end_x < 0:
+                end_x = 0
+                end_y = int(y + (end_x - x) * vy / vx)
+            elif end_x >= width:
+                end_x = width - 1
+                end_y = int(y + (end_x - x) * vy / vx)
+            if end_y < 0:
+                end_y = 0
+                end_x = int(x + (end_y - y) * vx / vy)
+            elif end_y >= height:
+                end_y = height - 1
+                end_x = int(x + (end_y - y) * vx / vy)
+            # Draw the cue line on the original frame
+
+            cv2.line(black_bg, (start_x, start_y), (end_x, end_y), (0, 255, 0), 3)
+
+
+    # for k in range(len(detectedBallPos)) :
+    #     if detectedBall[k] not in updatedBall:
+    #         ballProbs[detectedBallPos[k]] += 1
+    #         if ballProbs[detectedBallPos[k]] >= 10:
+    #             ballProbs[detectedBallPos[k]] = 10
+                
+    #         if ballProbs[detectedBallPos[k]] == 10:
+    #             updatedBall.append(detectedBall[k])
+    #             updatedBallPos.append(detectedBallPos[k])
+    #             updatedBallTablePos.append(detectedBallTablePos[k])
+
+    # for k in range(len(updatedBall)-1, -1, -1) :
+    #     if updatedBall[k] not in detectedBall :
+    #         ballProbs[updatedBallPos[k]] -= 1
+    #         if ballProbs[updatedBallPos[k]] <= 0:
+    #             ballProbs[updatedBallPos[k]] = 0
+                
+    #         if ballProbs[updatedBallPos[k]] == 0:
+    #             updatedBall.pop(k)
+    #             updatedBallPos.pop(k)
+    #             updatedBallTablePos.pop(k)
+    #     else :
+    #         ballProbs[updatedBallPos[k]] += 1
+    #         if ballProbs[updatedBallPos[k]] >= 10:
+    #             ballProbs[updatedBallPos[k]] = 10
+    #             updatedBallTablePos[k] = detectedBallTablePos[detectedBall.index(updatedBall[k])] 
+
+    # print('DetectedBall = ', detectedBall)
+    # print('DetectedBallPos = ', detectedBallPos)
+    # print('DetectedBallTablePos = ', detectedBallTablePos)
+    # print('UpdatedBall = ', updatedBall)
+    # print('UpdatedBallPos = ', updatedBallPos)
+    # print('UpdatedBallTablePos = ', updatedBallTablePos)
+    # print('BallProbs = ', ballProbs)
+    # whitePos = -1
+    # blackPos = -1
+    # whiteTablePos = (0,0)
+    # blackTablePos = (0,0)
+    # if 'White' in detectedBall:
+    #     whitePos = detectedBall.index('White')
+    #     whiteTablePos = detectedBallTablePos[whitePos]
+    #     detectedBall.pop(whitePos)
+    # if 'Black' in detectedBall:
+    #     blackPos = detectedBall.index('Black')
+    #     whiteTablePos = detectedBallTablePos[blackPos]
+    #     detectedBall.pop(blackPos)
+
+    # if whitePos != -1:
+
+    #     x = circles[whitePos][0]
+    #     y = circles[whitePos][1]
+    #     center = (int(x), int(y))
+    #     cv2.circle(black_bg, center, 200, (255, 255, 255), 5, cv2.LINE_AA)
+    #     x_o,y_o = realPosition(x, y)
+    #     x1 = x_o - 200
+    #     y1 = y_o - 200
+    #     x2 = x_o + 200
+    #     y2 = y_o + 200
+    #     if x1 < 0:
+    #         x1 = 1
+    #     if y1 < 0:
+    #         y1 = 1
+    #     mask = np.zeros_like(original_frame)
+    #     cv2.circle(mask, (x_o,y_o), 200, (255, 255, 255), -1, cv2.LINE_AA)
+    #     # Apply the mask to the original image using bitwise operations
+    #     masked_img = cv2.bitwise_and(original_frame, mask)
+    #     if len(avg_center_x) <= 1:
+    #         avg_center_x.append(center[0])
+
+    #     if abs(center[0] - np.mean(avg_center_x)) >= 100 and not ball_move:
+    #         print("Ball shot")
+    #         count_shot += 1
+    #         avg_center_x.clear()
+    #         ball_move = True
+    #     elif abs(center[0] - avg_center_x[0]) <= 10 and len(avg_center_x) != 5:
+    #         avg_center_x.append(center[0])
+    #     elif len(avg_center_x) < 5 and ball_move:
+    #         avg_center_x.clear()
+    #     elif len(avg_center_x) == 5:
+    #         ball_move = False
+    #     # Crop around white ball
+    #     whiteball_zone = masked_img[y1:y2, x1:x2]
         
 
-        # Cue Detection
-        # Convert the frame to HSV color space
-        #print(whiteball_zone.shape[:2])
-        hsv = cv2.cvtColor(whiteball_zone, cv2.COLOR_BGR2HSV)
+    #     # Cue Detection
+    #     # Convert the frame to HSV color space
+    #     #print(whiteball_zone.shape[:2])
+    #     hsv = cv2.cvtColor(whiteball_zone, cv2.COLOR_BGR2HSV)
 
-        # Define a cue white color threshold
-        lower_white = np.array([0, 60, 160])
-        upper_white = np.array([100, 100, 255])
+    #     # Define a cue white color threshold
+    #     lower_white = np.array([0, 60, 160])
+    #     upper_white = np.array([100, 100, 255])
 
-        mask = cv2.inRange(hsv, lower_white, upper_white)
-        output = cv2.bitwise_and(whiteball_zone, whiteball_zone, mask=mask)
+    #     mask = cv2.inRange(hsv, lower_white, upper_white)
+    #     output = cv2.bitwise_and(whiteball_zone, whiteball_zone, mask=mask)
 
-        # Detect Edge of pool Cue
-        edges = cv2.Canny(output, 180, 255)
-        # Detect points that form a line
-        lines = cv2.HoughLinesP(edges, 1, np.pi/180, 50,
-                                minLineLength=10, maxLineGap=100)
+    #     # Detect Edge of pool Cue
+    #     edges = cv2.Canny(output, 180, 255)
+    #     # Detect points that form a line
+    #     lines = cv2.HoughLinesP(edges, 1, np.pi/180, 50,
+    #                             minLineLength=10, maxLineGap=100)
         #Draw the detected line segments on the original frame
 
         # if lines is not None:
@@ -585,10 +781,10 @@ while True:
         #         # print(x_bottom, y_bottom)
 
 
-
     detectedBall = []
     detectedBallPos = []
     detectedBallTablePos = [] 
+    whiteballpos = [] 
 
 
 
