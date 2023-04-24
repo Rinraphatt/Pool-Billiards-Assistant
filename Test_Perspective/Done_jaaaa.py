@@ -101,21 +101,21 @@ stagePro1Pics = [
 ]
 
 stagePro2Pics = [
-    'stageBasicPositioning.png',
-    'stageBasicPositioning_2.png',
-    'stageBasicPositioning_3.png',
-    'stageBasicPositioning_4.png',
-    'stageBasicPositioning_5.png',
-    'stageBasicPositioning_6.png',
+    'stageSideSpin.png',
+    'stageSideSpin_2.png',
+    'stageSideSpin_3.png',
+    'stageSideSpin_4.png',
+    'stageSideSpin_5.png',
+    'stageSideSpin_6.png',
 ]
 
 stagePro3Pics = [
-    'stageBasicPositioning.png',
-    'stageBasicPositioning_2.png',
-    'stageBasicPositioning_3.png',
-    'stageBasicPositioning_4.png',
-    'stageBasicPositioning_5.png',
-    'stageBasicPositioning_6.png',
+    'stageMasse.png',
+    'stageMasse_2.png',
+    'stageMasse_3.png',
+    'stageMasse_4.png',
+    'stageMasse_5.png',
+    'stageMasse_6.png',
 ]
 
 currentStagePics = []
