@@ -40,29 +40,36 @@ x2ProBtn, y2ProBtn = 1686, 763  # bottom-right corner
 
 # Initialize the timer
 start_time = None
-debounceTime = 2
+debounceTime = 1.5
 
 stageBasic1Pics = [
-    'stage1.png',
-    'stage1_2.png',
-    'stage1_3.png'
+    'stageBridge.png',
+    'stageBridge_2.png',
+    'stageBridge_3.png',
+    'stageBridge_4.png',
 ]
 
 stageBasic2Pics = [
-    'stage2.png',
-    'stage2_2.png',
-    'stage2_3.png',
-    'stage2_4.png'
+    'stageStraight.png',
+    'stageStraight_2.png',
+    'stageStraight_3.png'
 ]
 
 stageBasic3Pics = [
-    'stage3.png',
-    'stage3_2.png',
-    'stage3_3.png',
-    'stage3_4.png',
+    'stageGhost.png',
+    'stageGhost_2.png',
+    'stageGhost_3.png',
+    'stageGhost_4.png'
 ]
 
 stageAmature1Pics = [
+    'stageCombination.png',
+    'stageCombination_2.png',
+    'stageCombination_3.png',
+    'stageCombination_4.png',
+]
+
+stageAmature2Pics = [
     'stageDiamond.png',
     'stageDiamond_2.png',
     'stageDiamond_3.png',
@@ -74,7 +81,7 @@ stageAmature1Pics = [
     'stageDiamond_9.png',
 ]
 
-stageAmature2Pics = [
+stageAmature3Pics = [
     'stageBallControl.png',
     'stageBallControl_2.png',
     'stageBallControl_3.png',
@@ -82,6 +89,33 @@ stageAmature2Pics = [
     'stageBallControl_5.png',
     'stageBallControl_6.png',
     'stageBallControl_7.png',
+]
+
+stagePro1Pics = [
+    'stageBasicPositioning.png',
+    'stageBasicPositioning_2.png',
+    'stageBasicPositioning_3.png',
+    'stageBasicPositioning_4.png',
+    'stageBasicPositioning_5.png',
+    'stageBasicPositioning_6.png',
+]
+
+stagePro2Pics = [
+    'stageBasicPositioning.png',
+    'stageBasicPositioning_2.png',
+    'stageBasicPositioning_3.png',
+    'stageBasicPositioning_4.png',
+    'stageBasicPositioning_5.png',
+    'stageBasicPositioning_6.png',
+]
+
+stagePro3Pics = [
+    'stageBasicPositioning.png',
+    'stageBasicPositioning_2.png',
+    'stageBasicPositioning_3.png',
+    'stageBasicPositioning_4.png',
+    'stageBasicPositioning_5.png',
+    'stageBasicPositioning_6.png',
 ]
 
 currentStagePics = []
@@ -188,7 +222,7 @@ while True:
         # cv2.rectangle(handDetectFrame, (x1PrevBtn, y1PrevBtn), (x2PrevBtn, y2PrevBtn), (255, 0, 0), 3)
         if mainStage == 'modeSelect' :
             cv2.rectangle(tansformed_frame, (x1TrainingBtn, y1TrainingBtn+200), (x2TrainingBtn, y2TrainingBtn+200), (255, 0, 0), 3)
-        elif mainStage == 'difficultSelect' or mainStage == 'basicStageSelect' or mainStage == 'amatureStageSelect':
+        elif mainStage == 'difficultSelect' or mainStage == 'basicStageSelect' or mainStage == 'amatureStageSelect' or mainStage == 'proStageSelect':
             cv2.rectangle(tansformed_frame, (x1BasicBtn, y1BasicBtn+200), (x2BasicBtn, y2BasicBtn+200), (255, 0, 0), 3)
             cv2.rectangle(tansformed_frame, (x1AmatureBtn, y1AmatureBtn+200), (x2AmatureBtn, y2AmatureBtn+200), (255, 0, 0), 3)
             cv2.rectangle(tansformed_frame, (x1ProBtn, y1ProBtn+200), (x2ProBtn, y2ProBtn+200), (255, 0, 0), 3)
@@ -231,6 +265,16 @@ while True:
                     prevMainStage = 'difficultSelect'
                     mainStage = 'amatureStageSelect'
                     mac = cv2.imread('../pics/Stage/amatureStageSelect.png')
+                    mac = cv2.resize(mac, (1920, 880))
+                    start_time = time.time()
+            elif are_rectangles_overlapping(cursorRect,proBtnRect) == True :
+                if start_time is None:
+                    start_time = time.time()
+
+                elif time.time() - start_time >= debounceTime:
+                    prevMainStage = 'difficultSelect'
+                    mainStage = 'proStageSelect'
+                    mac = cv2.imread('../pics/Stage/proStageSelect.png')
                     mac = cv2.resize(mac, (1920, 880))
                     start_time = time.time()
             elif are_rectangles_overlapping(cursorRect,backBtnRect) == True :
@@ -321,18 +365,68 @@ while True:
                     mac = cv2.imread('../pics/Stage/' + currentStagePics[currentStageState])
                     mac = cv2.resize(mac, (1920, 880))
                     start_time = time.time()
-            # elif are_rectangles_overlapping(cursorRect,rightStageBtnRect) == True :
-            #     if start_time is None:
-            #         start_time = time.time()
+            elif are_rectangles_overlapping(cursorRect,rightStageBtnRect) == True :
+                if start_time is None:
+                    start_time = time.time()
 
-            #     elif time.time() - start_time >= 2:
-            #         prevMainStage = 'amatureStageSelect'
-            #         mainStage = 'trainingStage'
-            #         currentStagePics = stageAmature3Pics
-            #         currentStageState = 0
-            #         mac = cv2.imread('../pics/Stage/' + currentStagePics[currentStageState])
-            #         mac = cv2.resize(mac, (1920, 880))
-            #         start_time = time.time()
+                elif time.time() - start_time >= debounceTime:
+                    prevMainStage = 'amatureStageSelect'
+                    mainStage = 'trainingStage'
+                    currentStagePics = stageAmature3Pics
+                    currentStageState = 0
+                    mac = cv2.imread('../pics/Stage/' + currentStagePics[currentStageState])
+                    mac = cv2.resize(mac, (1920, 880))
+                    start_time = time.time()
+            elif are_rectangles_overlapping(cursorRect,backBtnRect) == True :
+                if start_time is None:
+                    start_time = time.time()
+
+                elif time.time() - start_time >= debounceTime:
+                    cv2.rectangle(tansformed_frame, (x1BackBtn, y1BackBtn+200), (x2BackBtn, y2BackBtn+200), (0, 255, 255), 3)
+                    prevMainStage = 'modeSelect'
+                    mainStage = 'difficultSelect'
+                    mac = cv2.imread('../pics/Stage/difficultSelect.png') 
+                    mac = cv2.resize(mac, (1920, 880))
+                    start_time = time.time()
+            else:
+                start_time = None
+        elif mainStage == 'proStageSelect':
+            if are_rectangles_overlapping(cursorRect,leftStageBtnRect) == True :
+                if start_time is None:
+                    start_time = time.time()
+
+                elif time.time() - start_time >= debounceTime:
+                    prevMainStage = 'proStageSelect'
+                    mainStage = 'trainingStage'
+                    currentStagePics = stagePro1Pics
+                    currentStageState = 0
+                    mac = cv2.imread('../pics/Stage/' + currentStagePics[currentStageState])
+                    mac = cv2.resize(mac, (1920, 880))
+                    start_time = time.time()
+            elif are_rectangles_overlapping(cursorRect,middleStageBtnRect) == True :
+                if start_time is None:
+                    start_time = time.time()
+
+                elif time.time() - start_time >= debounceTime:
+                    prevMainStage = 'proStageSelect'
+                    mainStage = 'trainingStage'
+                    currentStagePics = stagePro2Pics
+                    currentStageState = 0
+                    mac = cv2.imread('../pics/Stage/' + currentStagePics[currentStageState])
+                    mac = cv2.resize(mac, (1920, 880))
+                    start_time = time.time()
+            elif are_rectangles_overlapping(cursorRect,rightStageBtnRect) == True :
+                if start_time is None:
+                    start_time = time.time()
+
+                elif time.time() - start_time >= debounceTime:
+                    prevMainStage = 'proStageSelect'
+                    mainStage = 'trainingStage'
+                    currentStagePics = stagePro3Pics
+                    currentStageState = 0
+                    mac = cv2.imread('../pics/Stage/' + currentStagePics[currentStageState])
+                    mac = cv2.resize(mac, (1920, 880))
+                    start_time = time.time()
             elif are_rectangles_overlapping(cursorRect,backBtnRect) == True :
                 if start_time is None:
                     start_time = time.time()
