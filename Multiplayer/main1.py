@@ -192,8 +192,8 @@ upperColor = [
 
 
 # Load the camera matrix and distortion coefficients from the calibration file
-mtx = np.loadtxt('./arUco/calib_data/camera_matrix.txt')
-dist = np.loadtxt('./arUco/calib_data/dist_coeffs.txt')
+mtx = np.loadtxt('../arUco/calib_data/camera_matrix.txt')
+dist = np.loadtxt('../arUco/calib_data/dist_coeffs.txt')
 cap = cv2.VideoCapture(0)
 width = 1920
 height = 1080

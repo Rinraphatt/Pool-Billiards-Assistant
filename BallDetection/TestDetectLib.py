@@ -17,7 +17,7 @@ cropSize = (100, 100)
 width = 1920
 height = 1080
 # cap = cv2.VideoCapture(0)
-cap = cv2.VideoCapture('../videos/Level1_Blue1.mp4')
+cap = cv2.VideoCapture(0)
 # set frame rate to 30 fps
 fps = cap.get(cv2.CAP_PROP_FPS)
 print('fps = ', fps)
@@ -31,6 +31,13 @@ cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
 frame_count = 0
 
 updatedBall = []
+updatedBallPos = []
+updatedBallTablePos = []
+detectedBall = []
+detectedBallPos = []
+detectedBallTablePos = []
+
+ballProbs = [0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 # loadSetting()
 outputDrawing = np.zeros((1080,1920,3), np.uint8)
@@ -50,6 +57,10 @@ while True:
         res = BDLib.getCircles(perspectFrame)
 
         # BDLib.createGuideline(perspectFrame, res[0], res[1], outputDrawing)
+        if res[0] is not None :
+            print(res)
+            for i in range(len(res[0])) :
+                cv2.circle(perspectFrame, (int(res[0][0][i][0]), int(res[0][0][i][1])), int(res[0][0][i][2]), (255,0,255), 2)
         
         updatedBall = []
 
