@@ -50,7 +50,7 @@ def filter_ctrs(ctrs, min_s = 20, max_s = 500000, alpha = 1):
             continue # do nothing
             
         if (area < min_s) or (area > max_s): # if the contour area is too big/small
-            print("pif")
+
             continue # do nothing 
 
         # if it failed previous statements then it is most likely a ball
@@ -216,23 +216,39 @@ count_shot_p1 = 0
 count_shot_p2 = 0
 isP1 = True
 ball_move = False
+avg_cue_x1 = []
+avg_cue_y1 = []
+avg_cue_x2 = []
+avg_cue_y2 = []
+list_start = []
+list_end = []
+
+
 
 detectedBall = []
 detectedBallPos = []
 detectedBallTablePos = []
+updatedBall = []
+updatedBallPos = []
+updatedBallTablePos = []
+prevBallPos = []
+ballProbs = [0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 list_white = []
 list_black = []
 avg_white = (0,0)
 avg_black = (0,0)
 realtime_black = []
-
+acurency_p1 = 0
+acurency_p2 = 0
 ballProbs = [0, 0, 0, 0, 0, 0, 0, 0, 0]
 pocket_point = [(240,166),(974,148),(1720,188),(180,905),(965,950),(1761,928)]
 bound = 0
 output_width = 1920 - bound
 output_height = 880 - bound
 output_min = 0 + bound
+xchangeP,ychangeP = 1650,500
+wchangeP,hchangeP = 100,100
 while True:
     succuess, frame = cap.read()
     whiteball_zone = np.zeros((400, 400, 3), np.uint8)
@@ -268,6 +284,10 @@ while True:
     circles = cv2.HoughCircles(inv_mask, cv2.HOUGH_GRADIENT, 1, 30, param1=100, param2=10, minRadius=21, maxRadius=35)
     circleZones = []
     circleZonesColor = []
+
+
+
+    cv2.rectangle(black, ( xchangeP , ychangeP ),( xchangeP+wchangeP , ychangeP+hchangeP ), (255, 255, 255), 5)
     if circles is not None :
         circles = np.round(circles[0, :]).astype("int")
         if len(circles) <= 20 :
@@ -346,9 +366,7 @@ while True:
                 elif maxSameColorPos == 8:
                     similarColor = 'White'
 
-                detectedBall.append(similarColor)
-                detectedBallPos.append(maxSameColorPos)
-                detectedBallTablePos.append((circles[i][0], circles[i][1]))
+
                 if (similarColor in ["Black","White"]):
                     # cv2.putText(table_frame, f'Number : {i}', (circles[i][0], circles[i][1]-80), cv2.FONT_HERSHEY_SIMPLEX, 
                     #     0.7, (255, 0, 255), 2, cv2.LINE_AA)
@@ -367,7 +385,7 @@ while True:
                         # Calculate the mean of the points
                         avg_point = np.mean(points, axis=0)
                         ax,ay = avg_point
-                        if abs(circles[i][0] - ax) < 10 and abs(circles[i][1] - ay) < 10 :
+                        if abs(circles[i][0] - ax) < 20 and abs(circles[i][1] - ay) < 20 :
                             if len(list_black) < 3:
                                 list_black.append([circles[i][0], circles[i][1]])
                             else :
@@ -384,18 +402,24 @@ while True:
                         # Calculate the mean of the points
                         avg_point = np.mean(points, axis=0)
                         ax,ay = avg_point
-                        if abs(circles[i][0] - ax) < 10 and abs(circles[i][1] - ay) < 10 :
+                        if abs(circles[i][0] - ax) < 20 and abs(circles[i][1] - ay) < 20 :
                             if len(list_white) < 3:
                                 list_white.append([circles[i][0], circles[i][1]])
                             else :
                                 avg_white = (round(ax),round(ay))
                         else:
                             list_white.pop(0)
+                else:
+                    detectedBall.append(similarColor)
+                    detectedBallPos.append(maxSameColorPos)
+                    detectedBallTablePos.append((circles[i][0], circles[i][1]))
 
             for p in pocket_point:
                 if len(realtime_black) != 0:
                     if circleOverlap(realtime_black[0], realtime_black[1], realtime_black[2], p[0], p[1], 50) :
                         print("End Round")
+                        print("Acurency Player1 : " + str(round((acurency_p1/count_shot_p1)*100),2) + "  %")
+                        print("Acurency Player2 : " + str(round((acurency_p2/count_shot_p2)*100),2) + "  %")
                    
 
     whitePos = -1
@@ -403,6 +427,12 @@ while True:
         whitePos = detectedBall.index('White')
 
     if whitePos != -1 :
+        if isP1:
+            if prevBallPos != updatedBall:
+                acurency_p1 += 1
+        else :
+            if prevBallPos != updatedBall:
+                acurency_p2 += 1
         center = avg_white
         # Draw on black frame
         cv2.circle(black, center, 30, (255, 255, 255), 5, cv2.LINE_AA)
@@ -416,6 +446,7 @@ while True:
             avg_center_x.append(center[0])
             avg_center_y.append(center[1])
         if (abs(center[0] - np.mean(avg_center_x)) >= 100 or abs(center[1] - np.mean(avg_center_y)) >= 100) and not ball_move:
+            prevBallPos = updatedBallTablePos
             if isP1:
                 count_shot_p1 += 1
                 print("Ball shot for Player1")
@@ -504,7 +535,29 @@ while True:
 
             # print("Top : "+ str(start_x) + "  "+str(start_y))
             # print("Bot : "+ str( end_x ) + "  " +str(end_y))
-            cv2.line(black, (start_x, start_y), (end_x, end_y), (255, 255, 255), 10)
+
+            if len(list_start) < 1:
+                list_start.append([start_x,start_y])
+                list_end.append([end_x,end_y])
+
+            cue_1 = np.array(list_start)
+            cue_2 = np.array(list_end)
+            # Calculate the mean of the points
+            avg_cue1 = np.mean(cue_1, axis=0)
+            avg_cue2 = np.mean(cue_2, axis=0)
+            ax_start,ay_start = avg_cue1
+            ax_end,ay_end = avg_cue2
+
+            if abs(start_x - ax_start) < 100 and abs(start_y - ay_start) < 100 and abs(end_x - ax_end) < 100 and abs(end_y - ay_end) < 100 :
+                if len(list_start) < 5 :
+                    list_start.append([start_x,start_y])
+                    list_end.append([end_x,end_y])
+                else:
+                    cv2.line(black, (ax_start, ay_start), (ax_end, ay_end), (255, 255, 255), 10)
+            else:
+                list_start.clear()
+                list_end.clear()
+            
             
             output = cv2.bitwise_and(whiteball_zone, whiteball_zone, mask=mask)
             edges = cv2.Canny(output, 180, 255)
@@ -681,7 +734,9 @@ while True:
 
                             else:
                                 showLine(black,(x4, y4), (output_min,y4+abs(y4-y3)))
-
+    else :
+        list_start.clear()
+        list_end.clear()
     black_bg = np.zeros((1080, 1920, 3), np.uint8)
     black_bg[200:1080,0:1920] = black 
     cv2.namedWindow('Frame',cv2.WND_PROP_FULLSCREEN)

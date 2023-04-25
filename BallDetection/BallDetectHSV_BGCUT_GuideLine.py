@@ -139,7 +139,7 @@ updatedBallTablePos = []
 detectedBall = []
 detectedBallPos = []
 detectedBallTablePos = []
-
+pevBallPos = []
 ballProbs = [0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 bgFrame = None
