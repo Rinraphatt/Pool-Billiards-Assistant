@@ -28,8 +28,8 @@ cropSize = (100, 100)
 # cv.namedWindow("Python Webcam Screenshot App")
 
 outputDrawing = np.zeros((784,1568,3), np.uint8)
-mtx = np.loadtxt('./arUco/calib_data/camera_matrix.txt')
-dist = np.loadtxt('./arUco/calib_data/dist_coeffs.txt')
+mtx = np.loadtxt('../arUco/calib_data/camera_matrix.txt')
+dist = np.loadtxt('../arUco/calib_data/dist_coeffs.txt')
 def loadSetting():
     print("loadSetting")
 
@@ -97,28 +97,29 @@ cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
 # start processing loop
 frame_count = 0
 
+# Blue Light
 lowerColor = [
     np.array([20,150,50]), #Yellow
-    np.array([110,200,125]), #Blue
-    np.array([0,150,155]), #Red
+    np.array([115,0,190]), #Blue
+    np.array([0,0,0]), #Red
     np.array([110,215,150]), #Purple
-    np.array([5,150,50]), #Orange
+    np.array([0,150,155]), #Orange
     np.array([95,100,100]), #Green
     np.array([0,100,50]), #Crimson
     np.array([0,0,0]), #Black
-    np.array([100,0,130]), #White
-
+    np.array([110,200,125]), #White
 ]
+
 upperColor = [
     np.array([40,255,255]),
     np.array([130,255,255]),
-    np.array([20,255,255]),
+    np.array([60,255,255]),
     np.array([145,255,255]),
-    np.array([25,255,255]),
+    np.array([20,255,255]),
     np.array([110,255,255]),
     np.array([20,255,155]),
     np.array([179,255,40]),
-    np.array([179,180,255]),
+    np.array([130,255,255]),
 ]
 
 grayScaleValues = [
@@ -195,8 +196,14 @@ while True:
         if n_white_pix <= 100:
             #print("IDLE")
             hsvFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-            lower_green = np.array([50,20,40])
-            upper_green = np.array([100,255,255])
+
+            # White Light
+            # lower_green = np.array([50,20,40])
+            # upper_green = np.array([100,255,255])
+
+            # Blue Light
+            lower_green = np.array([85,0,0])
+            upper_green = np.array([110,255,255])
 
 
             mask = cv2.inRange(hsvFrame, lower_green, upper_green)
@@ -207,7 +214,7 @@ while True:
             # cropped_Show_image = showFrame[148:932, 174:1742]
             cv2.imshow("CroppedShowFrame1", mask)
             circles = cv2.HoughCircles(blurFrame, cv2.HOUGH_GRADIENT, 1.4, 30,
-                                        param1=100, param2=20, minRadius=30, maxRadius=40)
+                                        param1=100, param2=25, minRadius=30, maxRadius=40)
 
             circleZones = []
             circleZonesColor = []
@@ -322,28 +329,33 @@ while True:
 
             for k in range(len(updatedBall)-1, -1, -1) :
                 #print('K = ', k)
-                if updatedBall[k] not in detectedBall :
-                    ballProbs[updatedBallPos[k]] -= 1
-                    if ballProbs[updatedBallPos[k]] <= 0:
-                        ballProbs[updatedBallPos[k]] = 0
-                        
-                    if ballProbs[updatedBallPos[k]] == 0:
-                        updatedBall.pop(k)
-                        updatedBallPos.pop(k)
-                        updatedBallTablePos.pop(k)
+                if updatedBall[k] == '' :
+                    updatedBall.pop(k)
+                    updatedBallPos.pop(k)
+                    updatedBallTablePos.pop(k)
                 else :
-                    ballProbs[updatedBallPos[k]] += 1
-                    if ballProbs[updatedBallPos[k]] >= 10:
-                        ballProbs[updatedBallPos[k]] = 10
-                        updatedBallTablePos[k] = detectedBallTablePos[detectedBall.index(updatedBall[k])] 
+                    if updatedBall[k] not in detectedBall :
+                        ballProbs[updatedBallPos[k]] -= 1
+                        if ballProbs[updatedBallPos[k]] <= 0:
+                            ballProbs[updatedBallPos[k]] = 0
+                            
+                        if ballProbs[updatedBallPos[k]] == 0:
+                            updatedBall.pop(k)
+                            updatedBallPos.pop(k)
+                            updatedBallTablePos.pop(k)
+                    else :
+                        ballProbs[updatedBallPos[k]] += 1
+                        if ballProbs[updatedBallPos[k]] >= 10:
+                            ballProbs[updatedBallPos[k]] = 10
+                            updatedBallTablePos[k] = detectedBallTablePos[detectedBall.index(updatedBall[k])] 
 
             print('DetectedBall = ', detectedBall)
             # print('DetectedBallPos = ', detectedBallPos)
             # print('DetectedBallTablePos = ', detectedBallTablePos)
-            # print('UpdatedBall = ', updatedBall)
-            # print('UpdatedBallPos = ', updatedBallPos)
-            # print('UpdatedBallTablePos = ', updatedBallTablePos)
-            # print('BallProbs = ', ballProbs)
+            print('UpdatedBall = ', updatedBall)
+            print('UpdatedBallPos = ', updatedBallPos)
+            print('UpdatedBallTablePos = ', updatedBallTablePos)
+            print('BallProbs = ', ballProbs)
             whitePos = -1
             if 'White' in detectedBall:
                 whitePos = detectedBall.index('White')
