@@ -5,8 +5,7 @@ import random
 import math
 import BallDetectionLib as BDLib
 
-#vidcap = cv2.VideoCapture(0)
-vidcap = cv2.VideoCapture("./videos/Test.mp4")
+vidcap = cv2.VideoCapture(0)
 width = 1920
 height = 1080
 vidcap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
@@ -743,7 +742,7 @@ while True:
                     start_time = time.time()
             else:
                 start_time = None
-  
+    print(mainStage)
     if mainStage == 'timeTrialMode':
         mac = np.zeros((880, 1920, 3), np.uint8)
         cv2.rectangle(mac, (0, 0), (1920, 880), (0, 0, 0), -1)
@@ -816,7 +815,7 @@ while True:
                     if ballCheckingStartTime == 0 :
                         ballCheckingStartTime = time.time()
 
-                    if time.time() - ballCheckingStartTime >= 3:
+                    if time.time() - ballCheckingStartTime > 3:
                         if 'Red' not in updatedBall :
                             timeTrialScore += 50
                         else:
@@ -838,9 +837,6 @@ while True:
                 'Place cue ball inside the circle to start.', cv2.FONT_HERSHEY_SIMPLEX, 1.5, 3)
 
             cv2.putText(mac, 'Place cue ball inside the circle to start.', (970 - int((explanTextSize[0])/2), 550), cv2.FONT_HERSHEY_SIMPLEX,
-                    1.5, (255, 255, 255), 3, cv2.LINE_AA)
-
-            cv2.putText(mac, '[ Use Orange ball(5) as an object ball. ]', (970 - int((explanTextSize[0])/2), 650), cv2.FONT_HERSHEY_SIMPLEX,
                     1.5, (255, 255, 255), 3, cv2.LINE_AA)
             
             print(timeTrialMainBall)
@@ -905,7 +901,7 @@ while True:
             mac = cv2.resize(mac, (1920, 880))
 
             # Open a file for reading
-            with open("./pics/HighScore.txt", "r") as f:
+            with open("HighScore.txt", "r") as f:
                 # Read the contents of the file
                 contents = f.read()
 
@@ -918,7 +914,7 @@ while True:
                 timeTrialHighScore = timeTrialScore
 
                 # Open a file for writing
-                with open("./pics/HighScore.txt", "w") as f:
+                with open("HighScore.txt", "w") as f:
                     # Write some text to the file
                     f.write(str(timeTrialHighScore))
                 
@@ -929,8 +925,8 @@ while True:
                     4.0, (0, 0, 0), 15, cv2.LINE_AA)
             cv2.putText(mac, f'{timeTrialScore}', (970 - int((scoreSize[0])/2), 750 - int((scoreSize[1])/2)), cv2.FONT_HERSHEY_SIMPLEX, 
                     3.5, (0, 0, 0), 15, cv2.LINE_AA)
-   
-    if mainStage == 'timeTrialMode':
+
+    elif mainStage == 'freedomMode':
         mac = np.zeros((880, 1920, 3), np.uint8)
         cv2.rectangle(mac, (0, 0), (1920, 880), (0, 0, 0), -1)
 
@@ -947,7 +943,7 @@ while True:
         n_white_pix = np.sum(thresh == 255)
 
         if n_white_pix <= 100:
-            res = BDLib.getCircles(handDetectFrame,"Blue")
+            res = BDLib1.getCircles(handDetectFrame,"White")
 
             # BDLib.createGuideline(perspectFrame, res[0], res[1], outputDrawing)
             if res[0] is not None :
@@ -996,128 +992,19 @@ while True:
             print('UpdatedBallPos = ', updatedBallPos)
             print('UpdatedBallTablePos = ', updatedBallTablePos)
             print('BallProbs = ', ballProbs)
-            if (timeTrialState == 'Playing') and (timeTrialMainBall in updatedBall) :
-                if math.sqrt(pow((abs(int(updatedBallTablePos[updatedBall.index(timeTrialMainBall)][0]) - int(prevWhiteX))), 2) + pow(abs(int(updatedBallTablePos[updatedBall.index(timeTrialMainBall)][1]) - int(prevWhiteY)), 2)) >= 200 :
-                    print("White Stop")
-                    if ballCheckingStartTime == 0 :
-                        ballCheckingStartTime = time.time()
 
-                    if time.time() - ballCheckingStartTime >= 3:
-                        if 'Red' not in updatedBall :
-                            timeTrialScore += 50
-                        else:
-                            timeTrialScore -= 10
-                        prevWhiteX = updatedBallTablePos[updatedBall.index(timeTrialMainBall)][0]
-                        prevWhiteY = updatedBallTablePos[updatedBall.index(timeTrialMainBall)][1] 
-                        objectX = random.randint(20, 1900)
-                        objectY = random.randint(20, 780)
-                        ballCheckingStartTime = 0
-                        timeTrialState = 'Positioning'
-        else :
-            print("Moving")
 
-        if timeTrialState == 'Prepare':
-            print('Prepare')
-            cv2.circle(mac, (970, 440), 35, (255, 255, 255), 5)
-
-            explanTextSize, explanTextBaseline = cv2.getTextSize(
-                'Place cue ball inside the circle to start.', cv2.FONT_HERSHEY_SIMPLEX, 1.5, 3)
-
-            cv2.putText(mac, 'Place cue ball inside the circle to start.', (970 - int((explanTextSize[0])/2), 550), cv2.FONT_HERSHEY_SIMPLEX,
-                    1.5, (255, 255, 255), 3, cv2.LINE_AA)
-
-            cv2.putText(mac, '[ Use Orange ball(5) as an object ball. ]', (970 - int((explanTextSize[0])/2), 650), cv2.FONT_HERSHEY_SIMPLEX,
-                    1.5, (255, 255, 255), 3, cv2.LINE_AA)
-            
-            print(timeTrialMainBall)
-            if timeTrialMainBall in updatedBall :
-                print('White : ', updatedBallTablePos[updatedBall.index(timeTrialMainBall)])
-                if (updatedBallTablePos[updatedBall.index(timeTrialMainBall)][0] >= 935 and updatedBallTablePos[updatedBall.index(timeTrialMainBall)][0] <= 1005 and
-                    updatedBallTablePos[updatedBall.index(timeTrialMainBall)][1] >= 405 and updatedBallTablePos[updatedBall.index(timeTrialMainBall)][1] <= 475) :
-                    prevWhiteX = updatedBallTablePos[updatedBall.index(timeTrialMainBall)][0]
-                    prevWhiteY = updatedBallTablePos[updatedBall.index(timeTrialMainBall)][1]
-                    objectX = random.randint(20, 1900)
-                    objectY = random.randint(20, 780)
-                    timeTrialStartTime = time.time()
-                    timeTrialState = 'Positioning'
-
-            if cv2.waitKey(25) & 0xFF == ord('g'):
-                prevWhiteX = updatedBallTablePos[updatedBall.index(timeTrialMainBall)][0]
-                prevWhiteY = updatedBallTablePos[updatedBall.index(timeTrialMainBall)][1]
-                objectX = random.randint(20, 1900)
-                objectY = random.randint(20, 780)
-                timeTrialState = 'Positioning'
-        elif timeTrialState == 'Positioning' :
-            print('Positioning')
-            print('objectX', objectX)
-            print('objectY', objectY)
-            timeTextSize, timeTextBaseline = cv2.getTextSize(f'Time : {timeTrialMaxTime - int(time.time() - timeTrialStartTime)}', cv2.FONT_HERSHEY_SIMPLEX, 3.0, 5)
-            scoreTextSize, scoreTextBaseline = cv2.getTextSize(f'Score : {timeTrialScore}', cv2.FONT_HERSHEY_SIMPLEX, 3.0, 5)
-
-            cv2.putText(mac, f'Time : {timeTrialMaxTime - int(time.time() - timeTrialStartTime)}', (970 - int((timeTextSize[0])/2), 100), cv2.FONT_HERSHEY_SIMPLEX, 
-                    3.0, (255, 255, 255), 5, cv2.LINE_AA)
-            cv2.putText(mac, f'Score : {timeTrialScore}', (970 - int((scoreTextSize[0])/2), 200), cv2.FONT_HERSHEY_SIMPLEX, 
-                    3.0, (255, 255, 255), 5, cv2.LINE_AA)
+            whitePos = -1
+            if 'White' in detectedBall:
+                whitePos = detectedBall.index('White')
+                print(updatedBallTablePos[updatedBall.index('White')])
+                avg_white = updatedBallTablePos[updatedBall.index('White')]
                 
-            if (timeTrialMaxTime - int(time.time() - timeTrialStartTime)) == 0 :
-                    timeTrialState = 'TimeOver'
-            else :
-                cv2.circle(mac, (objectX, objectY) , 35, (255, 255, 255), 5)
 
-                if 'Red' in updatedBall :
-                    print('Red : ', updatedBallTablePos[updatedBall.index(timeTrialObjBall)])
-                    if (updatedBallTablePos[updatedBall.index(timeTrialObjBall)][0] >= objectX-35 and updatedBallTablePos[updatedBall.index(timeTrialObjBall)][0] <= objectX+35 and
-                        updatedBallTablePos[updatedBall.index(timeTrialObjBall)][1] >= objectY-35 and updatedBallTablePos[updatedBall.index(timeTrialObjBall)][1] <= objectY+35) :
-                        timeTrialState = 'Playing'
-                    else :
-                        timeTrialState = 'Positioning'
-        elif timeTrialState == 'Playing' :
-            print('Playing')
-            timeTextSize, timeTextBaseline = cv2.getTextSize(f'Time : {timeTrialMaxTime - int(time.time() - timeTrialStartTime)}', cv2.FONT_HERSHEY_SIMPLEX, 3.0, 5)
-            scoreTextSize, scoreTextBaseline = cv2.getTextSize(f'Score : {timeTrialScore}', cv2.FONT_HERSHEY_SIMPLEX, 3.0, 5)
+          
 
-            cv2.putText(mac, f'Time : {timeTrialMaxTime - int(time.time() - timeTrialStartTime)}', (970 - int((timeTextSize[0])/2), 100), cv2.FONT_HERSHEY_SIMPLEX, 
-                    3.0, (255, 255, 255), 5, cv2.LINE_AA)
-            cv2.putText(mac, f'Score : {timeTrialScore}', (970 - int((scoreTextSize[0])/2), 200), cv2.FONT_HERSHEY_SIMPLEX, 
-                    3.0, (255, 255, 255), 5, cv2.LINE_AA)
-                
-            if (timeTrialMaxTime - int(time.time() - timeTrialStartTime)) == 0 :
-                    timeTrialState = 'TimeOver'
-            else :
-                cv2.circle(mac, (objectX, objectY) , 35, (0, 0, 255), 5)
+        bgFrame = motionBlurFrame
 
-        elif timeTrialState == 'TimeOver' :
-            mac = cv2.imread('./pics/Stage/timeTrialResult.png')
-            mac = cv2.resize(mac, (1920, 880))
-
-            # Open a file for reading
-            with open("./pics/HighScore.txt", "r") as f:
-                # Read the contents of the file
-                contents = f.read()
-
-            # Print the contents of the file
-            print(contents)
-
-            timeTrialHighScore = contents
-
-            if timeTrialScore > int(timeTrialHighScore) :
-                timeTrialHighScore = timeTrialScore
-
-                # Open a file for writing
-                with open("./pics/HighScore.txt", "w") as f:
-                    # Write some text to the file
-                    f.write(str(timeTrialHighScore))
-                
-            highScoreTextSize, highScoreTextBaseline = cv2.getTextSize(f'{timeTrialHighScore}', cv2.FONT_HERSHEY_SIMPLEX, 4.0, 15)
-            scoreSize, scoreBaseline = cv2.getTextSize(f'{timeTrialScore}', cv2.FONT_HERSHEY_SIMPLEX, 3.5, 15)
-
-            cv2.putText(mac, f'{timeTrialHighScore}', (970 - int((highScoreTextSize[0])/2), 400 - int((highScoreTextSize[1])/2)), cv2.FONT_HERSHEY_SIMPLEX, 
-                    4.0, (0, 0, 0), 15, cv2.LINE_AA)
-            cv2.putText(mac, f'{timeTrialScore}', (970 - int((scoreSize[0])/2), 750 - int((scoreSize[1])/2)), cv2.FONT_HERSHEY_SIMPLEX, 
-                    3.5, (0, 0, 0), 15, cv2.LINE_AA)
-           
-    # # print('mainStage : ', mainStage)
-    #     bgFrame = motionBlurFrame
     cv2.namedWindow('Test_Perspectice',cv2.WND_PROP_FULLSCREEN)
     cv2.setWindowProperty('Test_Perspectice', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
     cv2.imshow("Test_Perspectice", tansformed_frame)

@@ -54,7 +54,7 @@ while True:
 
         perspectFrame =  BDLib.perspectiveTransform(frame)
 
-        res = BDLib.getCircles(perspectFrame)
+        res = BDLib.getCircles(perspectFrame,"White")
 
         # BDLib.createGuideline(perspectFrame, res[0], res[1], outputDrawing)
         if res[0] is not None :

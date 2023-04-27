@@ -67,44 +67,24 @@ cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
 # start processing loop
 frame_count = 0
 
-lowerColor = [
-    np.array([20,150,50]), #Yellow
-    np.array([110,200,125]), #Blue
-    np.array([0,150,155]), #Red
-    np.array([110,215,150]), #Purple
-    np.array([5,150,50]), #Orange
-    np.array([95,100,100]), #Green
-    np.array([0,100,50]), #Crimson
-    np.array([0,0,0]), #Black
-    np.array([100,0,130]), #White
 
-]
-upperColor = [
-    np.array([40,255,255]),
-    np.array([130,255,255]),
-    np.array([20,255,255]),
-    np.array([145,255,255]),
-    np.array([25,255,255]),
-    np.array([110,255,255]),
-    np.array([20,255,155]),
-    np.array([179,255,40]),
-    np.array([179,180,255]),
-]
+
+
 
 
 bgFrame = None
 
 # loadSetting()
-mtx = np.loadtxt('../arUco/calib_data/camera_matrix.txt')
-dist = np.loadtxt('../arUco/calib_data/dist_coeffs.txt')
+mtx = np.loadtxt('./arUco/calib_data/camera_matrix.txt')
+dist = np.loadtxt('./arUco/calib_data/dist_coeffs.txt')
 
 def perspectiveTransform(frame):
     # Perspective Transform
     frame = cv2.undistort(frame, mtx, dist)
-    tl = (252 ,21)
-    bl = (174 ,906)
-    tr = (1701 ,31)
-    br = (1764 ,933)
+    tl = (251 ,10)
+    bl = (183 ,908)
+    tr = (1709 ,27)
+    br = (1772 ,934)
     # cv2.circle(frame, tl, 3, (0, 0, 255), -1)
     # cv2.circle(frame, bl, 3, (0, 0, 255), -1)
     # cv2.circle(frame, tr, 3, (0, 0, 255), -1)
@@ -122,24 +102,77 @@ def perspectiveTransform(frame):
     tansformed_frame = tansformed_frame[200:1080,0:1920]
     return tansformed_frame
 
-def getCircles(frame):
+def getCircles(frame,color):
         response = []
     
         # grayFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         # blurFrame = cv2.GaussianBlur(grayFrame, (7, 7), 0)
 
         hsvFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-        lower_green = np.array([50,20,40])
-        upper_green = np.array([100,255,255])
+        if color == "White":
+            # White Light
+            lower_bg = np.array([50,20,40])
+            upper_bg = np.array([100,255,255])
+            # White Light
+            lowerColor = [
+                np.array([20,150,50]), #Yellow
+                np.array([110,200,125]), #Blue
+                np.array([0,150,155]), #Red
+                np.array([110,215,150]), #Purple
+                np.array([5,150,50]), #Orange
+                np.array([95,100,100]), #Green
+                np.array([0,100,50]), #Crimson
+                np.array([0,0,0]), #Black
+                np.array([100,0,130]), #White
 
+            ]
+            upperColor = [
+                np.array([40,255,255]),
+                np.array([130,255,255]),
+                np.array([20,255,255]),
+                np.array([145,255,255]),
+                np.array([25,255,255]),
+                np.array([110,255,255]),
+                np.array([20,255,155]),
+                np.array([179,255,40]),
+                np.array([179,180,255]),
+            ]
+        elif color == "Blue":
+            # Blue Light
+            lower_bg = np.array([85,0,0])
+            upper_bg = np.array([110,255,255])
+            # Blue Light
+            lowerColor = [
+                np.array([20,150,50]), #Yellow
+                np.array([115,0,190]), #Blue
+                np.array([0,0,0]), #Red
+                np.array([110,215,150]), #Purple
+                np.array([0,150,155]), #Orange
+                np.array([95,100,100]), #Green
+                np.array([0,100,50]), #Crimson
+                np.array([0,0,0]), #Black
+                np.array([110,200,125]), #White
+            ]
 
-        mask = cv2.inRange(hsvFrame, lower_green, upper_green)
+            upperColor = [
+                np.array([40,255,255]),
+                np.array([130,255,255]),
+                np.array([60,255,255]),
+                np.array([145,255,255]),
+                np.array([20,255,255]),
+                np.array([110,255,255]),
+                np.array([20,255,155]),
+                np.array([179,255,40]),
+                np.array([130,255,255]),
+            ]
+
+        mask = cv2.inRange(hsvFrame, lower_bg, upper_bg)
         blurFrame = cv2.GaussianBlur(mask, (7,7), 0)
 
         # cropped_image = frame[148:932, 174:1742]
         # cropped_Blur_image = blurFrame[148:932, 174:1742]
         # cropped_Show_image = showFrame[148:932, 174:1742]
-        cv2.imshow("CroppedShowFrame1", mask)
+        # cv2.imshow("CroppedShowFrame1", mask)
         circles = cv2.HoughCircles(blurFrame, cv2.HOUGH_GRADIENT, 1.4, 30,
                                     param1=100, param2=20, minRadius=30, maxRadius=40)
         

@@ -2,8 +2,9 @@ import cv2
 import numpy as np
 import time
 import math
-
-
+import sys
+sys.path.append('./BallDetection/')
+import BallDetectionLib as BDLib
 def findSlope(start_x, start_y, end_x, end_y, find=None, interest_value=None):
     m = 0
     if (end_x-start_x) != 0:
@@ -34,81 +35,14 @@ def realPosition(x,y):
 
     return x_o,y_o
 
-def filter_ctrs(ctrs, min_s = 20, max_s = 500000, alpha = 1):  
-    
-    filtered_ctrs = [] # list for filtered contours
-    
-    for x in range(len(ctrs)): # for all contours
-        
-        rot_rect = cv2.minAreaRect(ctrs[x]) # area of rectangle around contour
-        w = rot_rect[1][0] # width of rectangle
-        h = rot_rect[1][1] # height
-        area = cv2.contourArea(ctrs[x]) # contour area 
-
-        
-        if (h*alpha<w) or (w*alpha<h): # if the contour isnt the size of a snooker ball
-            continue # do nothing
-            
-        if (area < min_s) or (area > max_s): # if the contour area is too big/small
-
-            continue # do nothing 
-
-        # if it failed previous statements then it is most likely a ball
-        filtered_ctrs.append(ctrs[x]) # add contour to filtered cntrs list
-
-        
-    return filtered_ctrs # returns filtere contours
-
-def find_ctrs_color(ctrs, input_img):
-
-    K = np.ones((3,3),np.uint8) # filter
-    output = input_img.copy() #np.zeros(input_img.shape,np.uint8) # empty img
-    gray = cv2.cvtColor(input_img, cv2.COLOR_BGR2GRAY) # gray version
-    mask = np.zeros(gray.shape,np.uint8) # empty mask
-
-    for i in range(len(ctrs)): # for all contours
-        
-        # find center of contour
-        M = cv2.moments(ctrs[i])
-        cX = int(M['m10']/M['m00']) # X pos of contour center
-        cY = int(M['m01']/M['m00']) # Y pos
-    
-        mask[...]=0 # reset the mask for every ball 
-    
-        cv2.drawContours(mask,ctrs,i,255,-1) # draws the mask of current contour (every ball is getting masked each iteration)
-
-        mask =  cv2.erode(mask,K,iterations=3) # erode mask to filter green color around the balls contours
-        
-        output = cv2.circle(output, # img to draw on
-                         (cX,cY), # position on img
-                         20, # radius of circle - size of drawn snooker ball
-                         cv2.mean(input_img,mask), # color mean of each contour-color of each ball (src_img=transformed img)
-                         -1) # -1 to fill ball with color
-    return output
-
-def draw_rectangles(ctrs, img):
-    
-    output = img.copy()
-    
-    for i in range(len(ctrs)):
-    
-        M = cv2.moments(ctrs[i]) # moments
-        rot_rect = cv2.minAreaRect(ctrs[i])
-        w = rot_rect[1][0] # width
-        h = rot_rect[1][1] # height
-        
-        box = np.int64(cv2.boxPoints(rot_rect))
-        cv2.drawContours(output,[box],0,(255,100,0),2) # draws box
-        
-    return output
 
 
 def createTable():
     h,w = 880,1920
-    frame = np.zeros((h, w, 3), np.uint8)
-    pocket_point = [(0,0),(int(w/2),0),(w,0),(0,h),(int(w/2),h),(w,h)]
+    frame = np.zeros((h, w, 1), np.uint8)
+    pocket_point = [(0,0),(int(w/2),-30),(w,0),(0,h),(int(w/2),h+30),(w,h)]
     for i in pocket_point:
-        cv2.circle(frame, i , 50, (255, 255, 255), 5)
+        cv2.circle(frame, i , 50, (255, 255, 255), -1)
     return frame
 
 def are_rectangles_overlapping(rect1, rect2):
@@ -165,35 +99,59 @@ def circleOverlap(x1, y1, r1, x2, y2, r2):
 #     np.array([179,60,255]), #White
 # ]
 
-# white close light 10:AM
+# # white close light 10:AM
+# lowerColor = [
+#     np.array([12,100,120]), #Yellow
+#     np.array([105,200,0]), #Blue
+#     np.array([150,150,160]), #Red
+#     np.array([128,170,0]), #Purple
+#     np.array([0,50,60]), #Orange
+#     np.array([85,155,85]), #Green
+#     np.array([135,170,80]), #Crimson
+#     np.array([100,0,0]), #Black
+#     np.array([120,0,170]), #White
+
+# ]
+# upperColor = [
+#     np.array([35,255,255]),
+#     np.array([125,255,255]),
+#     np.array([179,255,255]),
+#     np.array([140,255,255]),
+#     np.array([10,255,255]),
+#     np.array([110,255,255]),
+#     np.array([170,255,180]),
+#     np.array([170,135,120]),
+#     np.array([179,120,255]),
+# ]
+
+# white close light 3:AM
 lowerColor = [
-    np.array([12,100,10]), #Yellow
-    np.array([105,200,0]), #Blue
-    np.array([150,150,160]), #Red
-    np.array([128,170,0]), #Purple
-    np.array([0,50,60]), #Orange
-    np.array([85,155,85]), #Green
-    np.array([135,170,80]), #Crimson
+    np.array([12,100,120]), #Yellow
+    np.array([115,200,0]), #Blue
+    np.array([150,150,180]), #Red
+    np.array([128,215,0]), #Purple
+    np.array([0,75,150]), #Orange
+    np.array([100,155,110]), #Green
+    np.array([150,180,75]), #Crimson
     np.array([100,0,0]), #Black
-    np.array([120,0,170]), #White
+    np.array([120,0,200]), #White
 
 ]
 upperColor = [
     np.array([35,255,255]),
     np.array([125,255,255]),
     np.array([179,255,255]),
-    np.array([140,255,255]),
+    np.array([160,255,255]),
     np.array([10,255,255]),
     np.array([110,255,255]),
-    np.array([170,255,180]),
-    np.array([170,135,120]),
-    np.array([179,120,255]),
+    np.array([170,255,175]),
+    np.array([170,135,90]),
+    np.array([179,105,255]),
 ]
 
-
 # Load the camera matrix and distortion coefficients from the calibration file
-mtx = np.loadtxt('../arUco/calib_data/camera_matrix.txt')
-dist = np.loadtxt('../arUco/calib_data/dist_coeffs.txt')
+mtx = np.loadtxt('./arUco/calib_data/camera_matrix.txt')
+dist = np.loadtxt('./arUco/calib_data/dist_coeffs.txt')
 cap = cv2.VideoCapture(0)
 width = 1920
 height = 1080
@@ -210,10 +168,11 @@ table_height = 880
 roi_x, roi_y = 0, 200
 roi_w, roi_h = 1920, 880
 isShowline = True
+isDraw = True
 avg_center_x = []
 avg_center_y = []
-count_shot_p1 = 0
-count_shot_p2 = 0
+count_shot_p1 = 1
+count_shot_p2 = 1
 isP1 = True
 ball_move = False
 avg_cue_x1 = []
@@ -233,7 +192,7 @@ updatedBallPos = []
 updatedBallTablePos = []
 prevBallPos = []
 ballProbs = [0, 0, 0, 0, 0, 0, 0, 0, 0]
-
+check_black = None
 list_white = []
 list_black = []
 avg_white = (0,0)
@@ -262,15 +221,17 @@ while True:
     M_inv = cv2.invert(M)[1]
     # Compute the perspective transform 
     for i in pocket_point:
-        cv2.circle(frame, i , 50, (255, 255, 255), 5)
+        cv2.circle(frame, i , 30, (255, 255, 255), -1)
     transformed_frame = cv2.warpPerspective(frame, M, (width, height))
     projection_frame = transformed_frame.copy()
     table_frame = transformed_frame[200:1080,0:1920]
     
     black = createTable()
+    ret,thresh1 = cv2.threshold(black,127,255,cv2.THRESH_BINARY)
+    
     # White close light 10 AM
     lower_green = np.array([50,0,0])
-    upper_green = np.array([90,255,255])
+    upper_green = np.array([95,255,255])
 
     hsv = cv2.cvtColor(table_frame, cv2.COLOR_BGR2HSV)
     blurFrame = cv2.GaussianBlur(hsv, (7, 7), 0)
@@ -279,6 +240,8 @@ while True:
     mask_closing = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel) # dilate->erode
     mask = cv2.dilate(mask_closing,kernel,iterations = 1)
     inv_mask = cv2.bitwise_not(mask)
+    table_mask = inv_mask | thresh1
+    cv2.imshow("0",table_mask)
     output = cv2.bitwise_and(table_frame,table_frame, mask= inv_mask)
 
     circles = cv2.HoughCircles(inv_mask, cv2.HOUGH_GRADIENT, 1, 30, param1=100, param2=10, minRadius=21, maxRadius=35)
@@ -366,25 +329,29 @@ while True:
                 elif maxSameColorPos == 8:
                     similarColor = 'White'
 
+                detectedBall.append(similarColor)
+                detectedBallPos.append(maxSameColorPos)
+                detectedBallTablePos.append((circles[i][0], circles[i][1]))
 
                 if (similarColor in ["Black","White"]):
-                    # cv2.putText(table_frame, f'Number : {i}', (circles[i][0], circles[i][1]-80), cv2.FONT_HERSHEY_SIMPLEX, 
-                    #     0.7, (255, 0, 255), 2, cv2.LINE_AA)
-                    # cv2.putText(table_frame, f'Color : {similarColor}', (circles[i][0], circles[i][1]-50), cv2.FONT_HERSHEY_SIMPLEX, 
-                    #     0.7, (255, 0, 255), 2, cv2.LINE_AA)
-                    # cv2.putText(table_frame, f'X : {circles[i][0]}', (circles[i][0], circles[i][1]-30), cv2.FONT_HERSHEY_SIMPLEX, 
-                    #     0.7, (255, 0, 255), 2, cv2.LINE_AA)
-                    # cv2.putText(table_frame, f'Y : {circles[i][1]}', (circles[i][0], circles[i][1]-10), cv2.FONT_HERSHEY_SIMPLEX, 
-                    #     0.7, (255, 0, 255), 2, cv2.LINE_AA)
+                    cv2.putText(table_frame, f'Number : {i}', (circles[i][0], circles[i][1]-80), cv2.FONT_HERSHEY_SIMPLEX, 
+                        0.7, (255, 0, 255), 2, cv2.LINE_AA)
+                    cv2.putText(table_frame, f'Color : {similarColor}', (circles[i][0], circles[i][1]-50), cv2.FONT_HERSHEY_SIMPLEX, 
+                        0.7, (255, 0, 255), 2, cv2.LINE_AA)
+                    cv2.putText(table_frame, f'X : {circles[i][0]}', (circles[i][0], circles[i][1]-30), cv2.FONT_HERSHEY_SIMPLEX, 
+                        0.7, (255, 0, 255), 2, cv2.LINE_AA)
+                    cv2.putText(table_frame, f'Y : {circles[i][1]}', (circles[i][0], circles[i][1]-10), cv2.FONT_HERSHEY_SIMPLEX, 
+                        0.7, (255, 0, 255), 2, cv2.LINE_AA)
+
                     if similarColor == "Black":
                         realtime_black = [circles[i][0], circles[i][1],circles[i][2]]
                         if len(list_black) < 1:
                             list_black.append([circles[i][0], circles[i][1]])
                         # Define the points as numpy arrays
-                        points = np.array(list_black)
+                        points_black = np.array(list_black)
                         # Calculate the mean of the points
-                        avg_point = np.mean(points, axis=0)
-                        ax,ay = avg_point
+                        avg_point_black  = np.mean(points_black , axis=0)
+                        ax,ay = avg_point_black 
                         if abs(circles[i][0] - ax) < 20 and abs(circles[i][1] - ay) < 20 :
                             if len(list_black) < 3:
                                 list_black.append([circles[i][0], circles[i][1]])
@@ -392,6 +359,7 @@ while True:
                                 avg_black = (round(ax),round(ay))
                         else:
                             list_black.pop(0)
+                            
                         
 
                     if similarColor == "White":
@@ -409,23 +377,29 @@ while True:
                                 avg_white = (round(ax),round(ay))
                         else:
                             list_white.pop(0)
-                else:
-                    detectedBall.append(similarColor)
-                    detectedBallPos.append(maxSameColorPos)
-                    detectedBallTablePos.append((circles[i][0], circles[i][1]))
 
-            for p in pocket_point:
-                if len(realtime_black) != 0:
-                    if circleOverlap(realtime_black[0], realtime_black[1], realtime_black[2], p[0], p[1], 50) :
-                        print("End Round")
-                        print("Acurency Player1 : " + str(round((acurency_p1/count_shot_p1)*100),2) + "  %")
-                        print("Acurency Player2 : " + str(round((acurency_p2/count_shot_p2)*100),2) + "  %")
+                if "Black" not in detectedBall and  check_black is None:
+                    check_black = time.time()
+                elif "Black" not in detectedBall and  check_black is not None:
+                    if int(time.time()) - int(check_black) > 3 :
+                            print("End Round")
+                            print("Acurency Player1 : " + str(round((acurency_p1/count_shot_p1)*100)) + "  %")
+                            print("Acurency Player2 : " + str(round((acurency_p2/count_shot_p2)*100)) + "  %")
+                            check_black = None
+                else : 
+                    check_black = None
+
+            # for p in pocket_point:
+            #     if len(realtime_black) != 0:
+            #         if circleOverlap(realtime_black[0], realtime_black[1], realtime_black[2], p[0], p[1], 100) :
+            #             print("End Round")
+            #             print("Acurency Player1 : " + str(round((acurency_p1/count_shot_p1)*100)) + "  %")
+            #             print("Acurency Player2 : " + str(round((acurency_p2/count_shot_p2)*100)) + "  %")
                    
-
     whitePos = -1
     if 'White' in detectedBall:
         whitePos = detectedBall.index('White')
-
+    #print(realtime_black)
     if whitePos != -1 :
         if isP1:
             if prevBallPos != updatedBall:
@@ -433,6 +407,7 @@ while True:
         else :
             if prevBallPos != updatedBall:
                 acurency_p2 += 1
+        print(acurency_p1)
         center = avg_white
         # Draw on black frame
         cv2.circle(black, center, 30, (255, 255, 255), 5, cv2.LINE_AA)
@@ -442,6 +417,7 @@ while True:
         mask = np.zeros_like(original_frame)
         cv2.circle(mask, (x_o,y_o), 200, (255, 255, 255), -1, cv2.LINE_AA)
         masked_img = cv2.bitwise_and(original_frame, mask)
+        
         if len(avg_center_x) <= 1:
             avg_center_x.append(center[0])
             avg_center_y.append(center[1])
@@ -553,16 +529,19 @@ while True:
                     list_start.append([start_x,start_y])
                     list_end.append([end_x,end_y])
                 else:
-                    cv2.line(black, (ax_start, ay_start), (ax_end, ay_end), (255, 255, 255), 10)
+                    cv2.line(black, (round(ax_start), round(ay_start)), (round(ax_end), round(ay_end)), (255, 255, 255), 10)
+                    isDraw = True
             else:
                 list_start.clear()
                 list_end.clear()
-            
-            
+                isDraw = False
+
             output = cv2.bitwise_and(whiteball_zone, whiteball_zone, mask=mask)
             edges = cv2.Canny(output, 180, 255)
             lines = cv2.HoughLinesP(edges, 1, np.pi/180, 45,minLineLength=10, maxLineGap=100)
-            if lines is not None:
+            if lines is not None and isDraw == True:
+                start_x,start_y = round(ax_start), round(ay_start)
+                end_x,end_y = round(ax_end), round(ay_end)
                 if len(lines) >= 2:
                     x1, y1, x2, y2 = lines[0][0]
                     x3, y3, x4, y4 = lines[1][0]
@@ -745,7 +724,9 @@ while True:
     cv2.imshow("Frame1", table_frame)
     #cv2.imshow("Frame2", black)
     #cv2.imshow("Frame3", whiteball_zone)
-
+    detectedBall.clear()
+    detectedBallPos.clear()
+    detectedBallTablePos.clear()
 
 
 

@@ -22,12 +22,7 @@ cameraWidth=1920
 # success, img = cam.read()
 # success2, img2 = cam2.read()
 
-prevCircle = None
-cropSize = (100, 100)
 
-# cv.namedWindow("Python Webcam Screenshot App")
-
-outputDrawing = np.zeros((784,1568,3), np.uint8)
 
 def checkWinCondition(updatedBall):
     if not ('White' in updatedBall):
@@ -51,6 +46,59 @@ def findSlope(start_x,start_y,end_x,end_y,find=None,interest_value=None) :
     else :
         return (m,b)
 
+def showLine(frame, start, end , width = 10):
+    if isShowline is True :
+        cv2.line(frame, start, end, (255, 255, 255), width)
+
+def realPosition(x,y):
+    circle_pos_on_img = (int(roi_x + x), int(roi_y + y))
+
+    homogeneous_coord = np.array([circle_pos_on_img[0], circle_pos_on_img[1], 1]).reshape(-1, 1)
+    original_coord = np.matmul(M_inv, homogeneous_coord)
+    original_coord /= original_coord[2]
+    # The resulting original coordinate is (x_o, y_o)
+    x_o = int(original_coord[0][0])
+    y_o = int(original_coord[1][0])
+
+    return x_o,y_o
+
+
+
+def createTable():
+    h,w = 880,1920
+    frame = np.zeros((h, w, 1), np.uint8)
+    pocket_point = [(0,0),(int(w/2),-30),(w,0),(0,h),(int(w/2),h+30),(w,h)]
+    for i in pocket_point:
+        cv2.circle(frame, i , 50, (255, 255, 255), -1)
+    return frame
+
+def are_rectangles_overlapping(rect1, rect2):
+    """
+    Checks if two rectangles are overlapping
+    rect1, rect2: tuples of 4 integers representing (x, y, width, height) of each rectangle
+    returns: True if the rectangles are overlapping, False otherwise
+    """
+    x1, y1, w1, h1 = rect1
+    x2, y2, w2, h2 = rect2
+    if x1 + w1 < x2 or x2 + w2 < x1 or y1 + h1 < y2 or y2 + h2 < y1:
+        return False
+    return True
+
+def circleOverlap(x1, y1, r1, x2, y2, r2):
+    """
+    Determines if a small circle with center (x1, y1) and radius r1 is inside a big circle with center (x2, y2) and radius r2.
+    Returns True if the small circle is inside the big circle, False otherwise.
+    """
+    # Calculate the distance between the centers of the two circles
+    d = math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
+    
+    # Determine if the small circle is inside the big circle or not
+    if d + r1 < r2:
+        return True
+    elif d >= r2 - r1:
+        return False
+    else:
+        return False  # The circles are tangent, so it's up to you to decide if the small circle is considered inside or not
 width = 1920
 height = 1080
 # cap = cv2.VideoCapture(0)
@@ -64,15 +112,6 @@ frame_interval = 3 #HAHAHA
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
 
-# start processing loop
-frame_count = 0
-
-
-
-
-
-
-bgFrame = None
 
 # loadSetting()
 mtx = np.loadtxt('./arUco/calib_data/camera_matrix.txt')
@@ -81,10 +120,10 @@ dist = np.loadtxt('./arUco/calib_data/dist_coeffs.txt')
 def perspectiveTransform(frame):
     # Perspective Transform
     frame = cv2.undistort(frame, mtx, dist)
-    tl = (252 ,21)
-    bl = (174 ,906)
-    tr = (1701 ,31)
-    br = (1764 ,933)
+    tl = (251 ,10)
+    bl = (183 ,908)
+    tr = (1709 ,27)
+    br = (1772 ,934)
     # cv2.circle(frame, tl, 3, (0, 0, 255), -1)
     # cv2.circle(frame, bl, 3, (0, 0, 255), -1)
     # cv2.circle(frame, tr, 3, (0, 0, 255), -1)
@@ -112,7 +151,7 @@ def getCircles(frame,color):
         if color == "White":
             # White Light
             lower_bg = np.array([50,20,40])
-            upper_bg = np.array([100,255,255])
+            upper_bg = np.array([95,255,255])
             # White Light
             # lowerColor = [
             #     np.array([20,150,50]), #Yellow
@@ -188,29 +227,43 @@ def getCircles(frame,color):
                 np.array([179,255,40]),
                 np.array([130,255,255]),
             ]
-
+        black = createTable()
+        ret,thresh1 = cv2.threshold(black,127,255,cv2.THRESH_BINARY)
         mask = cv2.inRange(hsvFrame, lower_bg, upper_bg)
         blurFrame = cv2.GaussianBlur(mask, (7,7), 0)
-
+        kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
+        mask_closing = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel) # dilate->erode
+        mask = cv2.dilate(mask_closing,kernel,iterations = 1)
+        inv_mask = cv2.bitwise_not(mask)
+        table_mask = inv_mask | thresh1
         # cropped_image = frame[148:932, 174:1742]
         # cropped_Blur_image = blurFrame[148:932, 174:1742]
         # cropped_Show_image = showFrame[148:932, 174:1742]
         # cv2.imshow("CroppedShowFrame1", mask)
-        circles = cv2.HoughCircles(blurFrame, cv2.HOUGH_GRADIENT, 1.4, 30,
-                                    param1=100, param2=20, minRadius=30, maxRadius=40)
+        circles = cv2.HoughCircles(table_mask, cv2.HOUGH_GRADIENT, 1, 30,
+                                    param1=100, param2=15, minRadius=30, maxRadius=40)
         
         response.append(circles)
 
         circleZones = []
         circleZonesColor = []
         
-        if circles is not None:
-                circles = np.uint16(np.around(circles))
-                for i in circles[0, :]:
-                    circleZoneColor = frame[int(i[1].item())-22:int(i[1].item())+22, int(i[0].item())-22:int(i[0].item())+22]
+        if circles is not None :
+            circles = np.round(circles[0, :]).astype("int")
+            if len(circles) <= 20 :
+                i = 0
+                for (x, y, r) in circles:
+                    x1 = x - 35
+                    y1 = y - 35
+                    x2 = x + 35
+                    y2 = y + 35
+                    if x1 < 0:
+                        x1 = 1
+                    if y1 < 0:
+                        y1 = 1
+                    circleZoneColor = frame[y1:y2, x1:x2]
                     circleZonesColor.append(circleZoneColor)
 
-                    # cv2.circle(showFrame, (i[0], i[1]), i[2], (255,0,255), 2)
 
         if circles is not None:
             detectedBall = []
@@ -241,8 +294,12 @@ def getCircles(frame,color):
 
                 # print('size = ', circleZonesColor[i].size)
                 if circleZonesColor[i].size != 0:
-                    # print('size after = ', circleZonesColor[i].size)
                     hsvcircleZone = cv2.cvtColor(circleZonesColor[i], cv2.COLOR_BGR2HSV)
+                    mask = cv2.inRange(hsvcircleZone, lowerColor[j], upperColor[j])
+                    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
+                    mask_closing = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel) # dilate->erode
+                    mask = cv2.dilate(mask_closing,kernel,iterations = 1)
+                    samePixs = np.sum(mask == 255)
                     for j in range(len(lowerColor)):
                         mask = cv2.inRange(hsvcircleZone, lowerColor[j], upperColor[j])
                         samePixs = np.sum(mask == 255)

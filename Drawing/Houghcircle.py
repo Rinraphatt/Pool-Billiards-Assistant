@@ -6,6 +6,14 @@ height = 1080
 def nothing(x):
     pass
 
+def createTable():
+    h,w = 880,1920
+    frame = np.zeros((h, w, 1), np.uint8)
+    pocket_point = [(0,0),(int(w/2),-30),(w,0),(0,h),(int(w/2),h+30),(w,h)]
+    for i in pocket_point:
+        cv2.circle(frame, i , 50, (255, 255, 255), -1)
+    return frame
+
 # Load the video
 cap = cv2.VideoCapture(0)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
@@ -58,7 +66,15 @@ while(cap.isOpened()):
     mask = cv2.dilate(mask_closing,kernel,iterations = 1)
     inv_mask = cv2.bitwise_not(mask)
     output = cv2.bitwise_and(frame,frame, mask= inv_mask)
-
+    black = createTable()
+    ret,thresh1 = cv2.threshold(black,127,255,cv2.THRESH_BINARY)
+    mask = cv2.inRange(hsvFrame, lower_bg, upper_bg)
+    blurFrame = cv2.GaussianBlur(mask, (7,7), 0)
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (3, 3))
+    mask_closing = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel) # dilate->erode
+    mask = cv2.dilate(mask_closing,kernel,iterations = 1)
+    inv_mask = cv2.bitwise_not(mask)
+    table_mask = inv_mask | thresh1
 
     if ret:
         # Get current values of trackbars
