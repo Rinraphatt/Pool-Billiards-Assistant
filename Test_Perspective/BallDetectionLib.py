@@ -191,14 +191,8 @@ def getCircles(frame,color):
 
         mask = cv2.inRange(hsvFrame, lower_bg, upper_bg)
         blurFrame = cv2.GaussianBlur(mask, (7,7), 0)
-
-        # cropped_image = frame[148:932, 174:1742]
-        # cropped_Blur_image = blurFrame[148:932, 174:1742]
-        # cropped_Show_image = showFrame[148:932, 174:1742]
-        # cv2.imshow("CroppedShowFrame1", mask)
         circles = cv2.HoughCircles(blurFrame, cv2.HOUGH_GRADIENT, 1.4, 30,
                                     param1=100, param2=20, minRadius=30, maxRadius=40)
-        
         response.append(circles)
 
         circleZones = []
@@ -210,8 +204,6 @@ def getCircles(frame,color):
                     circleZoneColor = frame[int(i[1].item())-22:int(i[1].item())+22, int(i[0].item())-22:int(i[0].item())+22]
                     circleZonesColor.append(circleZoneColor)
 
-                    # cv2.circle(showFrame, (i[0], i[1]), i[2], (255,0,255), 2)
-
         if circles is not None:
             detectedBall = []
             detectedBallPos = []
@@ -222,24 +214,9 @@ def getCircles(frame,color):
                 maxSameColor = 0
                 maxSameColorPos = -1
                 semiSameColorPos = -1
-                # print('start ', maxSameColor, maxSameColorPos)
-
                 colorCounter = 0
                 whiteCounter = 0
 
-                # print('circles = ', circles)
-                # print('circleZonesColor = ', circleZonesColor)
-
-                # print(i, ' = ', circleZonesColor[i])
-                # print('len = ', len(circleZonesColor[i]))
-
-                # if circleZonesColor[i].size != 0 :
-                #     print("exist bracket = ", circleZonesColor[i])
-                # else:
-                #     print('null bracket')
-
-
-                # print('size = ', circleZonesColor[i].size)
                 if circleZonesColor[i].size != 0:
                     # print('size after = ', circleZonesColor[i].size)
                     hsvcircleZone = cv2.cvtColor(circleZonesColor[i], cv2.COLOR_BGR2HSV)
@@ -293,17 +270,6 @@ def getCircles(frame,color):
                     detectedBallPos.append(maxSameColorPos)
                     detectedBallTablePos.append((circles[0][i][0], circles[0][i][1]))
                         
-                    # cv2.putText(showFrame, f'Number : {i}', (circles[0][i][0], circles[0][i][1]-80), cv2.FONT_HERSHEY_SIMPLEX, 
-                    #     0.7, (255, 0, 255), 2, cv2.LINE_AA)
-                    # cv2.putText(showFrame, f'Color : {similarColor}', (circles[0][i][0], circles[0][i][1]-50), cv2.FONT_HERSHEY_SIMPLEX, 
-                    #     0.7, (255, 0, 255), 2, cv2.LINE_AA)
-                    # cv2.putText(showFrame, f'X : {circles[0][i][0]}', (circles[0][i][0], circles[0][i][1]-30), cv2.FONT_HERSHEY_SIMPLEX, 
-                    #     0.7, (255, 0, 255), 2, cv2.LINE_AA)
-                    # cv2.putText(showFrame, f'Y : {circles[0][i][1]}', (circles[0][i][0], circles[0][i][1]-10), cv2.FONT_HERSHEY_SIMPLEX, 
-                    #     0.7, (255, 0, 255), 2, cv2.LINE_AA)
-                        # if (maxSameColorPos >= 0 and maxSameColorPos <= 6):
-                        #         cv2.putText(showFrame, f'Type : {ballType}', (circles[0][i][0], circles[0][i][1]-30), cv2.FONT_HERSHEY_SIMPLEX, 
-                        #             0.7, (255, 0, 255), 2, cv2.LINE_AA)
             response.append(detectedBall)
             response.append(detectedBallPos)
             response.append(detectedBallTablePos) 
@@ -605,3 +571,29 @@ def createGuideline(frame, circles, updatedBall, showFrame):
                     
                     # cv2.putText(showFrame, 'X_top: '+ str(x_top)+ " Y_top: "+ str(y_top), (100,100), font, 1, (0, 255, 0), 2, cv2.LINE_AA)
                     # cv2.putText(showFrame, 'X_bottom: '+ str(x_bottom)+ " Y_bottom: "+ str(y_bottom), (100,200), font, 1, (0, 255, 0), 2, cv2.LINE_AA)
+
+def showLine(frame, start, end , width = 10):
+    if isShowline is True :
+        cv2.line(frame, start, end, (255, 255, 255), width)
+
+def realPosition(x,y):
+    circle_pos_on_img = (int(roi_x + x), int(roi_y + y))
+
+    homogeneous_coord = np.array([circle_pos_on_img[0], circle_pos_on_img[1], 1]).reshape(-1, 1)
+    original_coord = np.matmul(M_inv, homogeneous_coord)
+    original_coord /= original_coord[2]
+    # The resulting original coordinate is (x_o, y_o)
+    x_o = int(original_coord[0][0])
+    y_o = int(original_coord[1][0])
+
+    return x_o,y_o
+
+
+
+def createTable():
+    h,w = 880,1920
+    frame = np.zeros((h, w, 1), np.uint8)
+    pocket_point = [(0,0),(int(w/2),-30),(w,0),(0,h),(int(w/2),h+30),(w,h)]
+    for i in pocket_point:
+        cv2.circle(frame, i , 50, (255, 255, 255), -1)
+    return frame
