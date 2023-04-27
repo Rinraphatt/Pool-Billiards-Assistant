@@ -811,12 +811,12 @@ while True:
             print('UpdatedBallTablePos = ', updatedBallTablePos)
             print('BallProbs = ', ballProbs)
             if (timeTrialState == 'Playing') and (timeTrialMainBall in updatedBall) :
-                if math.sqrt(pow((abs(int(updatedBallTablePos[updatedBall.index(timeTrialMainBall)][0]) - int(prevWhiteX))), 2) + pow(abs(int(updatedBallTablePos[updatedBall.index(timeTrialMainBall)][1]) - int(prevWhiteY)), 2)) >= 200 :
+                if math.sqrt(pow((abs(int(updatedBallTablePos[updatedBall.index(timeTrialMainBall)][0]) - int(prevWhiteX))), 2) + pow(abs(int(updatedBallTablePos[updatedBall.index(timeTrialMainBall)][1]) - int(prevWhiteY)), 2)) >= 50 :
                     print("White Stop")
                     if ballCheckingStartTime == 0 :
                         ballCheckingStartTime = time.time()
 
-                    if time.time() - ballCheckingStartTime >= 3:
+                    if time.time() - ballCheckingStartTime > 4:
                         if 'Red' not in updatedBall :
                             timeTrialScore += 50
                         else:
@@ -827,6 +827,11 @@ while True:
                         objectY = random.randint(20, 780)
                         ballCheckingStartTime = 0
                         timeTrialState = 'Positioning'
+            elif (timeTrialState == 'Playing') and (timeTrialMainBall not in updatedBall) :
+                if time.time() - ballCheckingStartTime > 4:
+                        timeTrialScore -= 50
+                        ballCheckingStartTime = 0
+                        timeTrialState = 'WhiteFailed'
         else :
             print("Moving")
 
@@ -861,6 +866,37 @@ while True:
                 objectX = random.randint(20, 1900)
                 objectY = random.randint(20, 780)
                 timeTrialState = 'Positioning'
+        elif timeTrialState == 'WhiteFailed' :
+            print('WhiteFailed')
+            cv2.circle(mac, (970, 440), 35, (255, 255, 255), 5)
+
+            explanTextSize, explanTextBaseline = cv2.getTextSize(
+                'Place cue ball inside the circle.', cv2.FONT_HERSHEY_SIMPLEX, 1.5, 3)
+
+            cv2.putText(mac, 'Place cue ball inside the circle.', (970 - int((explanTextSize[0])/2), 550), cv2.FONT_HERSHEY_SIMPLEX,
+                    1.5, (255, 255, 255), 3, cv2.LINE_AA)
+            
+            timeTextSize, timeTextBaseline = cv2.getTextSize(f'Time : {timeTrialMaxTime - int(time.time() - timeTrialStartTime)}', cv2.FONT_HERSHEY_SIMPLEX, 3.0, 5)
+            scoreTextSize, scoreTextBaseline = cv2.getTextSize(f'Score : {timeTrialScore}', cv2.FONT_HERSHEY_SIMPLEX, 3.0, 5)
+
+            cv2.putText(mac, f'Time : {timeTrialMaxTime - int(time.time() - timeTrialStartTime)}', (970 - int((timeTextSize[0])/2), 100), cv2.FONT_HERSHEY_SIMPLEX, 
+                    3.0, (255, 255, 255), 5, cv2.LINE_AA)
+            cv2.putText(mac, f'Score : {timeTrialScore}', (970 - int((scoreTextSize[0])/2), 200), cv2.FONT_HERSHEY_SIMPLEX, 
+                    3.0, (255, 255, 255), 5, cv2.LINE_AA)
+                
+            if (timeTrialMaxTime - int(time.time() - timeTrialStartTime)) == 0 :
+                    timeTrialState = 'TimeOver'
+            
+            print(timeTrialMainBall)
+            if timeTrialMainBall in updatedBall :
+                print('White : ', updatedBallTablePos[updatedBall.index(timeTrialMainBall)])
+                if (updatedBallTablePos[updatedBall.index(timeTrialMainBall)][0] >= 935 and updatedBallTablePos[updatedBall.index(timeTrialMainBall)][0] <= 1005 and
+                    updatedBallTablePos[updatedBall.index(timeTrialMainBall)][1] >= 405 and updatedBallTablePos[updatedBall.index(timeTrialMainBall)][1] <= 475) :
+                    prevWhiteX = updatedBallTablePos[updatedBall.index(timeTrialMainBall)][0]
+                    prevWhiteY = updatedBallTablePos[updatedBall.index(timeTrialMainBall)][1]
+                    objectX = random.randint(20, 1900)
+                    objectY = random.randint(20, 780)
+                    timeTrialState = 'Positioning'
         elif timeTrialState == 'Positioning' :
             print('Positioning')
             print('objectX', objectX)
