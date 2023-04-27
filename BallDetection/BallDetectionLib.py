@@ -71,7 +71,7 @@ lowerColor = [
     np.array([20,150,50]), #Yellow
     np.array([110,200,125]), #Blue
     np.array([0,150,155]), #Red
-    np.array([110,215,150]), #Purple
+    np.array([140,215,150]), #Purple
     np.array([5,150,50]), #Orange
     np.array([95,100,100]), #Green
     np.array([0,100,50]), #Crimson
