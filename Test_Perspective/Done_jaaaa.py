@@ -211,10 +211,14 @@ while True:
     # bl = (174 ,906)
     # tr = (1695 ,31)
     # br = (1748 ,933)
-    tl = (245 ,10)
-    bl = (180 ,900)
-    tr = (1717 ,22)
-    br = (1760 ,930)
+    # tl = (245 ,10)
+    # bl = (180 ,900)
+    # tr = (1717 ,22)
+    # br = (1760 ,930
+    tl = (249 ,26)
+    bl = (190 ,906)
+    tr = (1699 ,24)
+    br = (1773 ,915)
     #cv2.circle(frame, tl, 3, (0, 0, 255), -1)
     # cv2.circle(frame, bl, 3, (0, 0, 255), -1)
     # cv2.circle(frame, tr, 3, (0, 0, 255), -1)
@@ -759,7 +763,7 @@ while True:
 
         n_white_pix = np.sum(thresh == 255)
 
-        if n_white_pix <= 100:
+        if n_white_pix <= 30:
             res = BDLib.getCircles(handDetectFrame)
 
             # BDLib.createGuideline(perspectFrame, res[0], res[1], outputDrawing)
@@ -815,7 +819,7 @@ while True:
                     if ballCheckingStartTime == 0 :
                         ballCheckingStartTime = time.time()
 
-                    if time.time() - ballCheckingStartTime > 4:
+                    if time.time() - ballCheckingStartTime > 5:
                         if 'Red' not in updatedBall :
                             timeTrialScore += 50
                         else:
@@ -966,7 +970,8 @@ while True:
     cv2.namedWindow('Test_Perspectice',cv2.WND_PROP_FULLSCREEN)
     cv2.setWindowProperty('Test_Perspectice', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
     cv2.imshow("Test_Perspectice", tansformed_frame)
-    # cv2.imshow('Hand Zone', handDetectFrame)
+    cv2.imshow('Hand Zone', handDetectFrame)
+    # cv2.imshow('Frame3 Zone', frame3)
     #cv2.imshow("Test", frame)
 
     

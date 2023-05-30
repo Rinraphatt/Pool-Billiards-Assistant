@@ -272,7 +272,7 @@ def getCircles(frame):
                     #     0.7, (255, 0, 255), 2, cv2.LINE_AA)
                     # cv2.putText(showFrame, f'Color : {similarColor}', (circles[0][i][0], circles[0][i][1]-50), cv2.FONT_HERSHEY_SIMPLEX, 
                     #     0.7, (255, 0, 255), 2, cv2.LINE_AA)
-                    # cv2.putText(showFrame, f'X : {circles[0][i][0]}', (circles[0][i][0], circles[0][i][1]-30), cv2.FONT_HERSHEY_SIMPLEX, 
+                    # cv2.putText(showFrame, f'X : {circles[0][i][0]}', (circles[0][i][0], circles[0][i][1]- 30), cv2.FONT_HERSHEY_SIMPLEX, 
                     #     0.7, (255, 0, 255), 2, cv2.LINE_AA)
                     # cv2.putText(showFrame, f'Y : {circles[0][i][1]}', (circles[0][i][0], circles[0][i][1]-10), cv2.FONT_HERSHEY_SIMPLEX, 
                     #     0.7, (255, 0, 255), 2, cv2.LINE_AA)
